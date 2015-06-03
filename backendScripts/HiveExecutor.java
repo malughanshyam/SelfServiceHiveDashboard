@@ -31,6 +31,7 @@ public class HiveExecutor {
 	private Statement stmt;
 //	private String jobStatus;
 	private String statusFilePath;
+	private String logFilePath;
 	private String outputDir ;
 	private String outputDataDir;
 	private String resultFilePath;
@@ -46,8 +47,9 @@ public class HiveExecutor {
 	HiveExecutor (String [] args){	
 		this.jobID = args[0];
 		//this.outputDir = "/Users/gmalu/Documents/Project/HiveDashboard/data/"+this.jobID;
-		this.outputDataDir = args[1];
-		this.outputDir = this.outputDataDir +this.jobID;
+		//this.outputDataDir = args[1];
+		//this.outputDir = this.outputDataDir +this.jobID;
+		this.outputDir = args[1];
 		this.hiveUser = args[2];
 		this.hiveHost = args[3];
 		this.dbName = args[4];
@@ -55,6 +57,7 @@ public class HiveExecutor {
 		//this.jobStatus = "NOT STARTED";
 		this.resultFilePath = this.outputDir +"/result.txt";
 		this.statusFilePath = this.outputDir +"/status.txt";
+		this.logFilePath = this.outputDir +"/log.txt";
 		this.jobStatus = JobStatus.NOT_STARTED;
 	}
 	
@@ -97,7 +100,7 @@ public class HiveExecutor {
 		}
 */
 		hiveExecObj.updateStatusFile();
-		hiveExecObj.copyQueryFileToOuputDir();
+		//hiveExecObj.copyQueryFileToOuputDir();
 				
 	}
 

@@ -69,7 +69,6 @@
 
 			<ul class="nav nav-tabs" id="adHocJobTabs">
 				<li class="active" id="navLinkNewJob"> <a data-toggle="tab" href="#newJob">New Job</a></li>
-				<!-- <li class="disabled" id="navLinkStatus"> <a data-toggle="tab" href="#status">Status</a></li> -->
 				<li id="navLinkStatus"> <a data-toggle="tab" href="#jobStatus">Status</a></li>
 				<li class="disabled" id="navLinkResult"> <a data-toggle="tab" href="#jobResult">Result</a></li>
 			</ul>
@@ -105,28 +104,50 @@
 		    </div>
 
 		    <div id="jobStatus" class="tab-pane fade">
-		      <h3>Job Status</h3>
+		      <h3>Job Status  
+		      	<button type="button" class="btn btn-primary btn-sm" ng-click="refreshJobStatus()" id="refreshBtn" >
+  				<span class="glyphicon glyphicon-refresh" aria-hidden="true"  ></span> Refresh
+			  	</button>  
+			  </h3>
+		      
 
-				<pre class="pre-scrollable"> <samp>{{formData.hiveQuery}}</samp> </pre>
+		    <div>
+    			<span id="submittedHiveLabel">Submitted Hive Query</span>
+  				<pre class="pre-scrollable" id="submittedHiveQuery"><samp>{{formData.hiveQuery}}</samp></pre>
+  			</div>
+
+				<br>
 
 
-
-		      <div class="row">
+				<div class="row">
 				 <div class="span12" align="center">
-				  
-				  <div class="alert alert-success" ng-show="submittedJobStatus == 'SUCCESS'" ng-hide="submittedJobStatus == 'FAILED'" role="alert" id="alertJobSuccess">
+				 
+				  <div class="alert alert-success" ng-show="submittedJobStatus == 'SUCCESS'" role="alert" id="alertJobSuccess">
 					  <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
-					  <span class="sr-only">Success</span>
 					  Job Succeeded
 				  </div>
 
-				  <div class="alert alert-danger" ng-hide="submittedJobStatus == 'SUCCESS'" ng-show="submittedJobStatus == 'FAILED'" role="alert" id="alertJobFail">
+				  <div class="alert alert-danger" ng-show="submittedJobStatus == 'FAILED'" role="alert" id="alertJobFail">
 					  <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
-					  <span class="sr-only">Error:</span>
 					  Job Failed
+				  </div>
+
+				   <div class="alert alert-info" ng-show="submittedJobStatus == 'IN_PROGRESS'" role="alert" id="alertJobInProgress">
+					  <span class="fa fa-spinner fa-pulse" aria-hidden="true"></span>
+					  Job execution in progress
+				  </div>
+
+				   <div class="alert alert-info" ng-show="submittedJobStatus == 'NOT_STARTED'" role="alert" id="alertJobNotStarted">
+					  <span class="glyphicon glyphicon-time" aria-hidden="true"></span>
+					  Job has not started yet
 				  </div>
 				 </div>
 				</div>
+ 
+
+
+
+
 
 		      
 		    </div>
@@ -139,10 +160,8 @@
 		    
 		  </div>
 
-		  <pre>Response:<br><samp>{{output}}</samp><pre>
+		  <br>
 
-	
-	
     </div> <!-- /container -->
 
 

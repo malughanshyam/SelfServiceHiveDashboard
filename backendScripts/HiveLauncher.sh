@@ -1,5 +1,5 @@
 #!/bin/bash
-cd /Users/gmalu/Documents/Project/SelfServiceDashboard/backendScripts
+cd /Users/gmalu/Documents/Project/SelfServiceHiveDashboard/backendScripts
 if [ $# != 3 ]
 then
     echo "Incorrect number of arguments !"

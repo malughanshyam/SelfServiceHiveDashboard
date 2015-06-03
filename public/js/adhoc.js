@@ -25,6 +25,8 @@ app.controller('formCtrl', function($scope, $http) {
     $scope.formData.hiveQuery = ''
     $scope.formData.jobName = ''
     $scope.formData.jobID = ''
+    $scope.submittedJobStatus = 'NOT_STARTED'
+    
 
     // $scope.hiveQuery = ''
     // $scope.jobID = ''
@@ -36,18 +38,11 @@ app.controller('formCtrl', function($scope, $http) {
 
         $http.post('/submitJob',$scope.formData)
             .success(function(data) {
-                //$scope.formData = {}
-                // $scope.hiveQuery = ''
-                $scope.submittedJobStatus='SUCCESS'
-                console.log(data)
-                $scope.output=data
-                //alert("File written : " + data)
+                $scope.refreshJobStatus();
 
             })
             .error(function(err){
-                $scope.submittedJobStatus='FAILED'
-                $scope.output=err
-                //alert("Error" + err)
+                $scope.refreshJobStatus(); 
             });
 
 
@@ -70,6 +65,55 @@ app.controller('formCtrl', function($scope, $http) {
 */
         console.log("Clicked Execute")
     }
+
+
+    $scope.refreshJobStatus = function(){
+
+       console.log("Refreshing Job Status");
+       $scope.checkStatusURL = '/jobStatus?jobID='+$scope.formData.jobID
+
+        $http.get($scope.checkStatusURL,$scope.formData)
+            .success(function(data) {
+                
+                //$scope.submittedJobStatus='SUCCESS'
+                $scope.submittedJobStatus=data.trim();
+                //$scope.submittedJobStatus='SUCCESS';
+                console.log("Type of :"+ typeof(data))
+                console.log("Exact data :'"+ data+"'")
+                console.log("Length data :'"+ data.length+"'")
+                $scope.output=typeof(data)
+                
+            })
+            .error(function(err){
+                // $scope.submittedJobStatus='FAILED'
+                $scope.$apply($scope.submittedJobStatus='FAILED');
+                $scope.output=err
+                console.log(err)
+                
+            });
+
+
+        /*enable tab*/
+        $("#navLinkStatus").removeClass('disabled');
+        $("#navLinkStatus").find('a').attr("data-toggle","tab");
+        $("#navLinkStatus").click();
+
+        activaTab('jobStatus');
+
+        // Disable Create New Job 
+        $("#navLinkNewJob").addClass('disabled');
+        $("#navLinkNewJob").find('a').removeAttr("data-toggle");
+
+
+        
+
+/*        $('#navLinkResult').removeClass('disabled');
+        $('#navLinkResult').find('a').attr("data-toggle","tab")
+*/
+        console.log("Clicked Execute")
+    }
+
+
 
     $scope.execute = function(){
 

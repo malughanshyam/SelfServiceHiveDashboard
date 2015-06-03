@@ -1,7 +1,7 @@
 fs = require('fs-extra');
 sys = require('sys')
 child_process = require('child_process');
-	
+dataDir = "data/"
 exports.findAll = function(req,res) {
 		return res.json("GET is working");
 }
@@ -12,15 +12,14 @@ exports.submitJob = function(req,res) {
 
 	var jobID = req.body.jobID, //"job_001",
 		query = req.body.hiveQuery	//query = "SHOW TABLES;",
-//		queryFile = "/data/"+jobID+'/query.sql';
 		
 	if (jobID == null)
 		jobID = "job_unnamed"
 	if (query == null)
 		query = " "
 
-	dir = "data/"+jobID,
-	queryFile = dir+'/query.sql';
+	dir = dataDir+jobID,
+	queryFile = dir+'/sql.txt';
 
 	console.log("jobID: "+jobID)
 	console.log("Dir: " + dir)
@@ -29,7 +28,6 @@ exports.submitJob = function(req,res) {
 
 	fs.ensureDir(dir, function (err) {
 	  
-	  // dir has now been created, including the directory it is to be placed in
 	  if (err){
 	  	console.log(err) // => null
 	  	res.status(500)
@@ -42,15 +40,13 @@ exports.submitJob = function(req,res) {
 	})
 
 	function execute (){
-		var	execDirPath = '/Users/gmalu/Documents/Project/SelfServiceDashboard/backendScripts/',
+		
+		var	execDirPath = '/Users/gmalu/Documents/Project/SelfServiceHiveDashboard/backendScripts/',
 		execFileName = './HiveLauncher.sh',
 		
 		normalizePath = "../"
 
 		args = [jobID, normalizePath+queryFile, normalizePath+dir]
-		//args = ['sql_topNYSEstocks.txt']
-	
-		//	args = ['sql_faultyQuery.txt']
 
 		var	options = { 
 		  cwd: execDirPath,
@@ -75,6 +71,27 @@ exports.submitJob = function(req,res) {
 		console.log("Executing hiveQuery")
 		child_process.execFile(execFileName, args, options, callback)
 	}
+
+};
+
+exports.getStatus = function(req,res){
+
+	var jobID = req.query["jobID"];
+	if (jobID != null){
+        jobStatusFile = dataDir+jobID+"/status.txt";
+		console.log("Job Status File: "+jobStatusFile);
+		fs.readFile(jobStatusFile, 'utf8', function (err,data) {
+		  	if (err) {
+		    	console.log(err);
+		    	res.send(err);
+		  	}
+		  	console.log(data.trim());
+		  	res.send(data.trim())
+    	});
+	} else{
+        res.json(({status: '500 Server error', error: 'JobID not specified'}))
+    }
+
 
 };
 
