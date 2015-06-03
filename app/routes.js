@@ -2,7 +2,10 @@ module.exports = function(app){
     var fileHandler = require('./controllers/fileHandler');
     app.post('/submitJob', fileHandler.submitJob);
     app.get('/jobStatus', fileHandler.getStatus);
-    
+	app.get('/jobLog', fileHandler.getJobLog);
+	app.get('/jobResult',fileHandler.getJobResult);
+
+
     app.get('/schedule', fileHandler.schedule);
     app.post('/execute', fileHandler.execute)
 

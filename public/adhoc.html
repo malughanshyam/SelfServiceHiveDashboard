@@ -92,7 +92,6 @@
 				  <div class="form-group">
 				    <div class="col-sm-offset-2 col-sm-10">
 				      <button ng-click="submitJob()" type="submit" class="btn btn-primary">Submit Query</button>
-					  <button ng-click="execute()" class="btn btn-primary">Execute</button>
 					  <button ng-click="reset()" class="btn btn-default">Clear</button>
 				    </div>
 				  </div>
@@ -109,23 +108,21 @@
 		      	<button type="button" class="btn btn-primary btn-sm" ng-click="refreshJobStatus()" id="refreshBtn" ng-show="submittedJobStatus == 'JOB_IN_PROGRESS'">
   				<span class="glyphicon glyphicon-refresh" aria-hidden="true"  ></span> Refresh
 			  	</button> 
-			  	<button type="button" class="btn btn-primary btn-sm" ng-click="viewLog()" id="viewLogBtn" ng-hide="submittedJobStatus == 'JOB_NOT_STARTED'" >
+			  	<button type="button" class="btn btn-primary btn-sm" ng-click="viewJobLog()" id="viewLogBtn" ng-hide="submittedJobStatus == 'JOB_NOT_STARTED'" >
   				<span class="glyphicon glyphicon-list-alt" aria-hidden="true" ></span> View Log
 			  	</button>
-			  	<button type="button" class="btn btn-primary btn-sm" ng-click="viewResult()" id="viewResultBtn" ng-hide="submittedJobStatus == 'JOB_NOT_STARTED'"  >
+			  	<button type="button" class="btn btn-primary btn-sm" ng-click="viewJobResult()" id="viewResultBtn" ng-show="submittedJobStatus == 'JOB_SUCCESSFUL'"  >
   				<span class="glyphicon glyphicon-eye-open" aria-hidden="true"  ></span> View Result
 			  	</button>     
 			  </h3>
 		      
 
-		    <div>
-    			<span id="submittedHiveLabel">Submitted Hive Query</span>
-  				<pre class="pre-scrollable" id="submittedHiveQuery"><samp>{{formData.hiveQuery}}</samp></pre>
-  			</div>
+			    <div>
+	    			<span id="submittedHiveLabel" class="preLabels">Submitted Hive Query</span>
+	  				<pre class="pre-scrollable" id="submittedHiveQuery"><samp>{{formData.hiveQuery}}</samp></pre>
+	  			</div>
 
-				<br>
-
-
+				<!-- Job Status Alerts -->
 				<div class="row">
 				 <div class="span12" align="center">
 				 
@@ -150,19 +147,29 @@
 				  </div>
 				 </div>
 				</div>
- 
+	 
 
-
-
-
-
+				<div id="jobLogDiv" ng-show="showJobLog == true">
+	    			<span id="jobLogLabel">Job Log</span>
+	  				<pre class="pre-scrollable" id="jobLog"><samp>{{jobLog}}</samp></pre>
+	  			</div>
 		      
 		    </div>
 
 
 		    <div id="jobResult" class="tab-pane fade">
 		      <h3>Results</h3>
-		      <p>Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam.</p>
+
+		      <div>
+	    		    <span id="submittedHiveLabel" class="preLabels">Submitted Hive Query</span>
+	  				<pre class="pre-scrollable" id="submittedHiveQuery"><samp>{{formData.hiveQuery}}</samp></pre>
+	  			</div>
+
+		      <div>
+	    			<span id="jobResultLabel" class="preLabels">Result</span>
+	  				<pre class="pre-scrollable" id="jobResult"><samp>{{jobResult}}</samp></pre>
+	  		  </div>
+
 		    </div>
 		    
 		  </div>

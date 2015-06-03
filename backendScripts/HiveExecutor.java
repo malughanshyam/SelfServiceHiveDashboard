@@ -157,7 +157,7 @@ public class HiveExecutor {
 		} catch (Exception e){
 			this.writerLog.println("Job Failed");
 			this.occurredException = e;
-			//this.jobStatus = "FAILED";
+			this.occurredException.printStackTrace(this.writerLog);
 			this.jobStatus = JobStatus.FAILED;
 			this.cleanUp();
 		} 

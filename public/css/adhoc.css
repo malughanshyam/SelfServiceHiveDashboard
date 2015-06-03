@@ -28,3 +28,7 @@ pre {
 #submittedHiveLabel {
 	float: top;
 }
+
+#jobLogDiv {
+	padding: 0.5em;
+}

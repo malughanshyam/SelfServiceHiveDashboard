@@ -13,10 +13,8 @@ app.controller('formCtrl', function($scope, $http) {
         $('.nav-tabs a[href="#' + tab + '"]').tab('show');
     };
 
-    //
+    /*
 
-
-        /*enable tab*/
         $("#navLinkStatus").removeClass('disabled');
         $("#navLinkStatus").find('a').attr("data-toggle","tab");
         $("#navLinkStatus").click();
@@ -24,18 +22,12 @@ app.controller('formCtrl', function($scope, $http) {
         activaTab('jobStatus');
 
 
-    //
+    */
 
 
 
 
     $scope.refreshInterval;
-
-/*    $(document).ready(function() {
-        $(".nav li.disabled a").click(function() {
-        return false;
-        });
-    });*/
 
     $scope.formData = {}
     $scope.output=''
@@ -44,12 +36,9 @@ app.controller('formCtrl', function($scope, $http) {
     $scope.formData.jobName = ''
     $scope.formData.jobID = ''
     $scope.submittedJobStatus = 'JOB_NOT_STARTED'
+    $scope.showJobLog=false
+    $scope.jobResult=''
     
-
-    // $scope.hiveQuery = ''
-    // $scope.jobID = ''
-    
-
     $scope.submitJob = function(){
 
        console.log("SubmitJob Clicked");
@@ -79,11 +68,6 @@ app.controller('formCtrl', function($scope, $http) {
         $("#navLinkNewJob").find('a').removeAttr("data-toggle");
 
 
-        
-
-/*        $('#navLinkResult').removeClass('disabled');
-        $('#navLinkResult').find('a').attr("data-toggle","tab")
-*/
         console.log("Clicked Execute")
     }
 
@@ -95,14 +79,7 @@ app.controller('formCtrl', function($scope, $http) {
 
         $http.get($scope.checkStatusURL,$scope.formData)
             .success(function(data) {
-                
-                //$scope.submittedJobStatus='SUCCESS'
-                $scope.submittedJobStatus=data.trim();
-                //$scope.submittedJobStatus='SUCCESS';
-                console.log("Type of :"+ typeof(data))
-                console.log("Exact data :'"+ data+"'")
-                console.log("Length data :'"+ data.length+"'")
-                $scope.output=typeof(data)
+                 $scope.submittedJobStatus=data.trim();
                 
             })
             .error(function(err){
@@ -130,6 +107,66 @@ app.controller('formCtrl', function($scope, $http) {
             clearInterval($scope.refreshInterval)
         }
 
+       
+       /* if($scope.submittedJobStatus == 'JOB_SUCCESSFUL' )
+          $scope.viewJogResult();
+*/
+    }
+
+    $scope.viewJobLog = function(){
+       $scope.showJobLog = true
+       console.log("View Job Log");
+       $scope.checkLogURL = '/jobLog?jobID='+$scope.formData.jobID
+
+        $http.get($scope.checkLogURL,$scope.formData)
+            .success(function(data) {
+                
+                $scope.jobLog=data;
+                
+            })
+            .error(function(err){
+                // $scope.submittedJobStatus='FAILED'
+                $scope.jobLog='Fetching Log Failed :'+err;
+                console.log(err)
+                
+            });
+
+    }
+
+
+    $scope.viewJobResult = function(){
+
+        if ($scope.submittedJobStatus != 'JOB_SUCCESSFUL'){
+            return false;
+        }
+
+        /*enable tab*/
+        $("#navLinkResult").removeClass('disabled');
+        $("#navLinkResult").find('a').attr("data-toggle","tab");
+        $("#navLinkResult").click();
+
+        activaTab('jobResult');
+
+        // Disable Create New Job 
+        $("#navLinkStatus").addClass('disabled');
+        $("#navLinkStatus").find('a').removeAttr("data-toggle");
+
+
+       $scope.showJobLog = true
+       console.log("View Job Log");
+       $scope.checkResultURL = '/jobResult?jobID='+$scope.formData.jobID
+
+        $http.get($scope.checkResultURL,$scope.formData)
+            .success(function(data) {
+                $scope.jobResult=data;
+            })
+            .error(function(err){
+                // $scope.submittedJobStatus='FAILED'
+                $scope.jobResult='Fetching Result Failed :'+err;
+                console.log(err)
+                
+            });
+
     }
 
 
@@ -155,9 +192,8 @@ app.controller('formCtrl', function($scope, $http) {
     $scope.reset = function() {
         $scope.user = angular.copy($scope.master);
     };
-    $scope.reset();
-
     
+    $scope.reset();
 
 
 });

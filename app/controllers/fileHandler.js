@@ -95,6 +95,52 @@ exports.getStatus = function(req,res){
 
 };
 
+
+exports.getJobLog = function(req,res){
+
+	var jobID = req.query["jobID"];
+	if (jobID != null){
+        
+        jobLogFile = dataDir+jobID+"/log.txt";
+		console.log("Job Log File: "+jobLogFile);
+		fs.readFile(jobLogFile, 'utf8', function (err,data) {
+		  	if (err) {
+		    	console.log(err);
+		    	res.send(err);
+		  	}
+		  	res.send(data);
+    	});
+	} else{
+        res.json(({status: '500 Server error', error: 'JobID not specified'}))
+    }
+
+
+};
+
+exports.getJobResult = function(req,res){
+
+	var jobID = req.query["jobID"];
+	if (jobID != null){
+        
+        jobResultFile = dataDir+jobID+"/result.txt";
+		console.log("Job Result File: "+jobResultFile);
+		fs.readFile(jobResultFile, 'utf8', function (err,data) {
+		  	if (err) {
+		    	console.log(err);
+		    	res.send(err);
+		  	}
+		  	res.send(data);
+    	});
+	} else{
+        res.json(({status: '500 Server error', error: 'JobID not specified'}))
+    }
+
+
+};
+
+
+
+
 exports.update = function() {};
 
 exports.execute = function(req,res) {
