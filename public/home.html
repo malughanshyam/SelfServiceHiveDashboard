@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+  	<head>
+	    <meta charset="utf-8">
+	    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+	    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+	    <title> Self Service Dashboard</title>
+
+
+    	<link rel="stylesheet" type="text/css" href="css/metro-bootstrap.min.css">
+
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+		<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+
+		<!-- Bootstrap core CSS -->
+	    <!-- <link href="css/bootstrap.min.css" rel="stylesheet"> -->
+	    <!-- Bootstrap theme -->
+	    <link href="css/bootstrap-theme.min.css" rel="stylesheet">
+	    <link href="css/home.css" rel="stylesheet">
+	    <link href="css/common_template.css" rel="stylesheet">
+
+
+		<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.0.7/angular.min.js"></script>
+		<script  type= "text/javascript" src="./js/home.js"></script>
+	</head>
+
+	<body ng-app = "myApp">
+
+ 		<nav class="navbar navbar-inverse navbar-fixed-top">
+	      <div class="container">
+	        <div class="navbar-header">
+	          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+	            <span class="sr-only">Toggle navigation</span>
+	            <span class="icon-bar"></span>
+	            <span class="icon-bar"></span>
+	            <span class="icon-bar"></span>
+	          </button>
+	          <a class="navbar-brand" href="home.html">Self Service Dashboard</a>
+	        </div>
+	       
+	      </div>
+	    </nav>
+
+	<div class="container">
+<!-- 
+      <div class="masthead">
+        <h3 class="text-muted">Project name</h3>
+        <nav>
+          <ul class="nav nav-justified">
+            <li class="active"><a href="#">Home</a></li>
+            <li><a href="#">Projects</a></li>
+            <li><a href="#">Services</a></li>
+            <li><a href="#">Downloads</a></li>
+            <li><a href="#">About</a></li>
+            <li><a href="#">Contact</a></li>
+          </ul>
+        </nav>
+      </div>
+ -->
+      <!-- Jumbotron -->
+
+	<br><br>
+	<div class="jumbotron">
+		<h2>Self Service Dashboard</h2>
+
+		<p class="lead">A self service dashboard for scheduling and running adhoc Hive queries</p>
+		<!--  <p><a class="btn btn-lg btn-success" href="#" role="button">Get started today</a></p> -->
+	</div>
+
+ 
+	<div class="col-sm-6 col-md-4">
+		<a href="adhoc.html" class="fa-links">
+			<div class="thumbnail tile tile-wide tile-green">
+	            <h3 class="tile-text">Ad Hoc Jobs</h3>
+	            <i class="fa fa-4x fa-gavel"></i>
+	    	</div>
+	    </a>
+	</div>
+
+	<div class="col-sm-6 col-md-4">
+	    <a href="adhoc.html" class="fa-links">	   
+			<div class="thumbnail tile tile-wide tile-orange">
+	        	<h3 class="tile-text">Scheduled Jobs</h3>
+	            <i class="fa fa-4x fa-clock-o"></i>
+			</div>
+		</a>
+	</div>
+
+			
+
+		<!-- Site footer -->
+<!-- 	<footer class="footer">
+		<p>&copy; eBay 2015</p>
+	</footer>
+ -->
+    </div> <!-- /container -->
+
+	<footer>
+	    <div class="navbar navbar-inverse navbar-fixed-bottom">
+	        <div class="container">
+	            <div class="navbar-collapse collapse" id="footer-body">
+	                <ul class="nav navbar-nav">
+	                    <li><a href="#">About Us</a></li>
+	                    <li><a href="#">Contact Support</a></li>                   
+	                </ul>
+	            </div>
+	          	<div class="navbar-header">
+	                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#footer-body">
+	                    <span class="icon-bar"></span>
+	                    <span class="icon-bar"></span>
+	                    <span class="icon-bar"></span>
+	                </button>
+	                <ul class="footer-bar-btns visible-xs">	                    
+	                    <li><a href="#" class="btn" title="Favourites"><i class="fa fa-2x fa-star yellow-text"></i></a></li>
+	                </ul>
+	            </div>
+
+	        </div>
+	    </div>
+	</footer>
+
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="js/bootstrap.min.js"></script>
+	</body>
+</html>

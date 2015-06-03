@@ -1,0 +1,18 @@
+{
+  "name"         : "Dashboard",
+  "version"      : "0.0.0",
+  "description"  : "Dashboard",
+  "main"         : "server.js",
+  "author"       : "Dashboard",
+  "dependencies" : {
+    "express"    : "*",
+    "morgan"	 : "*",
+	"body-parser": "*",
+	"method-override": "*",
+	"serve-favicon": "*",
+	"cookie-parser": "*",
+	"debug": "*",
+  "fs-extra" : "*",
+  "bootstrap" : "*"
+  }
+}

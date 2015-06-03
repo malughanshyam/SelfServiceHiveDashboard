@@ -1,0 +1,5 @@
+SELECT stock_symbol, SUM(stock_volume) AS totalStocks, MAX(stock_price_high) AS MaxHighStockPrice,  MIN(stock_price_low) AS MinLowStockPrice
+FROM nyse_stocks 
+GROUP BY stock_symbol 
+ORDER BY totalStocks DESC 
+LIMIT 10;
