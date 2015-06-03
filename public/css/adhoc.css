@@ -21,7 +21,7 @@ pre {
  word-wrap: break-word;       /* Internet Explorer 5.5+ */
 }
 
-#refreshBtn {
+.jobStatusBtn {
 	float: right;
 }
 

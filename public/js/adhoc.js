@@ -13,6 +13,24 @@ app.controller('formCtrl', function($scope, $http) {
         $('.nav-tabs a[href="#' + tab + '"]').tab('show');
     };
 
+    //
+
+
+        /*enable tab*/
+        $("#navLinkStatus").removeClass('disabled');
+        $("#navLinkStatus").find('a').attr("data-toggle","tab");
+        $("#navLinkStatus").click();
+
+        activaTab('jobStatus');
+
+
+    //
+
+
+
+
+    $scope.refreshInterval;
+
 /*    $(document).ready(function() {
         $(".nav li.disabled a").click(function() {
         return false;
@@ -25,7 +43,7 @@ app.controller('formCtrl', function($scope, $http) {
     $scope.formData.hiveQuery = ''
     $scope.formData.jobName = ''
     $scope.formData.jobID = ''
-    $scope.submittedJobStatus = 'NOT_STARTED'
+    $scope.submittedJobStatus = 'JOB_NOT_STARTED'
     
 
     // $scope.hiveQuery = ''
@@ -38,11 +56,14 @@ app.controller('formCtrl', function($scope, $http) {
 
         $http.post('/submitJob',$scope.formData)
             .success(function(data) {
-                $scope.refreshJobStatus();
+                $scope.refreshInterval = setInterval(function () {refreshTimer()}, 1000);
+                function refreshTimer() {
+                    $scope.refreshJobStatus();
+                }      
 
             })
             .error(function(err){
-                $scope.refreshJobStatus(); 
+                $scope.submittedJobStatus='FAILED';
             });
 
 
@@ -86,7 +107,7 @@ app.controller('formCtrl', function($scope, $http) {
             })
             .error(function(err){
                 // $scope.submittedJobStatus='FAILED'
-                $scope.$apply($scope.submittedJobStatus='FAILED');
+                $scope.submittedJobStatus='FAILED';
                 $scope.output=err
                 console.log(err)
                 
@@ -105,12 +126,10 @@ app.controller('formCtrl', function($scope, $http) {
         $("#navLinkNewJob").find('a').removeAttr("data-toggle");
 
 
-        
+        if($scope.submittedJobStatus == 'JOB_SUCCESSFUL' || $scope.submittedJobStatus == 'JOB_FAILED'){
+            clearInterval($scope.refreshInterval)
+        }
 
-/*        $('#navLinkResult').removeClass('disabled');
-        $('#navLinkResult').find('a').attr("data-toggle","tab")
-*/
-        console.log("Clicked Execute")
     }
 
 

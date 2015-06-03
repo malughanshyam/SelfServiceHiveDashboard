@@ -6,6 +6,7 @@
 import java.sql.SQLException;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
@@ -37,6 +38,7 @@ public class HiveExecutor {
 	private String resultFilePath;
 	private ResultSet res;
 	private Exception occurredException;
+	private PrintWriter writerLog;
 	
 	public enum JobStatus {
 		NOT_STARTED, SUCCESS, FAILED, IN_PROGRESS
@@ -44,7 +46,7 @@ public class HiveExecutor {
  
 	private JobStatus jobStatus;
 	
-	HiveExecutor (String [] args){	
+	HiveExecutor (String [] args) throws IOException{	
 		this.jobID = args[0];
 		//this.outputDir = "/Users/gmalu/Documents/Project/HiveDashboard/data/"+this.jobID;
 		//this.outputDataDir = args[1];
@@ -54,22 +56,24 @@ public class HiveExecutor {
 		this.hiveHost = args[3];
 		this.dbName = args[4];
 		this.queryFilePath = args[5];
-		//this.jobStatus = "NOT STARTED";
 		this.resultFilePath = this.outputDir +"/result.txt";
 		this.statusFilePath = this.outputDir +"/status.txt";
 		this.logFilePath = this.outputDir +"/log.txt";
 		this.jobStatus = JobStatus.NOT_STARTED;
+		//this.writerLog = new PrintWriter(this.logFilePath, "UTF-8");		
+		this.writerLog = new PrintWriter(new FileWriter(this.logFilePath, true)); 
+		
 	}
 	
 	private void printMetaData(){
 	
-		System.out.println("Job ID: " + this.jobID);
-		System.out.println("outputDataDir: "+ this.outputDataDir);
-		System.out.println("outputDir: "+ this.outputDir);		
-		System.out.println("queryFilePath: "+this.queryFilePath);
-		System.out.println("resultFilePath: "+ this.resultFilePath);
-		System.out.println("statusFilePath: "+this.statusFilePath);
-		System.out.println("\n");
+		this.writerLog.println("Job ID: " + this.jobID);
+		this.writerLog.println("outputDataDir: "+ this.outputDataDir);
+		this.writerLog.println("outputDir: "+ this.outputDir);		
+		this.writerLog.println("queryFilePath: "+this.queryFilePath);
+		this.writerLog.println("resultFilePath: "+ this.resultFilePath);
+		this.writerLog.println("statusFilePath: "+this.statusFilePath);
+		this.writerLog.println("\n");
 				
 	}
 	
@@ -79,7 +83,12 @@ public class HiveExecutor {
 			usage();
 		}
 
+		 
+
 		HiveExecutor hiveExecObj = new HiveExecutor(args);
+		
+		hiveExecObj.updateStatusFile();
+		
 		hiveExecObj.printMetaData();
 		
 		hiveExecObj.establishConnection();
@@ -87,7 +96,6 @@ public class HiveExecutor {
 		
 		hiveExecObj.createOutputDirectory();
 		
-		//hiveExecObj.jobStatus = "IN PROGRESS";
 		hiveExecObj.jobStatus = JobStatus.IN_PROGRESS;
 		hiveExecObj.updateStatusFile();
 		
@@ -101,6 +109,8 @@ public class HiveExecutor {
 */
 		hiveExecObj.updateStatusFile();
 		//hiveExecObj.copyQueryFileToOuputDir();
+
+		hiveExecObj.cleanUp();
 				
 	}
 
@@ -137,18 +147,19 @@ public class HiveExecutor {
 		
 		
 		try {
-			System.out.println("JobID : " + this.jobID);
-			System.out.println("Running : " + sql);
+			this.writerLog.println("JobID : " + this.jobID);
+			this.writerLog.println("Running : " + sql);
 			
 			this.res = stmt.executeQuery(sql);
 			//this.jobStatus = "SUCCESS";
 			this.jobStatus = JobStatus.SUCCESS;
 		
 		} catch (Exception e){
-			System.out.println("Job Failed");
+			this.writerLog.println("Job Failed");
 			this.occurredException = e;
 			//this.jobStatus = "FAILED";
 			this.jobStatus = JobStatus.FAILED;
+			this.cleanUp();
 		} 
 				
 	}
@@ -162,12 +173,12 @@ public class HiveExecutor {
 
 	private void exportResult() throws SQLException, FileNotFoundException, UnsupportedEncodingException{
 		
-		PrintWriter writer = new PrintWriter(this.resultFilePath, "UTF-8");
+		PrintWriter writerResult = new PrintWriter(this.resultFilePath, "UTF-8");
 		
 		switch(this.jobStatus) {
 		
 			case FAILED:
-				writer.println(getJobStatusValue(this.jobStatus));
+				writerResult.println(getJobStatusValue(this.jobStatus));
 				break;
 			
 			case SUCCESS:
@@ -176,16 +187,16 @@ public class HiveExecutor {
 					rsmd = this.res.getMetaData();
 					int numOfCols = rsmd.getColumnCount();
 					for (int i = 1; i <= numOfCols; i++) {	
-						writer.print(this.res.getString(i) + "\t");
+						writerResult.print(this.res.getString(i) + "\t");
 					}
-					writer.println();
+					writerResult.println();
 				}
 				break;
 			
 		}
 		
-		writer.close();
-		System.out.println("Output written :"+this.resultFilePath);
+		writerResult.close();
+		this.writerLog.println("Output written :"+this.resultFilePath);
 	}
 
 	private void copyQueryFileToOuputDir() throws IOException {
@@ -197,12 +208,18 @@ public class HiveExecutor {
 	}
 
 	private void updateStatusFile() throws FileNotFoundException, UnsupportedEncodingException {
-		PrintWriter writer = new PrintWriter(this.statusFilePath, "UTF-8");
-		writer.println(getJobStatusValue(this.jobStatus));
+		PrintWriter writerStatus = new PrintWriter(this.statusFilePath, "UTF-8");
+		
+		this.writerLog.println(getJobStatusValue(this.jobStatus));
+		writerStatus.print(getJobStatusValue(this.jobStatus));
 		if (this.jobStatus == JobStatus.FAILED){
-			this.occurredException.printStackTrace(writer);
+			this.occurredException.printStackTrace(this.writerLog);
 		}
-		writer.close();
+		writerStatus.close();
+	}
+
+	private void cleanUp(){
+		this.writerLog.close();	
 	}
 	
 	public static String getJobStatusValue(JobStatus jobStatus){	
@@ -210,21 +227,22 @@ public class HiveExecutor {
 		switch (jobStatus){
 		
 		  case SUCCESS:     
-			  return "SUCCESS";
+			  return "JOB_SUCCESSFUL";
 			  
 		  case NOT_STARTED:   
-			  return "NOT_STARTED";
+			  return "JOB_NOT_STARTED";
 			  
 		  case FAILED:  
-			  return "FAILED";
+			  return "JOB_FAILED";
 			  
 		  case IN_PROGRESS:    
-			  return "IN_PROGRESS";
+			  return "JOB_IN_PROGRESS";
 			  
 		  default:      
 			  return null;
 		 }
 	 }
+
 	  
 	public static void printColHeaders(ResultSet res) throws SQLException {
 		ResultSetMetaData rsmd;
@@ -234,8 +252,7 @@ public class HiveExecutor {
 			for (int i = 1; i <= numOfCols; i++) {
 				System.out.print(rsmd.getColumnName(i) + "\t");
 			}
-			System.out.println();
-			// System.out.println(String.valueOf(res));
+	
 		}
 	}
 }

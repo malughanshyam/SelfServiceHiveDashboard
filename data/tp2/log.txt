@@ -1,0 +1,14 @@
+JOB_NOT_STARTED
+Job ID: tp2
+outputDataDir: null
+outputDir: ../data/tp2
+queryFilePath: ../data/tp2/sql.txt
+resultFilePath: ../data/tp2/result.txt
+statusFilePath: ../data/tp2/status.txt
+
+
+JOB_IN_PROGRESS
+JobID : tp2
+Running : SELECT stock_symbol, SUM(stock_volume) AS totalStocks, MAX(stock_price_high) AS MaxHighStockPrice,  MIN(stock_price_low) AS MinLowStockPrice FROM nyse_stocks  GROUP BY stock_symbol  ORDER BY totalStocks DESC  LIMIT 10
+Output written :../data/tp2/result.txt
+JOB_SUCCESSFUL

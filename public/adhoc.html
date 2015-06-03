@@ -69,7 +69,7 @@
 
 			<ul class="nav nav-tabs" id="adHocJobTabs">
 				<li class="active" id="navLinkNewJob"> <a data-toggle="tab" href="#newJob">New Job</a></li>
-				<li id="navLinkStatus"> <a data-toggle="tab" href="#jobStatus">Status</a></li>
+				<li class="disabled" id="navLinkStatus"> <a data-toggle="tab" href="#jobStatus">Status</a></li>
 				<li class="disabled" id="navLinkResult"> <a data-toggle="tab" href="#jobResult">Result</a></li>
 			</ul>
 
@@ -105,9 +105,16 @@
 
 		    <div id="jobStatus" class="tab-pane fade">
 		      <h3>Job Status  
-		      	<button type="button" class="btn btn-primary btn-sm" ng-click="refreshJobStatus()" id="refreshBtn" >
+		      	<div class="jobStatusBtn">
+		      	<button type="button" class="btn btn-primary btn-sm" ng-click="refreshJobStatus()" id="refreshBtn" ng-show="submittedJobStatus == 'JOB_IN_PROGRESS'">
   				<span class="glyphicon glyphicon-refresh" aria-hidden="true"  ></span> Refresh
-			  	</button>  
+			  	</button> 
+			  	<button type="button" class="btn btn-primary btn-sm" ng-click="viewLog()" id="viewLogBtn" ng-hide="submittedJobStatus == 'JOB_NOT_STARTED'" >
+  				<span class="glyphicon glyphicon-list-alt" aria-hidden="true" ></span> View Log
+			  	</button>
+			  	<button type="button" class="btn btn-primary btn-sm" ng-click="viewResult()" id="viewResultBtn" ng-hide="submittedJobStatus == 'JOB_NOT_STARTED'"  >
+  				<span class="glyphicon glyphicon-eye-open" aria-hidden="true"  ></span> View Result
+			  	</button>     
 			  </h3>
 		      
 
@@ -122,22 +129,22 @@
 				<div class="row">
 				 <div class="span12" align="center">
 				 
-				  <div class="alert alert-success" ng-show="submittedJobStatus == 'SUCCESS'" role="alert" id="alertJobSuccess">
+				  <div class="alert alert-success" ng-show="submittedJobStatus == 'JOB_SUCCESSFUL'" role="alert" id="alertJobSuccess">
 					  <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
 					  Job Succeeded
 				  </div>
 
-				  <div class="alert alert-danger" ng-show="submittedJobStatus == 'FAILED'" role="alert" id="alertJobFail">
+				  <div class="alert alert-danger" ng-show="submittedJobStatus == 'JOB_FAILED'" role="alert" id="alertJobFail">
 					  <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
 					  Job Failed
 				  </div>
 
-				   <div class="alert alert-info" ng-show="submittedJobStatus == 'IN_PROGRESS'" role="alert" id="alertJobInProgress">
+				   <div class="alert alert-info" ng-show="submittedJobStatus == 'JOB_IN_PROGRESS'" role="alert" id="alertJobInProgress">
 					  <span class="fa fa-spinner fa-pulse" aria-hidden="true"></span>
 					  Job execution in progress
 				  </div>
 
-				   <div class="alert alert-info" ng-show="submittedJobStatus == 'NOT_STARTED'" role="alert" id="alertJobNotStarted">
+				   <div class="alert alert-info" ng-show="submittedJobStatus == 'JOB_NOT_STARTED'" role="alert" id="alertJobNotStarted">
 					  <span class="glyphicon glyphicon-time" aria-hidden="true"></span>
 					  Job has not started yet
 				  </div>
