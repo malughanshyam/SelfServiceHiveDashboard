@@ -13,6 +13,13 @@
 		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
 		<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
 
+		<!-- Load c3.css -->
+		<link href="css/c3.min.css" rel="stylesheet" type="text/css">
+
+		<!-- Load d3.js and c3.js -->
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min.js" charset="utf-8"></script>
+		<script src="js/c3.min.js"></script>
+
 		<!-- Bootstrap core CSS -->
 	    <!-- <link href="css/bootstrap.min.css" rel="stylesheet"> -->
 	    <!-- Bootstrap theme -->
@@ -67,8 +74,8 @@
 			  <h2>AdHoc Queries <small>Execute adhoc Hive queries</small></h2>
 			</div>
 
-			<ul class="nav nav-tabs" id="adHocJobTabs">
-				<li class="active" id="navLinkNewJob"> <a data-toggle="tab" href="#newJob">New Job</a></li>
+			<ul class="nav nav-tabs nav-justified" id="adHocJobTabs">
+				<li class="active" id="navLinkNewJob"> <a data-toggle="tab" href="#newJob">Create</a></li>
 				<li class="disabled" id="navLinkStatus"> <a data-toggle="tab" href="#jobStatus">Status</a></li>
 				<li class="disabled" id="navLinkResult"> <a data-toggle="tab" href="#jobResult">Result</a></li>
 			</ul>
@@ -143,7 +150,7 @@
 
 				   <div class="alert alert-info" ng-show="submittedJobStatus == 'JOB_NOT_STARTED'" role="alert" id="alertJobNotStarted">
 					  <span class="glyphicon glyphicon-time" aria-hidden="true"></span>
-					  Job has not started yet
+					  Initiating the Job
 				  </div>
 				 </div>
 				</div>
@@ -163,12 +170,31 @@
 		      <div>
 	    		    <span id="submittedHiveLabel" class="preLabels">Submitted Hive Query</span>
 	  				<pre class="pre-scrollable" id="submittedHiveQuery"><samp>{{formData.hiveQuery}}</samp></pre>
-	  			</div>
-
-		      <div>
-	    			<span id="jobResultLabel" class="preLabels">Result</span>
-	  				<pre class="pre-scrollable" id="jobResult"><samp>{{jobResult}}</samp></pre>
 	  		  </div>
+
+
+
+				<ul class="nav nav-pills" id="adHocJobTabs">
+					<li class="active" id="navTabular"> <a data-toggle="tab" href="#tabular">Tabular</a></li>
+					<li class="disabled" id="navChart1"> <a data-toggle="tab" href="#chart1" ng-click="m()">Line Chart</a></li>
+					<li class="disabled" id="navChart2"> <a data-toggle="tab" href="#chart2">Bar Chart</a></li>
+				</ul>
+
+			  <div class="tab-content">
+
+			    <div id="tabular" class="tab-pane fade in active">
+					<div id="jobResultTable"> </div>
+			    </div>
+
+			    <div id="chart1" class="tab-pane fade in ">
+	         	  <div id="chartLine"> </div>			
+			    </div>
+			
+			    <div id="chart2" class="tab-pane fade in ">
+			      <div id="chartBar"> </div>			
+			    </div>
+
+			  </div>
 
 		    </div>
 		    
@@ -207,5 +233,6 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
     <!-- Include all compiled plugins (below), or include individual files as needed -->
     <script src="js/bootstrap.min.js"></script>
+    <script src="js/jquery.csvToTable.js"></script>
 	</body>
 </html>

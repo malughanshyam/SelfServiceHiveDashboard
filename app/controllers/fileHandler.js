@@ -1,7 +1,8 @@
 fs = require('fs-extra');
 sys = require('sys')
 child_process = require('child_process');
-dataDir = "data/"
+dataDir = "data/";
+path = require('path');
 exports.findAll = function(req,res) {
 		return res.json("GET is working");
 }
@@ -117,6 +118,43 @@ exports.getJobLog = function(req,res){
 
 };
 
+exports.getJobResultFile = function(req,res){
+
+	var jobID = req.query["jobID"];
+	if (jobID != null){
+        
+       // jobResultFile = dataDir+jobID+"/result.txt";
+		//console.log("Job Result File: "+jobResultFile);
+		
+		var options = {
+			root: __dirname + '../../../' + dataDir+jobID,
+			dotfiles: 'deny',
+			headers: {
+				'x-timestamp': Date.now(),
+				'x-sent': true
+			}
+		};
+
+		var fileName = 'result.txt'
+		res.sendFile(fileName, options, function (err) {
+			if (err) {
+			console.log(err);
+			res.status(err.status).end();
+		}
+		else {
+			console.log('Sent:', fileName);
+			}
+		});
+
+
+	} else{
+        res.json(({status: '500 Server error', error: 'JobID not specified'}))
+    }
+
+};
+
+
+
 exports.getJobResult = function(req,res){
 
 	var jobID = req.query["jobID"];
@@ -129,13 +167,11 @@ exports.getJobResult = function(req,res){
 		    	console.log(err);
 		    	res.send(err);
 		  	}
-		  	res.send(data);
+		  	res.send(data.trim());
     	});
 	} else{
         res.json(({status: '500 Server error', error: 'JobID not specified'}))
     }
-
-
 };
 
 

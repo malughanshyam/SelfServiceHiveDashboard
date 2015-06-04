@@ -25,10 +25,15 @@ pre {
 	float: right;
 }
 
-#submittedHiveLabel {
+.preLabels{
 	float: top;
 }
 
 #jobLogDiv {
 	padding: 0.5em;
+}
+
+#imgLoading {
+	width:5px;
+	height: auto;
 }

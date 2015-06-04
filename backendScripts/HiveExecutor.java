@@ -102,12 +102,9 @@ public class HiveExecutor {
 		hiveExecObj.executeQuery(sql);
 				
 		hiveExecObj.exportResult();
-		
-/*		if ( hiveExecObj.jobStatus == JobStatus.SUCCESS){			
-			hiveExecObj.exportResult();
-		}
-*/
+	
 		hiveExecObj.updateStatusFile();
+
 		//hiveExecObj.copyQueryFileToOuputDir();
 
 		hiveExecObj.cleanUp();
@@ -183,11 +180,28 @@ public class HiveExecutor {
 			
 			case SUCCESS:
 				ResultSetMetaData rsmd;
+				boolean headerPrinted = false;
+				
 				while (this.res.next()) {
 					rsmd = this.res.getMetaData();
 					int numOfCols = rsmd.getColumnCount();
+					
+					if (!headerPrinted){
+						for (int i = 1; i <= numOfCols; i++) {
+							writerResult.print(rsmd.getColumnName(i).toUpperCase());
+							if (i != numOfCols){
+								writerResult.print("\t");
+							}
+						}
+						writerResult.println();
+						headerPrinted = true;
+					}
+					
 					for (int i = 1; i <= numOfCols; i++) {	
-						writerResult.print(this.res.getString(i) + "\t");
+						writerResult.print(this.res.getString(i));
+						if (i != numOfCols){
+							writerResult.print("\t");
+						}
 					}
 					writerResult.println();
 				}
@@ -244,10 +258,10 @@ public class HiveExecutor {
 	 }
 
 	  
-	public static void printColHeaders(ResultSet res) throws SQLException {
+	private void printColHeaders() throws SQLException {
 		ResultSetMetaData rsmd;
-		while (res.next()) {
-			rsmd = res.getMetaData();
+		while (this.res.next()) {
+			rsmd = this.res.getMetaData();
 			int numOfCols = rsmd.getColumnCount();
 			for (int i = 1; i <= numOfCols; i++) {
 				System.out.print(rsmd.getColumnName(i) + "\t");

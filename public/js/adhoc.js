@@ -9,20 +9,27 @@ app.controller('formCtrl', function($scope, $http) {
     $("#navLinkResult").addClass('disabled');
     $("#navLinkResult").find('a').removeAttr("data-toggle");
     
+    $("#navChart1").addClass('disabled');
+    $("#navChart1").find('a').removeAttr("data-toggle");
+
+    $("#navChart2").addClass('disabled');
+    $("#navChart2").find('a').removeAttr("data-toggle");
+
+
     function activaTab(tab){
         $('.nav-tabs a[href="#' + tab + '"]').tab('show');
     };
 
-    /*
+    
 
-        $("#navLinkStatus").removeClass('disabled');
-        $("#navLinkStatus").find('a').attr("data-toggle","tab");
-        $("#navLinkStatus").click();
+        $("#navLinkResult").removeClass('disabled');
+        $("#navLinkResult").find('a').attr("data-toggle","tab");
+        $("#navLinkResult").click();
 
-        activaTab('jobStatus');
+        activaTab('jobResult');
 
 
-    */
+    
 
 
 
@@ -152,13 +159,23 @@ app.controller('formCtrl', function($scope, $http) {
         $("#navLinkStatus").find('a').removeAttr("data-toggle");
 
 
-       $scope.showJobLog = true
-       console.log("View Job Log");
-       $scope.checkResultURL = '/jobResult?jobID='+$scope.formData.jobID
+       $scope.checkResultURL = '/jobResultFile?jobID='+$scope.formData.jobID
 
         $http.get($scope.checkResultURL,$scope.formData)
             .success(function(data) {
                 $scope.jobResult=data;
+                $scope.createResultTable();
+                $scope.createCharts(enableChartTabs);
+
+                function enableChartTabs(){
+                    /*enable tab*/
+                    $("#navChart1").removeClass('disabled');
+                    $("#navChart1").find('a').attr("data-toggle","tab");
+
+                    $("#navChart2").removeClass('disabled');
+                    $("#navChart2").find('a').attr("data-toggle","tab");
+                }
+
             })
             .error(function(err){
                 // $scope.submittedJobStatus='FAILED'
@@ -169,6 +186,50 @@ app.controller('formCtrl', function($scope, $http) {
 
     }
 
+    $scope.createHTMLTable = function(divId, data) {
+
+        $(function() {
+                
+                $('#'+divId).CSVToTable(data,{
+
+                    // class name to apply to the <table> tag
+                    tableClass: "resultTable table table-hover table-condensed",
+
+                    // class name to apply to the <thead> tag
+                    theadClass: "",
+
+                    // class name to apply to the <th> tag
+                    thClass: "",
+
+                    // class name to apply to the <tbody> tag
+                    tbodyClass: "",
+
+                    // class name to apply to the <tr> tag
+                    trClass: "",
+
+                    // class name to apply to the <td> tag
+                    tdClass: "",
+
+                    // path to an image to display while CSV/TSV data is loading
+                    loadingImage: "",
+
+                    // text to display while CSV/TSV is loading
+                    loadingText: "Loading Results...",
+
+                    // separator to use when parsing CSV/TSV data
+                    separator: "\t",
+
+                    startLine: 0
+
+                });
+            });
+    }
+
+    $scope.createResultTable = function(){
+        console.log($scope.jobResult);
+        $scope.createHTMLTable ('jobResultTable', $scope.jobResult);
+        
+    }
 
 
     $scope.execute = function(){
@@ -194,6 +255,163 @@ app.controller('formCtrl', function($scope, $http) {
     };
     
     $scope.reset();
+
+    $scope.createCharts = function generateChart(callbackFunction){
+
+        // Parse the TSV Result file into Array of Data 
+        var x = $scope.jobResult.split('\n');
+        for (var i=0; i<x.length; i++) {
+            y = x[i].split('\t');
+            x[i] = y;
+        }
+
+        $scope.chartData = x
+        console.log(x)
+
+        // $scope.chartDataHeader = x[0]
+        // $scope.chartDataSplit = x.slice(1);
+
+        // console.log("Header: ")
+        // console.log($scope.chartDataHeader)
+        
+        // console.log("Data: ")
+        // console.log($scope.chartDataSplit)
+
+        // Generate Bar Chart
+        var chartBar = c3.generate({
+            bindto: '#chartBar',
+            data: {
+                x: $scope.chartData[0][0],
+                rows: $scope.chartData,
+                type: 'bar'
+            },
+            axis: {
+                x: {
+                    type: 'category',
+                    tick: {
+                        rotate: 75,
+                        multiline: false
+                    },
+                    height: 130
+                }
+            }
+                        
+
+        });
+
+        // Generate Line Chart
+        var chartBar = c3.generate({
+            bindto: '#chartLine',
+            data: {
+                x: $scope.chartData[0][0],
+                rows: $scope.chartData,
+                type: 'line'
+            },
+            axis: {
+                x: {
+                    type: 'category',
+                    tick: {
+                        rotate: 75,
+                        multiline: false
+                    },
+                    height: 130
+                }
+            }
+                        
+
+        });
+
+        callbackFunction();
+
+    }
+
+
+    $scope.createChart = function(){
+
+//        $scope.checkResultURL = '/jobResultFile?jobID='+$scope.formData.jobID
+    $scope.checkResultURL = '/jobResultFile?jobID='+'nyse'
+
+    $http.get($scope.checkResultURL,$scope.formData)
+        .success(function(data) {
+            $scope.chartData=data.trim();
+            console.log("Data retrieved: ")
+            console.log($scope.chartData)
+            generateChart()
+        })
+        .error(function(err){
+            // $scope.submittedJobStatus='FAILED'
+            console.log(err)
+            
+        });
+
+        function generateChart(){
+
+            // Parse the TSV Result file into Array of Data 
+            var x = $scope.chartData.split('\n');
+            for (var i=0; i<x.length; i++) {
+                y = x[i].split('\t');
+                x[i] = y;
+            }
+
+            $scope.chartData = x
+            console.log(x)
+
+            // $scope.chartDataHeader = x[0]
+            // $scope.chartDataSplit = x.slice(1);
+
+            // console.log("Header: ")
+            // console.log($scope.chartDataHeader)
+            
+            // console.log("Data: ")
+            // console.log($scope.chartDataSplit)
+
+            // Generate Bar Chart
+            var chartBar = c3.generate({
+                bindto: '#chartBar',
+                data: {
+                    x: $scope.chartData[0][0],
+                    rows: $scope.chartData,
+                    type: 'bar'
+                },
+                axis: {
+                    x: {
+                        type: 'category',
+                        tick: {
+                            rotate: 75,
+                            multiline: false
+                        },
+                        height: 130
+                    }
+                }
+                            
+
+            });
+
+            // Generate Line Chart
+            var chartBar = c3.generate({
+                bindto: '#chartLine',
+                data: {
+                    x: $scope.chartData[0][0],
+                    rows: $scope.chartData,
+                    type: 'line'
+                },
+                axis: {
+                    x: {
+                        type: 'category',
+                        tick: {
+                            rotate: 75,
+                            multiline: false
+                        },
+                        height: 130
+                    }
+                }
+                            
+
+            });
+
+        }
+    
+    }
 
 
 });

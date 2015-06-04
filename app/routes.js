@@ -4,6 +4,7 @@ module.exports = function(app){
     app.get('/jobStatus', fileHandler.getStatus);
 	app.get('/jobLog', fileHandler.getJobLog);
 	app.get('/jobResult',fileHandler.getJobResult);
+	app.get('/jobResultFile', fileHandler.getJobResultFile);
 
 
     app.get('/schedule', fileHandler.schedule);

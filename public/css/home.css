@@ -9,3 +9,11 @@
 	{
 		margin-top: 0.5em
 	}*/
+
+
+.center {
+    margin-left: auto;
+    margin-right: auto;
+    width: 70%;
+ 
+}

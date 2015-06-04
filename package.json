@@ -5,7 +5,7 @@
   "main"         : "server.js",
   "author"       : "Dashboard",
   "dependencies" : {
-    "express"    : "*",
+    "express"    : "4.8.0",
     "morgan"	 : "*",
 	"body-parser": "*",
 	"method-override": "*",
