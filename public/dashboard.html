@@ -15,7 +15,7 @@
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
 
 
-	<!-- Load c3.css -->
+    <!-- Load c3.css -->
     <link href="css/c3.min.css" rel="stylesheet" type="text/css">
 
     <!-- Load d3.js and c3.js -->
@@ -55,7 +55,7 @@
             <div id="adHocTab" class="tab-pane fade in" ng-controller="adHocController">
                 <!--  Ad Hoc Tab Begins -->
 
-                
+
                 <div class="stepsFlow">
                     <div class="row smpl-step" style="border-bottom: 0; min-width: 500px;">
 
@@ -135,23 +135,23 @@
 
                     <div id="jobStatus" class="tab-pane fade">
                         <h3>{{formData.jobID}} {{formData.jobName}}<small> - Job Status </small>
-					      	<div class="jobStatusBtn">
-					      	<button type="button" class="btn btn-primary btn-sm" ng-click="refreshJobStatus()" id="refreshBtn" ng-show="submittedJobStatus == 'JOB_IN_PROGRESS'">
-								<span class="glyphicon glyphicon-refresh" aria-hidden="true"  ></span> Refresh
-						  	</button> 
-						  	<button type="button" class="btn btn-primary btn-sm" ng-click="viewJobLog()" id="viewLogBtn" ng-hide="submittedJobStatus == 'JOB_NOT_STARTED'" >
-								<span class="glyphicon glyphicon-list-alt" aria-hidden="true" ></span> View Log
-						  	</button>
-						  	<button type="button" class="btn btn-primary btn-sm" ng-click="viewJobResult()" id="viewResultBtn" ng-show="submittedJobStatus == 'JOB_SUCCESSFUL'"  >
-								<span class="glyphicon glyphicon-eye-open" aria-hidden="true"  ></span> View Result
-						  	</button>     
-						  </h3>
+                            <div class="jobStatusBtn">
+                            <button type="button" class="btn btn-primary btn-sm" ng-click="refreshJobStatus()" id="refreshBtn" ng-show="submittedJobStatus == 'JOB_IN_PROGRESS'">
+                                <span class="glyphicon glyphicon-refresh" aria-hidden="true"  ></span> Refresh
+                            </button> 
+                            <button type="button" class="btn btn-primary btn-sm" ng-click="viewJobLog()" id="viewLogBtn" ng-hide="submittedJobStatus == 'JOB_NOT_STARTED'" >
+                                <span class="glyphicon glyphicon-list-alt" aria-hidden="true" ></span> View Log
+                            </button>
+                            <button type="button" class="btn btn-primary btn-sm" ng-click="viewJobResult()" id="viewResultBtn" ng-show="submittedJobStatus == 'JOB_SUCCESSFUL'"  >
+                                <span class="glyphicon glyphicon-eye-open" aria-hidden="true"  ></span> View Result
+                            </button>     
+                          </h3>
 
-						  <br>
-							<dl>
-							    <dt>Submitted Hive Query</dt>
-							    <dd><pre class="pre-scrollable" id="submittedHiveQuery"><samp>{{formData.hiveQuery}}</samp></pre></dd>   
-							 </dl> 
+                        <br>
+                        <dl>
+                            <dt>Submitted Hive Query</dt>
+                            <dd><pre class="pre-scrollable" id="submittedHiveQuery"><samp>{{formData.hiveQuery}}</samp></pre></dd>
+                        </dl>
 
                         <!-- Job Status Alerts -->
                         <div class="row">
@@ -185,55 +185,62 @@
 
                     <!-- Results Tab-->
                     <div id="jobResult" class="tab-pane fade">
-                        
+
                         <br>
 
                         <div>
-                        	<dl>
-						    	<dt>Submitted Hive Query</dt>
-						    	<dd><pre class="pre-scrollable" id="submittedHiveQuery"><samp>{{formData.hiveQuery}}</samp></pre></dd>   
-						 	</dl> 
+                            <dl>
+                                <dt>Submitted Hive Query</dt>
+                                <dd><pre class="pre-scrollable" id="submittedHiveQuery"><samp>{{formData.hiveQuery}}</samp></pre></dd>
+                            </dl>
                         </div>
 
+
+                        <ul class="nav nav-pills right-to-left" id="adHocResultTypeTabs">
+
+                            </li>
+                            <li class="disabled" id="navChart1"> <a data-toggle="tab" href="#chart1" ng-click="m()">Line Chart</a>
+                            </li>
+                            <li class="disabled" id="navChart2"> <a data-toggle="tab" href="#chart2">Bar Chart</a>
+                            </li>
+                            <li class="active" id="navTabular"> <a data-toggle="tab" href="#tabular">Tabular</a>
+
+                        </ul>
+
+                        <br>
+
                         <div class="panel panel-info">
-						   <div class="panel-heading">
-						      <h3 class="panel-title">{{formData.jobID}} {{formData.jobName}}</h3>
-						       <ul class="nav nav-pills" id="adHocResultTypeTabs">
-	                            <li class="active" id="navTabular"> <a data-toggle="tab" href="#tabular">Tabular</a>
-	                            </li>
-	                            <li class="disabled" id="navChart1"> <a data-toggle="tab" href="#chart1" ng-click="m()">Line Chart</a>
-	                            </li>
-	                            <li class="disabled" id="navChart2"> <a data-toggle="tab" href="#chart2">Bar Chart</a>
-	                            </li>
-                        	   </ul>
+                            <div class="panel-heading">
+                                <h3 class="panel-title">{{formData.jobID}} {{formData.jobName}}</h3>
 
-						   </div>
-						   <div class="panel-body">
-						      
-						      
 
-							<div class="tab-content">
-
-	                            <div id="tabular" class="tab-pane fade in active">
-	                                <div id="jobResultTable"> </div>
-	                            </div>
-
-	                            <div id="chart1" class="tab-pane fade in ">
-	                                <div id="chartLine" class="chartResult"> </div>
-	                            </div>
-
-	                            <div id="chart2" class="tab-pane fade in ">
-	                                <div id="chartBar" class="chartResult"> </div>
-	                            </div>
-
-	                        </div>
-
-						   </div>
-						</div>
+                            </div>
+                            <div class="panel-body">
 
 
 
-                        
+                                <div class="tab-content">
+
+                                    <div id="tabular" class="tab-pane fade in active">
+                                        <div id="jobResultTable"> </div>
+                                    </div>
+
+                                    <div id="chart1" class="tab-pane fade in ">
+                                        <div id="chartLine" class="chartResult"> </div>
+                                    </div>
+
+                                    <div id="chart2" class="tab-pane fade in ">
+                                        <div id="chartBar" class="chartResult"> </div>
+                                    </div>
+
+                                </div>
+
+                            </div>
+                        </div>
+
+
+
+
 
                     </div>
 
