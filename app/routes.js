@@ -1,6 +1,7 @@
+// Include the MongoDB Schema 
 module.exports = function(app){
     var fileHandler = require('./controllers/fileHandler');
-    app.post('/submitJob', fileHandler.submitJob);
+   /* app.post('/submitJob', fileHandler.submitJob);*/
     app.get('/jobStatus', fileHandler.getStatus);
 	app.get('/jobLog', fileHandler.getJobLog);
 	app.get('/jobResult',fileHandler.getJobResult);
@@ -18,4 +19,10 @@ module.exports = function(app){
     app.get('/', function (req, res) {
         res.sendFile('dashboard.html', { root: __dirname + '/../public/'}); 
     });
+
+    var adHocJobHandler = require('./controllers/adHocJobHandler');
+
+    app.get('/adHocJob', adHocJobHandler.getAdHocJob);
+    app.post('/submitNewAdHocJob', adHocJobHandler.submitNewAdHocJob);
+
 }

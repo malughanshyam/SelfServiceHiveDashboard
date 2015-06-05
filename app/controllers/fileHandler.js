@@ -9,7 +9,7 @@ exports.findAll = function(req,res) {
 
 exports.findById = function() {};
 
-exports.submitJob = function(req,res) {
+/*exports.submitJob = function(req,res) {
 
 	var jobID = req.body.jobID, //"job_001",
 		query = req.body.hiveQuery	//query = "SHOW TABLES;",
@@ -74,7 +74,7 @@ exports.submitJob = function(req,res) {
 	}
 
 };
-
+*/
 exports.getStatus = function(req,res){
 
 	var jobID = req.query["jobID"];

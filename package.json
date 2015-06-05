@@ -13,6 +13,7 @@
 	"cookie-parser": "*",
 	"debug": "*",
   "fs-extra" : "*",
-  "bootstrap" : "*"
+  "bootstrap" : "*",
+  "mongoose": "*"
   }
 }

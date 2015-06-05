@@ -47,7 +47,7 @@ app.controller('adHocController', function($scope, $http) {
     $scope.formData.hiveQuery = ''
     
     $scope.formData.jobID = ''
-    $scope.formData.jobName = $scope.formData.jobID
+    $scope.formData.jobName = ''
     $scope.submittedJobStatus = 'JOB_NOT_STARTED'
     $scope.showJobLog = false
     $scope.jobResult = ''
@@ -56,8 +56,14 @@ app.controller('adHocController', function($scope, $http) {
 
         console.log("SubmitJob Clicked");
 
-        $http.post('/submitJob', $scope.formData)
+        $http.post('/submitNewAdHocJob', $scope.formData)
             .success(function(data) {
+                console.log("Back in adhoc.js. \n Data Received: " + data)
+                
+                $scope.formData.jobID = data.JobID;
+                console.log("FormData.jobID: " );
+                console.log($scope.formData.jobID);
+
                 $scope.refreshInterval = setInterval(function() {
                     refreshTimer()
                 }, 1000);
@@ -65,6 +71,7 @@ app.controller('adHocController', function($scope, $http) {
                 function refreshTimer() {
                     $scope.refreshJobStatus();
                 }
+                console.log("Returned to adhoc.js")
 
             })
             .error(function(err) {
