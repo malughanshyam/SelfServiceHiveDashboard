@@ -1,6 +1,6 @@
-var app = angular.module('myApp', []);
+var app = angular.module('dashboardApp', []);
 
-app.controller('formCtrl', function($scope, $http) {
+app.controller('adHocController', function($scope, $http) {
 
     // disable tab
     $("#navLinkStatus").addClass('disabled');
@@ -8,28 +8,33 @@ app.controller('formCtrl', function($scope, $http) {
 
     $("#navLinkResult").addClass('disabled');
     $("#navLinkResult").find('a').removeAttr("data-toggle");
-    
+
     $("#navChart1").addClass('disabled');
     $("#navChart1").find('a').removeAttr("data-toggle");
 
     $("#navChart2").addClass('disabled');
     $("#navChart2").find('a').removeAttr("data-toggle");
 
+    $("#flowStepCreate").find('i').css({"opacity": "1"});    
 
-    function activaTab(tab){
+    $("#flowStepStatus").find('i').css({"opacity": "0.3"});
+    $("#flowStepStatus").addClass('disabled');
+
+    $("#flowStepResult").find('i').css({"opacity": "0.3"});
+    $("#flowStepResult").addClass('disabled');        
+
+
+    function activaTab(tab) {
         $('.nav-tabs a[href="#' + tab + '"]').tab('show');
     };
 
-    
-
-        $("#navLinkResult").removeClass('disabled');
-        $("#navLinkResult").find('a').attr("data-toggle","tab");
-        $("#navLinkResult").click();
-
-        activaTab('jobResult');
 
 
-    
+/*    $("#navLinkResult").removeClass('disabled');
+    $("#navLinkResult").find('a').attr("data-toggle", "tab");
+    $("#navLinkResult").click();
+
+    activaTab('jobResult');*/
 
 
 
@@ -37,35 +42,39 @@ app.controller('formCtrl', function($scope, $http) {
     $scope.refreshInterval;
 
     $scope.formData = {}
-    $scope.output=''
+    $scope.output = ''
 
     $scope.formData.hiveQuery = ''
-    $scope.formData.jobName = ''
-    $scope.formData.jobID = ''
-    $scope.submittedJobStatus = 'JOB_NOT_STARTED'
-    $scope.showJobLog=false
-    $scope.jobResult=''
     
-    $scope.submitJob = function(){
+    $scope.formData.jobID = ''
+    $scope.formData.jobName = $scope.formData.jobID
+    $scope.submittedJobStatus = 'JOB_NOT_STARTED'
+    $scope.showJobLog = false
+    $scope.jobResult = ''
 
-       console.log("SubmitJob Clicked");
+    $scope.submitJob = function() {
 
-        $http.post('/submitJob',$scope.formData)
+        console.log("SubmitJob Clicked");
+
+        $http.post('/submitJob', $scope.formData)
             .success(function(data) {
-                $scope.refreshInterval = setInterval(function () {refreshTimer()}, 1000);
+                $scope.refreshInterval = setInterval(function() {
+                    refreshTimer()
+                }, 1000);
+
                 function refreshTimer() {
                     $scope.refreshJobStatus();
-                }      
+                }
 
             })
-            .error(function(err){
-                $scope.submittedJobStatus='FAILED';
+            .error(function(err) {
+                $scope.submittedJobStatus = 'FAILED';
             });
 
 
         /*enable tab*/
         $("#navLinkStatus").removeClass('disabled');
-        $("#navLinkStatus").find('a').attr("data-toggle","tab");
+        $("#navLinkStatus").find('a').attr("data-toggle", "tab");
         $("#navLinkStatus").click();
 
         activaTab('jobStatus');
@@ -73,83 +82,95 @@ app.controller('formCtrl', function($scope, $http) {
         // Disable Create New Job 
         $("#navLinkNewJob").addClass('disabled');
         $("#navLinkNewJob").find('a').removeAttr("data-toggle");
+
+        $("#flowStepCreate").removeClass('disabled');
+        $("#flowStepCreate").addClass('complete');
+       
+        $("#flowStepStatus").find('i').css({"opacity": "1"});
 
 
         console.log("Clicked Execute")
     }
 
 
-    $scope.refreshJobStatus = function(){
+    $scope.refreshJobStatus = function() {
 
-       console.log("Refreshing Job Status");
-       $scope.checkStatusURL = '/jobStatus?jobID='+$scope.formData.jobID
+        console.log("Refreshing Job Status");
+        $scope.checkStatusURL = '/jobStatus?jobID=' + $scope.formData.jobID
 
-        $http.get($scope.checkStatusURL,$scope.formData)
+        $http.get($scope.checkStatusURL, $scope.formData)
             .success(function(data) {
-                 $scope.submittedJobStatus=data.trim();
-                
+                $scope.submittedJobStatus = data.trim();
+
             })
-            .error(function(err){
+            .error(function(err) {
                 // $scope.submittedJobStatus='FAILED'
-                $scope.submittedJobStatus='FAILED';
-                $scope.output=err
+                $scope.submittedJobStatus = 'FAILED';
+                $scope.output = err
                 console.log(err)
-                
+
             });
 
-
-        /*enable tab*/
+        /*
+        //
         $("#navLinkStatus").removeClass('disabled');
-        $("#navLinkStatus").find('a').attr("data-toggle","tab");
+        $("#navLinkStatus").find('a').attr("data-toggle", "tab");
         $("#navLinkStatus").click();
 
         activaTab('jobStatus');
 
         // Disable Create New Job 
         $("#navLinkNewJob").addClass('disabled');
-        $("#navLinkNewJob").find('a').removeAttr("data-toggle");
+        $("#navLinkNewJob").find('a').removeAttr("data-toggle");*/
 
 
-        if($scope.submittedJobStatus == 'JOB_SUCCESSFUL' || $scope.submittedJobStatus == 'JOB_FAILED'){
+        if ($scope.submittedJobStatus == 'JOB_SUCCESSFUL' || $scope.submittedJobStatus == 'JOB_FAILED') {
             clearInterval($scope.refreshInterval)
         }
 
-       
-       /* if($scope.submittedJobStatus == 'JOB_SUCCESSFUL' )
+        if ($scope.submittedJobStatus == 'JOB_SUCCESSFUL'){
+            $("#flowStepStatus").removeClass('disabled');
+            $("#flowStepStatus").addClass('complete');
+            $("#flowStepResult").find('i').css({"opacity": "1"});
+            
+        }
+
+
+        /* if($scope.submittedJobStatus == 'JOB_SUCCESSFUL' )
           $scope.viewJogResult();
 */
     }
 
-    $scope.viewJobLog = function(){
-       $scope.showJobLog = true
-       console.log("View Job Log");
-       $scope.checkLogURL = '/jobLog?jobID='+$scope.formData.jobID
+    $scope.viewJobLog = function() {
+        $scope.showJobLog = true
+        console.log("View Job Log");
+        $scope.checkLogURL = '/jobLog?jobID=' + $scope.formData.jobID
 
-        $http.get($scope.checkLogURL,$scope.formData)
+        $http.get($scope.checkLogURL, $scope.formData)
             .success(function(data) {
-                
-                $scope.jobLog=data;
-                
+
+                $scope.jobLog = data;
+
             })
-            .error(function(err){
+            .error(function(err) {
                 // $scope.submittedJobStatus='FAILED'
-                $scope.jobLog='Fetching Log Failed :'+err;
+                $scope.jobLog = 'Fetching Log Failed :' + err;
                 console.log(err)
-                
+
             });
 
     }
 
 
-    $scope.viewJobResult = function(){
+    $scope.viewJobResult = function() {
 
-        if ($scope.submittedJobStatus != 'JOB_SUCCESSFUL'){
+        if ($scope.submittedJobStatus != 'JOB_SUCCESSFUL') {
             return false;
         }
 
         /*enable tab*/
         $("#navLinkResult").removeClass('disabled');
-        $("#navLinkResult").find('a').attr("data-toggle","tab");
+        $("#navLinkResult").find('a').attr("data-toggle", "tab");
         $("#navLinkResult").click();
 
         activaTab('jobResult');
@@ -159,29 +180,32 @@ app.controller('formCtrl', function($scope, $http) {
         $("#navLinkStatus").find('a').removeAttr("data-toggle");
 
 
-       $scope.checkResultURL = '/jobResultFile?jobID='+$scope.formData.jobID
+        $scope.checkResultURL = '/jobResultFile?jobID=' + $scope.formData.jobID
 
-        $http.get($scope.checkResultURL,$scope.formData)
+        $http.get($scope.checkResultURL, $scope.formData)
             .success(function(data) {
-                $scope.jobResult=data;
+                $scope.jobResult = data;
                 $scope.createResultTable();
                 $scope.createCharts(enableChartTabs);
 
-                function enableChartTabs(){
+                function enableChartTabs() {
                     /*enable tab*/
                     $("#navChart1").removeClass('disabled');
-                    $("#navChart1").find('a').attr("data-toggle","tab");
+                    $("#navChart1").find('a').attr("data-toggle", "tab");
 
                     $("#navChart2").removeClass('disabled');
-                    $("#navChart2").find('a').attr("data-toggle","tab");
+                    $("#navChart2").find('a').attr("data-toggle", "tab");
+
+                    $("#flowStepResult").removeClass('disabled');
+                    $("#flowStepResult").addClass('complete');  
                 }
 
             })
-            .error(function(err){
+            .error(function(err) {
                 // $scope.submittedJobStatus='FAILED'
-                $scope.jobResult='Fetching Result Failed :'+err;
+                $scope.jobResult = 'Fetching Result Failed :' + err;
                 console.log(err)
-                
+
             });
 
     }
@@ -189,61 +213,61 @@ app.controller('formCtrl', function($scope, $http) {
     $scope.createHTMLTable = function(divId, data) {
 
         $(function() {
-                
-                $('#'+divId).CSVToTable(data,{
 
-                    // class name to apply to the <table> tag
-                    tableClass: "resultTable table table-hover table-condensed",
+            $('#' + divId).CSVToTable(data, {
 
-                    // class name to apply to the <thead> tag
-                    theadClass: "",
+                // class name to apply to the <table> tag
+                tableClass: "resultTable table table-hover table-condensed",
 
-                    // class name to apply to the <th> tag
-                    thClass: "",
+                // class name to apply to the <thead> tag
+                theadClass: "",
 
-                    // class name to apply to the <tbody> tag
-                    tbodyClass: "",
+                // class name to apply to the <th> tag
+                thClass: "",
 
-                    // class name to apply to the <tr> tag
-                    trClass: "",
+                // class name to apply to the <tbody> tag
+                tbodyClass: "",
 
-                    // class name to apply to the <td> tag
-                    tdClass: "",
+                // class name to apply to the <tr> tag
+                trClass: "",
 
-                    // path to an image to display while CSV/TSV data is loading
-                    loadingImage: "",
+                // class name to apply to the <td> tag
+                tdClass: "",
 
-                    // text to display while CSV/TSV is loading
-                    loadingText: "Loading Results...",
+                // path to an image to display while CSV/TSV data is loading
+                loadingImage: "",
 
-                    // separator to use when parsing CSV/TSV data
-                    separator: "\t",
+                // text to display while CSV/TSV is loading
+                loadingText: "Loading Results...",
 
-                    startLine: 0
+                // separator to use when parsing CSV/TSV data
+                separator: "\t",
 
-                });
+                startLine: 0
+
             });
+        });
     }
 
-    $scope.createResultTable = function(){
+    $scope.createResultTable = function() {
         console.log($scope.jobResult);
-        $scope.createHTMLTable ('jobResultTable', $scope.jobResult);
-        
+        $scope.createHTMLTable('jobResultTable', $scope.jobResult);
+
     }
 
 
-    $scope.execute = function(){
+    $scope.execute = function() {
 
 
 
-        $http.post('/execute',$scope.formData)
+        $http.post('/execute', $scope.formData)
             .success(function(data) {
                 $scope.formData = {}
-                // $scope.hiveQuery = ''
+                    // $scope.hiveQuery = ''
                 alert("Executing query..: " + data)
 
             })
-            .error(function(err){
+            .error(function(err) {
                 alert("Error" + err)
             });
 
@@ -253,14 +277,14 @@ app.controller('formCtrl', function($scope, $http) {
     $scope.reset = function() {
         $scope.user = angular.copy($scope.master);
     };
-    
+
     $scope.reset();
 
-    $scope.createCharts = function generateChart(callbackFunction){
+    $scope.createCharts = function generateChart(callbackFunction) {
 
         // Parse the TSV Result file into Array of Data 
         var x = $scope.jobResult.split('\n');
-        for (var i=0; i<x.length; i++) {
+        for (var i = 0; i < x.length; i++) {
             y = x[i].split('\t');
             x[i] = y;
         }
@@ -273,7 +297,7 @@ app.controller('formCtrl', function($scope, $http) {
 
         // console.log("Header: ")
         // console.log($scope.chartDataHeader)
-        
+
         // console.log("Data: ")
         // console.log($scope.chartDataSplit)
 
@@ -295,7 +319,7 @@ app.controller('formCtrl', function($scope, $http) {
                     height: 130
                 }
             }
-                        
+
 
         });
 
@@ -317,7 +341,7 @@ app.controller('formCtrl', function($scope, $http) {
                     height: 130
                 }
             }
-                        
+
 
         });
 
@@ -326,29 +350,29 @@ app.controller('formCtrl', function($scope, $http) {
     }
 
 
-    $scope.createChart = function(){
+    $scope.createChart = function() {
 
-//        $scope.checkResultURL = '/jobResultFile?jobID='+$scope.formData.jobID
-    $scope.checkResultURL = '/jobResultFile?jobID='+'nyse'
+        //        $scope.checkResultURL = '/jobResultFile?jobID='+$scope.formData.jobID
+        $scope.checkResultURL = '/jobResultFile?jobID=' + 'nyse'
 
-    $http.get($scope.checkResultURL,$scope.formData)
-        .success(function(data) {
-            $scope.chartData=data.trim();
-            console.log("Data retrieved: ")
-            console.log($scope.chartData)
-            generateChart()
-        })
-        .error(function(err){
-            // $scope.submittedJobStatus='FAILED'
-            console.log(err)
-            
-        });
+        $http.get($scope.checkResultURL, $scope.formData)
+            .success(function(data) {
+                $scope.chartData = data.trim();
+                console.log("Data retrieved: ")
+                console.log($scope.chartData)
+                generateChart()
+            })
+            .error(function(err) {
+                // $scope.submittedJobStatus='FAILED'
+                console.log(err)
 
-        function generateChart(){
+            });
+
+        function generateChart() {
 
             // Parse the TSV Result file into Array of Data 
             var x = $scope.chartData.split('\n');
-            for (var i=0; i<x.length; i++) {
+            for (var i = 0; i < x.length; i++) {
                 y = x[i].split('\t');
                 x[i] = y;
             }
@@ -361,7 +385,7 @@ app.controller('formCtrl', function($scope, $http) {
 
             // console.log("Header: ")
             // console.log($scope.chartDataHeader)
-            
+
             // console.log("Data: ")
             // console.log($scope.chartDataSplit)
 
@@ -383,7 +407,7 @@ app.controller('formCtrl', function($scope, $http) {
                         height: 130
                     }
                 }
-                            
+
 
             });
 
@@ -405,12 +429,12 @@ app.controller('formCtrl', function($scope, $http) {
                         height: 130
                     }
                 }
-                            
+
 
             });
 
         }
-    
+
     }
 
 

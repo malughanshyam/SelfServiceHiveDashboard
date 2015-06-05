@@ -1,116 +1,131 @@
 <!DOCTYPE html>
 <html lang="en">
-  	<head>
-	    <meta charset="utf-8">
-	    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-	    <meta name="viewport" content="width=device-width, initial-scale=1">
 
-	    <title> Self Service Dashboard | Ad Hoc Queries</title>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 
-		
-    	<link rel="stylesheet" type="text/css" href="css/metro-bootstrap.min.css">
-
-		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
-		<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
-
-		<!-- Load c3.css -->
-		<link href="css/c3.min.css" rel="stylesheet" type="text/css">
-
-		<!-- Load d3.js and c3.js -->
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min.js" charset="utf-8"></script>
-		<script src="js/c3.min.js"></script>
-
-		<!-- Bootstrap core CSS -->
-	    <!-- <link href="css/bootstrap.min.css" rel="stylesheet"> -->
-	    <!-- Bootstrap theme -->
-	    <link href="css/bootstrap-theme.min.css" rel="stylesheet">
-	    <link href="css/adhoc.css" rel="stylesheet">
-	    <link href="css/common_template.css" rel="stylesheet">
+    <title> Self Service Dashboard | Ad Hoc Queries</title>
 
 
-		<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.0.7/angular.min.js"></script>
-		<script  type= "text/javascript" src="./js/adhoc.js"></script>
-	</head>
+    <link rel="stylesheet" type="text/css" href="css/metro-bootstrap.min.css">
 
-	<body ng-app = "myApp" role="document" ng-controller="formCtrl" >
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
 
-          <!-- Fixed navbar -->
-	    <nav class="navbar navbar-inverse navbar-fixed-top">
-	      <div class="container">
-	        <div class="navbar-header">
-	          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-	            <span class="sr-only">Toggle navigation</span>
-	            <span class="icon-bar"></span>
-	            <span class="icon-bar"></span>
-	            <span class="icon-bar"></span>
-	          </button>
-	          <a class="navbar-brand" href="home.html">Self Service Dashboard</a>
-	        </div>
-	        <div id="navbar" class="navbar-collapse collapse">
-	          <ul class="nav navbar-nav">
-	            <li class="active"><a href="home.html">Home</a></li>
-	            <li><a href="#about">About</a></li>
-	            <li><a href="#contact">Contact</a></li>
-	            <li class="dropdown">
-	              <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Dropdown <span class="caret"></span></a>
-	              <ul class="dropdown-menu" role="menu">
-	                <li><a href="#">Action</a></li>
-	                <li><a href="#">Another action</a></li>
-	                <li><a href="#">Something else here</a></li>
-	                <li class="divider"></li>
-	                <li class="dropdown-header">Nav header</li>
-	                <li><a href="#">Separated link</a></li>
-	                <li><a href="#">One more separated link</a></li>
-	              </ul>
-	            </li>
-	          </ul>
-	        </div><!--/.nav-collapse -->
-	      </div>
-	    </nav>
+    <!-- Load c3.css -->
+    <link href="css/c3.min.css" rel="stylesheet" type="text/css">
 
-		<div class="container theme-showcase" role="main">
+    <!-- Load d3.js and c3.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min.js" charset="utf-8"></script>
+    <script src="js/c3.min.js"></script>
 
-			<div class="page-header">
-			  <h2>AdHoc Queries <small>Execute adhoc Hive queries</small></h2>
-			</div>
+    <!-- Bootstrap core CSS -->
+    <!-- <link href="css/bootstrap.min.css" rel="stylesheet"> -->
+    <!-- Bootstrap theme -->
+    <link href="css/bootstrap-theme.min.css" rel="stylesheet">
+    <link href="css/adhoc.css" rel="stylesheet">
+    <link href="css/common_template.css" rel="stylesheet">
 
-			<ul class="nav nav-tabs nav-justified" id="adHocJobTabs">
-				<li class="active" id="navLinkNewJob"> <a data-toggle="tab" href="#newJob">Create</a></li>
-				<li class="disabled" id="navLinkStatus"> <a data-toggle="tab" href="#jobStatus">Status</a></li>
-				<li class="disabled" id="navLinkResult"> <a data-toggle="tab" href="#jobResult">Result</a></li>
-			</ul>
 
-		  <div class="tab-content">
-		    <div id="newJob" class="tab-pane fade in active">
-		      <h3>Create New Job</h3>
-				<form class="form-horizontal">
-				  <div class="form-group">
-				    <label for="jobName" class="col-sm-2 control-label">Job Name</label>
-				    <div class="col-sm-10">
-				      <input type="text" class="form-control" id="jobName" placeholder="Job Name" ng-model="formData.jobID">
-				    </div>
-				  </div>
-				  <div class="form-group">
-				    <label for="hiveQuery" class="col-sm-2 control-label">Hive Query</label>
-				    <div class="col-sm-10">
-				      <textarea class="form-control" id="hiveQuery"  ng-model="formData.hiveQuery" rows="3" placeholder="Enter your query here..." ></textarea>
-				    </div>
-				  </div>
-				  <div class="form-group">
-				    <div class="col-sm-offset-2 col-sm-10">
-				      <button ng-click="submitJob()" type="submit" class="btn btn-primary">Submit Query</button>
-					  <button ng-click="reset()" class="btn btn-default">Clear</button>
-				    </div>
-				  </div>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.0.7/angular.min.js"></script>
+    <script type="text/javascript" src="js/adhoc.js"></script>
+</head>
 
-					
-				</form>
+<body ng-app="myApp" role="document" ng-controller="formCtrl">
 
-				
-		    </div>
+    <!-- Fixed navbar -->
+    <nav class="navbar navbar-inverse navbar-fixed-top">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar"
+                aria-expanded="false" aria-controls="navbar">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="home.html">Self Service Dashboard</a>
+            </div>
+            <div id="navbar" class="navbar-collapse collapse">
+                <ul class="nav navbar-nav">
+                    <li class="active"><a href="home.html">Home</a>
+                    </li>
+                    <li><a href="#about">About</a>
+                    </li>
+                    <li><a href="#contact">Contact</a>
+                    </li>
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Dropdown <span class="caret"></span></a>
+                        <ul class="dropdown-menu" role="menu">
+                            <li><a href="#">Action</a>
+                            </li>
+                            <li><a href="#">Another action</a>
+                            </li>
+                            <li><a href="#">Something else here</a>
+                            </li>
+                            <li class="divider"></li>
+                            <li class="dropdown-header">Nav header</li>
+                            <li><a href="#">Separated link</a>
+                            </li>
+                            <li><a href="#">One more separated link</a>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+            <!--/.nav-collapse -->
+        </div>
+    </nav>
 
-		    <div id="jobStatus" class="tab-pane fade">
-		      <h3>Job Status  
+    <div class="container theme-showcase" role="main">
+
+        <div class="page-header">
+            <h2>AdHoc Queries <small>Execute adhoc Hive queries</small></h2>
+        </div>
+
+        <ul class="nav nav-tabs nav-justified" id="adHocJobTabs">
+            <li class="active" id="navLinkNewJob"> <a data-toggle="tab" href="#newJob">Create</a>
+            </li>
+            <li class="disabled" id="navLinkStatus"> <a data-toggle="tab" href="#jobStatus">Status</a>
+            </li>
+            <li class="disabled" id="navLinkResult"> <a data-toggle="tab" href="#jobResult">Result</a>
+            </li>
+        </ul>
+
+        <div class="tab-content">
+            <div id="newJob" class="tab-pane fade in active">
+                <h3>Create New Job</h3>
+                <form class="form-horizontal">
+                    <div class="form-group">
+                        <label for="jobName" class="col-sm-2 control-label">Job Name</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" id="jobName" placeholder="Job Name" ng-model="formData.jobID">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="hiveQuery" class="col-sm-2 control-label">Hive Query</label>
+                        <div class="col-sm-10">
+                            <textarea class="form-control" id="hiveQuery" ng-model="formData.hiveQuery" rows="3"
+                            placeholder="Enter your query here..."></textarea>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-offset-2 col-sm-10">
+                            <button ng-click="submitJob()" type="submit" class="btn btn-primary">Submit Query</button>
+                            <button ng-click="reset()" class="btn btn-default">Clear</button>
+                        </div>
+                    </div>
+
+
+                </form>
+
+
+            </div>
+
+            <div id="jobStatus" class="tab-pane fade">
+                <h3>Job Status  
 		      	<div class="jobStatusBtn">
 		      	<button type="button" class="btn btn-primary btn-sm" ng-click="refreshJobStatus()" id="refreshBtn" ng-show="submittedJobStatus == 'JOB_IN_PROGRESS'">
   				<span class="glyphicon glyphicon-refresh" aria-hidden="true"  ></span> Refresh
@@ -122,117 +137,125 @@
   				<span class="glyphicon glyphicon-eye-open" aria-hidden="true"  ></span> View Result
 			  	</button>     
 			  </h3>
-		      
-
-			    <div>
-	    			<span id="submittedHiveLabel" class="preLabels">Submitted Hive Query</span>
-	  				<pre class="pre-scrollable" id="submittedHiveQuery"><samp>{{formData.hiveQuery}}</samp></pre>
-	  			</div>
-
-				<!-- Job Status Alerts -->
-				<div class="row">
-				 <div class="span12" align="center">
-				 
-				  <div class="alert alert-success" ng-show="submittedJobStatus == 'JOB_SUCCESSFUL'" role="alert" id="alertJobSuccess">
-					  <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
-					  Job Succeeded
-				  </div>
-
-				  <div class="alert alert-danger" ng-show="submittedJobStatus == 'JOB_FAILED'" role="alert" id="alertJobFail">
-					  <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
-					  Job Failed
-				  </div>
-
-				   <div class="alert alert-info" ng-show="submittedJobStatus == 'JOB_IN_PROGRESS'" role="alert" id="alertJobInProgress">
-					  <span class="fa fa-spinner fa-pulse" aria-hidden="true"></span>
-					  Job execution in progress
-				  </div>
-
-				   <div class="alert alert-info" ng-show="submittedJobStatus == 'JOB_NOT_STARTED'" role="alert" id="alertJobNotStarted">
-					  <span class="glyphicon glyphicon-time" aria-hidden="true"></span>
-					  Initiating the Job
-				  </div>
-				 </div>
-				</div>
-	 
-
-				<div id="jobLogDiv" ng-show="showJobLog == true">
-	    			<span id="jobLogLabel">Job Log</span>
-	  				<pre class="pre-scrollable" id="jobLog"><samp>{{jobLog}}</samp></pre>
-	  			</div>
-		      
-		    </div>
 
 
-		    <div id="jobResult" class="tab-pane fade">
-		      <h3>Results</h3>
+                <div>
+                    <span id="submittedHiveLabel" class="preLabels">Submitted Hive Query</span>
+                    <pre class="pre-scrollable" id="submittedHiveQuery"><samp>{{formData.hiveQuery}}</samp></pre>
+                </div>
 
-		      <div>
-	    		    <span id="submittedHiveLabel" class="preLabels">Submitted Hive Query</span>
-	  				<pre class="pre-scrollable" id="submittedHiveQuery"><samp>{{formData.hiveQuery}}</samp></pre>
-	  		  </div>
+                <!-- Job Status Alerts -->
+                <div class="row">
+                    <div class="span12" align="center">
+
+                        <div class="alert alert-success" ng-show="submittedJobStatus == 'JOB_SUCCESSFUL'"
+                        role="alert" id="alertJobSuccess">
+                            <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>                            Job Succeeded
+                        </div>
+
+                        <div class="alert alert-danger" ng-show="submittedJobStatus == 'JOB_FAILED'" role="alert"
+                        id="alertJobFail">
+                            <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>                            Job Failed
+                        </div>
+
+                        <div class="alert alert-info" ng-show="submittedJobStatus == 'JOB_IN_PROGRESS'" role="alert"
+                        id="alertJobInProgress">
+                            <span class="fa fa-spinner fa-pulse" aria-hidden="true"></span>                            Job execution in progress
+                        </div>
+
+                        <div class="alert alert-info" ng-show="submittedJobStatus == 'JOB_NOT_STARTED'" role="alert"
+                        id="alertJobNotStarted">
+                            <span class="glyphicon glyphicon-time" aria-hidden="true"></span>                            Initiating the Job
+                        </div>
+                    </div>
+                </div>
+
+
+                <div id="jobLogDiv" ng-show="showJobLog == true">
+                    <span id="jobLogLabel">Job Log</span>
+                    <pre class="pre-scrollable" id="jobLog"><samp>{{jobLog}}</samp></pre>
+                </div>
+
+            </div>
+
+
+            <div id="jobResult" class="tab-pane fade">
+                <h3>Results</h3>
+
+                <div>
+                    <span id="submittedHiveLabel" class="preLabels">Submitted Hive Query</span>
+                    <pre class="pre-scrollable" id="submittedHiveQuery"><samp>{{formData.hiveQuery}}</samp></pre>
+                </div>
 
 
 
-				<ul class="nav nav-pills" id="adHocJobTabs">
-					<li class="active" id="navTabular"> <a data-toggle="tab" href="#tabular">Tabular</a></li>
-					<li class="disabled" id="navChart1"> <a data-toggle="tab" href="#chart1" ng-click="m()">Line Chart</a></li>
-					<li class="disabled" id="navChart2"> <a data-toggle="tab" href="#chart2">Bar Chart</a></li>
-				</ul>
+                <ul class="nav nav-pills" id="adHocJobTabs">
+                    <li class="active" id="navTabular"> <a data-toggle="tab" href="#tabular">Tabular</a>
+                    </li>
+                    <li class="disabled" id="navChart1"> <a data-toggle="tab" href="#chart1" ng-click="m()">Line Chart</a>
+                    </li>
+                    <li class="disabled" id="navChart2"> <a data-toggle="tab" href="#chart2">Bar Chart</a>
+                    </li>
+                </ul>
 
-			  <div class="tab-content">
+                <div class="tab-content">
 
-			    <div id="tabular" class="tab-pane fade in active">
-					<div id="jobResultTable"> </div>
-			    </div>
+                    <div id="tabular" class="tab-pane fade in active">
+                        <div id="jobResultTable"> </div>
+                    </div>
 
-			    <div id="chart1" class="tab-pane fade in ">
-	         	  <div id="chartLine"> </div>			
-			    </div>
-			
-			    <div id="chart2" class="tab-pane fade in ">
-			      <div id="chartBar"> </div>			
-			    </div>
+                    <div id="chart1" class="tab-pane fade in ">
+                        <div id="chartLine"> </div>
+                    </div>
 
-			  </div>
+                    <div id="chart2" class="tab-pane fade in ">
+                        <div id="chartBar"> </div>
+                    </div>
 
-		    </div>
-		    
-		  </div>
+                </div>
 
-		  <br>
+            </div>
 
-    </div> <!-- /container -->
+        </div>
+
+        <br>
+
+    </div>
+    <!-- /container -->
 
 
     <footer>
-	    <div class="navbar navbar-inverse navbar-fixed-bottom">
-	        <div class="container">
-	            <div class="navbar-collapse collapse" id="footer-body">
-	                <ul class="nav navbar-nav">
-	                    <li><a href="#">About Us</a></li>
-	                    <li><a href="#">Contact Support</a></li>                   
-	                </ul>
-	            </div>
-	          	<div class="navbar-header">
-	                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#footer-body">
-	                    <span class="icon-bar"></span>
-	                    <span class="icon-bar"></span>
-	                    <span class="icon-bar"></span>
-	                </button>
-	                <ul class="footer-bar-btns visible-xs">	                    
-	                    <li><a href="#" class="btn" title="Favourites"><i class="fa fa-2x fa-star yellow-text"></i></a></li>
-	                </ul>
-	            </div>
+        <div class="navbar navbar-inverse navbar-fixed-bottom">
+            <div class="container">
+                <div class="navbar-collapse collapse" id="footer-body">
+                    <ul class="nav navbar-nav">
+                        <li><a href="#">About Us</a>
+                        </li>
+                        <li><a href="#">Contact Support</a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#footer-body">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <ul class="footer-bar-btns visible-xs">
+                        <li><a href="#" class="btn" title="Favourites"><i class="fa fa-2x fa-star yellow-text"></i></a>
+                        </li>
+                    </ul>
+                </div>
 
-	        </div>
-	    </div>
-	</footer>
+            </div>
+        </div>
+    </footer>
 
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
     <!-- Include all compiled plugins (below), or include individual files as needed -->
     <script src="js/bootstrap.min.js"></script>
     <script src="js/jquery.csvToTable.js"></script>
-	</body>
+</body>
+
 </html>

@@ -14,4 +14,8 @@ module.exports = function(app){
     app.get('/query/:id', fileHandler.findById);
     app.put('/query/:id', fileHandler.update);
     app.delete('/query/:id', fileHandler.delete);
+
+    app.get('/', function (req, res) {
+        res.sendFile('dashboard.html', { root: __dirname + '/../public/'}); 
+    });
 }
