@@ -1,12 +1,5 @@
 var winston = require('winston');
 
-winston.setLevels({
-    debug:0,
-    info: 1,
-    silly:2,
-    warn: 3,
-    error:4,
-});
 
 winston.addColors({
     debug: 'green',
@@ -22,18 +15,21 @@ winston.addColors({
 //
 winston.loggers.add('HighLevelLog', {
   console: {
-    level: 'info',
+    level: 'debug',
     colorize: true,
     label: 'High Level Log',
-    exitOnError: false,
-    prettyPrint:true
+    exitOnError: false  ,
+    //prettyPrint:true
+    json:false
   },
   file: {
-    level: 'info',
-    colorize: true,
+    level: 'debug',
+    // colorize: true,
     filename: './logs/HighLevelLog.log',
-    exitOnError: false,
-    prettyPrint:true
+    exitOnError: false ,
+    // prettyPrint:true,
+    // logstash: false,
+    json: false
   }
 });
 
@@ -43,19 +39,22 @@ winston.loggers.add('HighLevelLog', {
 //
 winston.loggers.add('DetailedLog', {
   console: {
-    level: 'verbose',
+    level: 'debug',
     colorize: true,
     label: 'Detailed Log',
     exitOnError: false,
-    handleExceptions: true,
-    prettyPrint:true
+    handleExceptions: false,
+    json: false
+//    prettyPrint:true
   },
   file: {
-    level: 'verbose',
-    colorize: true,
+    level: 'debug',
+    // colorize: true,
     filename: './logs/DetailedLog.log',
     exitOnError: false,
-    handleExceptions: true,
-    prettyPrint:true
+    handleExceptions: false,
+    // prettyPrint:true,
+    // logstash: true,
+    json: false
   }
 });

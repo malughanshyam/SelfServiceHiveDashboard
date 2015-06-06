@@ -1,13 +1,20 @@
 // Include the MongoDB Schema 
 module.exports = function(app){
+
+
+    var adHocJobHandler = require('./controllers/adHocJobHandler');
+
+    app.get('/adHocJob', adHocJobHandler.getAdHocJob);
+    app.post('/submitNewAdHocJob', adHocJobHandler.submitNewAdHocJob);
+    app.get('/jobStatus', adHocJobHandler.getStatus);
+
+    app.get('/jobLog', adHocJobHandler.getJobLog);
+    app.get('/jobResult',adHocJobHandler.getJobResult);
+    app.get('/jobResultFile', adHocJobHandler.getJobResultFile);
+
+
     var fileHandler = require('./controllers/fileHandler');
-   /* app.post('/submitJob', fileHandler.submitJob);*/
-    app.get('/jobStatus', fileHandler.getStatus);
-	app.get('/jobLog', fileHandler.getJobLog);
-	app.get('/jobResult',fileHandler.getJobResult);
-	app.get('/jobResultFile', fileHandler.getJobResultFile);
-
-
+    
     app.get('/schedule', fileHandler.schedule);
     app.post('/execute', fileHandler.execute)
 
@@ -20,9 +27,7 @@ module.exports = function(app){
         res.sendFile('dashboard.html', { root: __dirname + '/../public/'}); 
     });
 
-    var adHocJobHandler = require('./controllers/adHocJobHandler');
 
-    app.get('/adHocJob', adHocJobHandler.getAdHocJob);
-    app.post('/submitNewAdHocJob', adHocJobHandler.submitNewAdHocJob);
+
 
 }
