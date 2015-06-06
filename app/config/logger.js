@@ -29,7 +29,8 @@ winston.loggers.add('HighLevelLog', {
     exitOnError: false ,
     // prettyPrint:true,
     // logstash: false,
-    json: false
+    json: false,
+    handleExceptions: true
   }
 });
 
@@ -43,7 +44,7 @@ winston.loggers.add('DetailedLog', {
     colorize: true,
     label: 'Detailed Log',
     exitOnError: false,
-    handleExceptions: false,
+    handleExceptions: true,
     json: false
 //    prettyPrint:true
   },
@@ -52,7 +53,7 @@ winston.loggers.add('DetailedLog', {
     // colorize: true,
     filename: './logs/DetailedLog.log',
     exitOnError: false,
-    handleExceptions: false,
+    handleExceptions: true,
     // prettyPrint:true,
     // logstash: true,
     json: false

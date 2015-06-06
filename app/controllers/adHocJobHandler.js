@@ -12,8 +12,8 @@ var highLevelLogger = winston.loggers.get('HighLevelLog');
 var detailLogger = winston.loggers.get('DetailedLog');
 
 
-highLevelLogger.info('Logged In');
-detailLogger.info('Logged In');
+highLevelLogger.info(' Logged In');
+detailLogger.info(' Logged In');
 
 // highLevelLogger.debug("Debug")
 // highLevelLogger.verbose("verbose")
@@ -35,7 +35,7 @@ AdHocJob = require('../models/AdHocJob');
 exports.getAdHocJob = function(req, res) {
 
 	var clientIPaddress = req.ip || req.header('x-forwarded-for') || req.connection.remoteAddress;
-	detailLogger.info('GET All AdHoc Jobs', { clientIPaddress: clientIPaddress });
+	detailLogger.info(' GET - Retrieved all AdHoc Jobs: ', { clientIPaddress: clientIPaddress });
 
     AdHocJob.find(function(err, adHocJobs) {
         if (err) return detailLogger.error(err);
@@ -66,8 +66,8 @@ exports.submitNewAdHocJob = function(req, res) {
 
     jobID = jobID.toString();
 
-    detailLogger.info('JobID - %s  Submit New AdHoc Job: %s', jobID, JSON.stringify({ clientIPaddress: clientIPaddress, JobName : jobName, sqlQuery : sqlQuery  }));
-    highLevelLogger.info('JobID - %s  Submit New AdHoc Job: %s', jobID, JSON.stringify({ clientIPaddress: clientIPaddress, JobName : jobName, sqlQuery : sqlQuery  }));
+    detailLogger.info(' JobID - %s New AdHoc Job Submitted: %s', jobID, JSON.stringify({ clientIPaddress: clientIPaddress, JobName : jobName, sqlQuery : sqlQuery  }));
+    highLevelLogger.info(' JobID - %s New AdHoc Job Submitted: %s', jobID, JSON.stringify({ clientIPaddress: clientIPaddress, JobName : jobName, sqlQuery : sqlQuery  }));
 
     res.set('Access-Control-Allow-Origin', '*');
 
@@ -82,13 +82,15 @@ exports.submitNewAdHocJob = function(req, res) {
         CreatedTimeStamp: new Date(),
         UpdatedTimeStamp: new Date()
     }, function(err, adHocQuery) {
-    	detailLogger.debug('JobID - %s  New Job details inserted into database', jobID  );
         if (err) {
         	detailLogger.error('JobID - %s Error creating new record: %s' ,jobID, JSON.stringify({ error: err}));
             res.status(500)
-            res.send(err)
+            return res.send(err)
+        } else {
+       		detailLogger.debug('JobID - %s  New Job details inserted into database', jobID  );
+        	createJobDirectory();
         }
-        createJobDirectory();
+
     });
 
     // Create a directory for the JobID
@@ -105,13 +107,15 @@ exports.submitNewAdHocJob = function(req, res) {
             if (err) {
             	detailLogger.error('JobID - %s Error creating new directory: %s', jobID,  JSON.stringify({Directory: dir, error: err}));
                 res.status(500)
-                res.send(err)
+                return res.send(err)
+            } else {
+	            detailLogger.debug('JobID - %s  New JobID directory created: %s',jobID, JSON.stringify ({Directory: dir}));
+		        var ws = fs.createOutputStream(queryFile)
+		        ws.write(sqlQuery)
+		        detailLogger.debug('JobID - %s  Hive Query written to file: %s',jobID, JSON.stringify({ QueryFile : queryFile}));
+		        executeHiveScript()
+
             }
-            detailLogger.debug('JobID - %s  New JobID directory created: %s',jobID, JSON.stringify ({Directory: dir}));
-            var ws = fs.createOutputStream(queryFile)
-            ws.write(sqlQuery)
-            detailLogger.debug('JobID - %s  Hive Query written to file: %s',jobID, JSON.stringify({ QueryFile : queryFile}));
-            executeHiveScript()
         })
 
     }
@@ -134,9 +138,9 @@ exports.submitNewAdHocJob = function(req, res) {
             if (error) {
             	detailLogger.error('JobID - %s  Execution of Hive Query failed: %s',jobID, JSON.stringify({ error: error}));
             	highLevelLogger.error('JobID - %s  Execution of Hive Query failed: %s',jobID, JSON.stringify({ error: error}));
-            	highLevelLogger.info('JobID - %s  AdHoc Job failed: %s', jobID, JSON.stringify({ clientIPaddress: clientIPaddress,  JobName : jobName, sqlQuery : sqlQuery, error: error  }));
+            	highLevelLogger.info(' JobID - %s  AdHoc Job failed: %s', jobID, JSON.stringify({ clientIPaddress: clientIPaddress,  JobName : jobName, sqlQuery : sqlQuery, error: error  }));
                 res.status(500)
-                res.send(error)
+                return res.send(error)
             } else {
             	detailLogger.debug('JobID - %s  Hive Query Script Execution Initiated',jobID)
                 res.send({
@@ -149,7 +153,7 @@ exports.submitNewAdHocJob = function(req, res) {
         child_process.execFile(execFileName, args, options, callback)
     }
 
-//    				highLevelLogger.info('AdHoc Job failed', { clientIPaddress: clientIPaddress, JobID: jobID,  JobName : jobName, sqlQuery : sqlQuery, error: error  });
+//    				highLevelLogger.info(' AdHoc Job failed', { clientIPaddress: clientIPaddress, JobID: jobID,  JobName : jobName, sqlQuery : sqlQuery, error: error  });
 
 };
 
@@ -166,16 +170,16 @@ exports.getStatus = function(req,res){
 		  	if (err) {
 		  		detailLogger.error('JobID - %s Error fetching Job Status %s' ,jobID, JSON.stringify({ clientIPaddress: clientIPaddress, error: err, statusFile: jobStatusFile}));
 		  		highLevelLogger.error('JobID - %s Error fetching Job Status %s' ,jobID, JSON.stringify({ clientIPaddress: clientIPaddress, error: err, statusFile: jobStatusFile}));
-		    	res.send(err);
+		    	return res.send(err);
+		  	} else{
+			  	detailLogger.debug('JobID - %s Checked Job Status: %s',jobID, data.trim());
+			  	highLevelLogger.debug('JobID - %s Checked Job Status: %s',jobID, data.trim());        
+			  	res.send(data.trim())
 		  	}
-		  	
-		  	detailLogger.debug('JobID - %s Checked Job Status: %s',jobID, data.trim());
-		  	highLevelLogger.debug('JobID - %s Checked Job Status: %s',jobID, data.trim());        
-		  	res.send(data.trim())
     	});
 	} else{
 		detailLogger.error('JobID - %s Error fetching Job Status %s' ,jobID, JSON.stringify({ clientIPaddress: clientIPaddress, error: 'JobID not specified'}));
-        res.json(({status: '500 Server error', error: 'JobID not specified'}))
+        return res.json(({status: '500 Server error', error: 'JobID not specified'}))
     }
 };
 
@@ -193,15 +197,16 @@ exports.getJobLog = function(req,res){
 		  	if (err) {
 		  		detailLogger.error('JobID - %s Error fetching Job Log %s' ,jobID, JSON.stringify({ clientIPaddress: clientIPaddress, error: err, jobLogFile: jobLogFile}));
 		  		highLevelLogger.error('JobID - %s Error fetching Job Log %s' ,jobID, JSON.stringify({ clientIPaddress: clientIPaddress, error: err, jobLogFile: jobLogFile}));
-		    	res.send(err);
+		    	return res.send(err);
+		  	} else {
+				detailLogger.debug('JobID - %s User retrieved Job Log File: %s',jobID, JSON.stringify({ jobLogFile: jobLogFile}));
+			  	highLevelLogger.debug('JobID - %s User retrieved Job Log File: %s',jobID, JSON.stringify({ jobLogFile: jobLogFile}));        
+			  	res.send(data);		  		
 		  	}
-			detailLogger.debug('JobID - %s User retrieved Job Log File: %s',jobID, JSON.stringify({ jobLogFile: jobLogFile}));
-		  	highLevelLogger.debug('JobID - %s User retrieved Job Log File: %s',jobID, JSON.stringify({ jobLogFile: jobLogFile}));        
-		  	res.send(data);
     	});
 	} else{
         detailLogger.error('JobID - %s Error fetching Job Log %s' ,jobID, JSON.stringify({ error: 'JobID not specified'}));
-        res.json(({status: '500 Server error', error: 'JobID not specified'}))
+        return res.json(({status: '500 Server error', error: 'JobID not specified'}))
 
     }
 
@@ -226,13 +231,13 @@ exports.getJobResultFile = function(req,res){
 		var fileName = 'result.txt'
 		res.sendFile(fileName, options, function (err) {
 			if (err) {
-				detailLogger.error('JobID - %s Error fetching Job Result: %s' ,jobID, JSON.stringify({ clientIPaddress: clientIPaddress, error: err, fileName: fileName, options: options}));
-		  		highLevelLogger.error('JobID - %s Error fetching Job Result %s' ,jobID, JSON.stringify({ clientIPaddress: clientIPaddress, error: err, fileName: fileName, options: options}));
-		    	res.status(err.status).end();
+				detailLogger.error('JobID - %s Error fetching Job Result: %s' ,jobID, JSON.stringify({ clientIPaddress: clientIPaddress, error: err, fileName: fileName, path: options.root}));
+		  		highLevelLogger.error('JobID - %s Error fetching Job Result %s' ,jobID, JSON.stringify({ clientIPaddress: clientIPaddress, error: err, fileName: fileName, path: options.root}));
+		    	return res.status(err.status).end();
 			}
 			else {
-				detailLogger.debug('JobID - %s User retrieved Job Result File: %s',jobID, JSON.stringify({ clientIPaddress: clientIPaddress, fileName: fileName, options: options}));
-			  	highLevelLogger.debug('JobID - %s User retrieved Job Result File: %s',jobID, JSON.stringify({ clientIPaddress: clientIPaddress, fileName: fileName, options: options}));
+				detailLogger.debug('JobID - %s User retrieved Job Result File: %s',jobID, JSON.stringify({ clientIPaddress: clientIPaddress, fileName: fileName, path: options.root}));
+			  	highLevelLogger.debug('JobID - %s User retrieved Job Result File: %s',jobID, JSON.stringify({ clientIPaddress: clientIPaddress, fileName: fileName, path: options.root}));
 				console.log('Sent:', fileName);
 				}
 		});
@@ -240,7 +245,7 @@ exports.getJobResultFile = function(req,res){
 
 	} else{
 		detailLogger.error('JobID - NOT_SPECIFIED  Error fetching Job Log %s' , JSON.stringify({ error: 'JobID not specified'}));
-        res.json(({status: '500 Server error', error: 'JobID not specified'}))
+        return res.json(({status: '500 Server error', error: 'JobID not specified'}))
     }
 
 };
@@ -248,7 +253,7 @@ exports.getJobResultFile = function(req,res){
 
 
 exports.getJobResult = function(req,res){
-		
+
 	var clientIPaddress = req.ip || req.header('x-forwarded-for') || req.connection.remoteAddress;
 	var jobID = req.query["jobID"];
 	if (jobID != null){
@@ -259,16 +264,16 @@ exports.getJobResult = function(req,res){
 				detailLogger.error('JobID - %s Error fetching Job Result: %s' ,jobID, JSON.stringify({ clientIPaddress: clientIPaddress, error: err, jobResultFile: jobResultFile}));
 		  		highLevelLogger.error('JobID - %s Error fetching Job Result %s' ,jobID, JSON.stringify({ clientIPaddress: clientIPaddress, error: err, jobResultFile: jobResultFile}));
 		    	console.log(err);
-		    	res.send(err);
+		    	return res.send(err);
+		  	} else {
+			  	detailLogger.debug('JobID - %s User retrieved Job Result File: %s',jobID, JSON.stringify({ clientIPaddress: clientIPaddress, jobResultFile: jobResultFile}));
+				highLevelLogger.debug('JobID - %s User retrieved Job Result File: %s',jobID, JSON.stringify({ clientIPaddress: clientIPaddress, jobResultFile: jobResultFile}));				
+			  	res.send(data.trim());
 		  	}
-		  	detailLogger.debug('JobID - %s User retrieved Job Result File: %s',jobID, JSON.stringify({ clientIPaddress: clientIPaddress, jobResultFile: jobResultFile}));
-			highLevelLogger.debug('JobID - %s User retrieved Job Result File: %s',jobID, JSON.stringify({ clientIPaddress: clientIPaddress, jobResultFile: jobResultFile}));
-				
-		  	res.send(data.trim());
     	});
 	} else{
 		detailLogger.error('JobID - NOT_SPECIFIED  Error fetching Job Log %s' , JSON.stringify({ error: 'JobID not specified'}));
-        res.json(({status: '500 Server error', error: 'JobID not specified'}))
+        return res.json(({status: '500 Server error', error: 'JobID not specified'}))
     }
 };
 
