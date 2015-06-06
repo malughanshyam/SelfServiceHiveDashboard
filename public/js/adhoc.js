@@ -2,6 +2,7 @@ var app = angular.module('dashboardApp', []);
 
 app.controller('adHocController', function($scope, $http) {
 
+    
     // disable tab
     $("#navLinkStatus").addClass('disabled');
     $("#navLinkStatus").find('a').removeAttr("data-toggle");

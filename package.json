@@ -14,6 +14,7 @@
 	"debug": "*",
   "fs-extra" : "*",
   "bootstrap" : "*",
-  "mongoose": "*"
+  "mongoose": "*",
+  "winston":"*"
   }
 }
