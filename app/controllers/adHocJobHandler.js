@@ -216,20 +216,19 @@ exports.getStatus = function(req,res){
 exports.updateStatus = function(req,res){
     var JobID = req.params.JobID
   return AdHocJob.findById(JobID, function (err, adHocJob) {
-    console.log('JobID -'+ adHocJob.JobID+ '  Old Job Status: '  + req.body.Status + "Object: " + JSON.stringify(adHocJob));
-    detailLogger.debug('JobID - %s Old Job Status: %s; ObjectID:',adHocJob.JobID,req.body.Status, JSON.stringify( adHocJob));
+    var oldJobStatus = adHocJob.Status;
     adHocJob.Status = req.body.Status;
-    adHocJob.UpdatedTimeStamp = new Date();
-    console.log('JobID -'+ adHocJob.JobID+ '  Updated Job Status to: '  + JSON.stringify(adHocJob));
-    detailLogger.debug('JobID - %s Updated Job Status to: %s',adHocJob.JobID, JSON.stringify( adHocJob));
-    
+    adHocJob.UpdatedTimeStamp = new Date();    
     return adHocJob.save(function (err) {
-      if (!err) {
-        console.log("updated");
-      } else {
-        console.log(err);
+      if (err) {
+        highLevelLogger.error('JobID - %s Error updating Job Status %s' ,jobID, JSON.stringify({ clientIPaddress: clientIPaddress, error: err}));
+        detailLogger.error('JobID - %s Error updating Job Status %s' ,jobID, JSON.stringify({ clientIPaddress: clientIPaddress, error: err}));
+        highLevelLogger.error('JobID - %s Error updating Job Status %s' ,jobID, JSON.stringify({ clientIPaddress: clientIPaddress, error: err}));                
+      } else {        
+        highLevelLogger.debug('JobID - %s Updated Job Status from %s to %s',adHocJob.JobID, oldJobStatus, adHocJob.Status);
+        detailLogger.debug('JobID - %s Updated Job Status from %s to %s',adHocJob.JobID, oldJobStatus, adHocJob.Status);
+        return res.send(adHocJob);
       }
-      return res.send(adHocJob);
     });
   });
 }

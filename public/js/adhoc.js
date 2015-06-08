@@ -1,14 +1,13 @@
 // var app = angular.module('dashboardApp', []);
 
-
-var app = angular.module('dashboardApp',['smart-table']);
-
+var app = angular.module('dashboardApp', ['ui.bootstrap','smart-table', 'ngAnimate']);
 
 app.controller('adHocController', function($scope, $http) {
 
     
     // experiment with smart table
     $scope.recentAdHocJobs = [];
+    $scope.displayedCollection = [];
 
 
     $scope.populateRecentAdHocJobTable = function(){
@@ -27,7 +26,7 @@ app.controller('adHocController', function($scope, $http) {
             });
     }
 
-    $scope.populateRecentAdHocJobTable();
+    //$scope.populateRecentAdHocJobTable();
 
     $scope.removeItem = function removeItem(row) {
         var index = $scope.recentAdHocJobs.indexOf(row);

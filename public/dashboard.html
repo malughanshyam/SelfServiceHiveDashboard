@@ -8,11 +8,16 @@
 
     <title> Self Service Dashboard</title>
 
-    <link rel="stylesheet" type="text/css" href="css/metro-bootstrap.min.css">
+    <link rel="stylesheet" href="css/metro-bootstrap.min.css">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
 
+    <!--<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.0.7/angular.min.js"></script>-->
 
+    <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.3.13/angular.js"></script>
+    <script src="//angular-ui.github.io/bootstrap/ui-bootstrap-tpls-0.13.0.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.3.13/angular-animate.js"></script>
+    
     <!-- Load c3.css -->
     <link href="css/c3.min.css" rel="stylesheet" type="text/css">
 
@@ -28,7 +33,7 @@
     <link href="css/common_template.css" rel="stylesheet">
 
 
-    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.0.7/angular.min.js"></script>
+
 
 </head>
 
@@ -55,10 +60,10 @@
 
                 <!-- Tabs Titles under AdHoc Category Begins -->
                 <ul class="nav nav-tabs" id="adHocJobTabs">
-                    <li id="navRecentAdHoc"> <a data-toggle="tab" href="#recentAdHocTab"><h4><i class="fa fa-1x fa-history"></i>  Recent Jobs</h4></a>
+                    <li id="navRecentAdHoc"> <a data-toggle="tab" href="#recentAdHocTab" ng-click="populateRecentAdHocJobTable()"><h4><i class="fa fa-1x fa-history"></i>  Recent Jobs</h4></a>
                     </li>
 
-                    <li id="navNewAdHoc"> <a data-toggle="tab" href="#newAdHocTab"><h4><i class="fa fa-1x fa-edit"></i> Create New Job</h4></a>
+                    <li id="navNewAdHoc"> <a data-toggle="tab" href="#newAdHocTab"><h4><i class="fa fa-1x fa-edit"></i>  New Job</h4></a>
                     </li>
                 </ul>
                 <!-- Tabs Titles under AdHoc Category Begins -->
@@ -68,71 +73,71 @@
 
                     <!-- Recent Jobs Tab Content Begins-->
                     <div id="recentAdHocTab" class="tab-pane fade in ">
-                        <h3>Recent Jobs</h3>
+                        <h3>Recent Jobs
                        
-                        <button type="button" ng-click="addRandomItem(row)" class="btn btn-sm btn-success pull-right">
+                        <button type="button" ng-click="populateRecentAdHocJobTable()" class="btn btn-sm btn-success pull-right">
                             <i class="fa fa-refresh">
                             </i> Refresh
                         </button>
+                        </h3>
 
 
-                        <table st-table="displayedCollection" st-safe-src="recentAdHocJobs" class="table table-striped">
+                        <table st-table="displayedCollection" st-safe-src="recentAdHocJobs" class="table table-striped table-responsive table-hover">
                             <thead>
-                            <tr>
-                                <!-- <th st-sort="JobID">JobID</th> -->
-                                <th st-sort="JobName" style="white-space: nowrap">
-                                    <a data-toggle="tooltip" title="Click to sort by Job Name" >Job Name</a></th>
-                                <th st-sort="SQLQuery">
-                                    <a data-toggle="tooltip" title="Click to sort by Hive Query">Hive Query</a></th>
-                                <th st-sort="Status">
-                                    <a data-toggle="tooltip" title="Click to sort by Status">Status</a></th>
-                                <th st-sort="UpdatedTimeStamp" st-sort-default="reverse">
-                                    <a data-toggle="tooltip" title="Click to sort by TimeStamp">UpdatedTimeStamp</a></th>
-                            </tr>
-                            <tr>
-                                <th colspan="7"> 
-                                    <div class="input-group">
-                                      <span class="input-group-addon" id="basic-addon1"> <i class="fa fa-1x fa-search"></i>  </span>
-                                      <input st-search="" class="form-control" placeholder="Search anything..." type="text" aria-describedby="basic-addon1"/>
-                                      
-                                    </div>
-                                    
-                                    
-                                </th>
-                            </tr>
+                                <tr>
+                                    <!-- <th st-sort="JobID">JobID</th> -->
+                                    <th st-sort="JobName" style="white-space: nowrap">
+                                        <a data-toggle="tooltip" title="Click to sort by Job Name">Job Name</a></th>
+                                    <th st-sort="SQLQuery">
+                                        <a data-toggle="tooltip" title="Click to sort by Hive Query">Hive Query</a></th>
+                                    <th st-sort="Status">
+                                        <a data-toggle="tooltip" title="Click to sort by Status">Status</a></th>
+                                    <th st-sort="UpdatedTimeStamp" st-sort-default="reverse">
+                                        <a data-toggle="tooltip" title="Click to sort by TimeStamp">UpdatedTimeStamp</a></th>
+                                </tr>
+                                <tr>
+                                    <th colspan="7">
+                                        <div class="input-group">
+                                            <span class="input-group-addon" id="basic-addon1"> <i class="fa fa-1x fa-search"></i>  </span>
+                                            <input st-search="" class="form-control" placeholder="Search anything..." type="text" aria-describedby="basic-addon1" />
+
+                                        </div>
+                                    </th>
+                                </tr>
                             </thead>
                             <tbody>
-                            <tr ng-repeat="row in displayedCollection">
-                                <!-- <td>{{row.JobID}}</td> -->
-                                <td>{{row.JobName}}</td>
-                                <td>{{row.SQLQuery}}</td>
-                                <td>{{row.Status}}</td>
-                                <td>{{row.UpdatedTimeStamp}}</td>
-                                <td>
-                                <!-- <button type="button" ng-click="removeItem(row)" class="btn btn-sm btn-danger">
-                                    <i class="glyphicon glyphicon-remove-circle">
-                                    </i>
-                                </button> -->
-                                
-        
-                                    <button type="button" ng-click="viewResults(row)" class="btn btn-success btn-xs" ng-show="row.Status == 'JOB_SUCCESSFUL'">
-                                        <span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span> Results
-                                    </button>
-                                    <button type="button" ng-click="viewLog(row)" class="btn btn-warning btn-xs" ng-show="row.Status == 'JOB_IN_PROGRESS'" >
-                                        <span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span> View Log
-                                    </button>
-                                    <button type="button" ng-click="viewLog(row)" class="btn btn-danger btn-xs" ng-show="row.Status == 'JOB_FAILED'" >
-                                        <span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span> View Log
-                                    </button>
-                                </td>
-                                <td>
-                                    <button type="button" ng-click="removeItem(row)" class="btn btn-info btn-xs">
-                                        <i class="fa fa-share-square-o"></i> Edit | Resubmit
-                                    </button>
+                                <tr ng-repeat="row in displayedCollection">
+                                    <!-- <td>{{row.JobID}}</td> -->
+                                    <td>{{row.JobName}}</td>
+                                    <td>{{row.SQLQuery}}</td>
+                                    <td>{{row.Status}}</td>
+                                    <td>{{row.UpdatedTimeStamp}}</td>
+                                    <td>
+                                        <button type="button" ng-click="viewResults(row)" class="btn btn-success btn-xs" ng-show="row.Status == 'JOB_SUCCESSFUL'">
+                                            <span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span> Results
+                                        </button>
+                                        <button type="button" ng-click="viewLog(row)" class="btn btn-warning btn-xs" ng-show="row.Status == 'JOB_IN_PROGRESS'">
+                                            <span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span> View Log
+                                        </button>
+                                        <button type="button" ng-click="viewLog(row)" class="btn btn-danger btn-xs" ng-show="row.Status == 'JOB_FAILED'">
+                                            <span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span> View Log
+                                        </button>
+                                    </td>
+                                    <td>
+                                        <button type="button" ng-click="removeItem(row)" class="btn btn-info btn-xs">
+                                            <i class="fa fa-share-square-o"></i> Edit | Resubmit
+                                        </button>
 
-                                </td>
-                            </tr>
+                                    </td>
+                                </tr>
                             </tbody>
+                            <tfoot>
+                                <tr>
+                                    <td colspan="5" class="text-center">
+                                        <div st-pagination="" st-items-by-page="5" ></div>
+                                    </td>
+                                </tr>
+                            </tfoot>
                         </table>
 
                     </div>
@@ -141,8 +146,8 @@
                     <!-- New Job Tab Content Begins-->
                     <div id="newAdHocTab" class="tab-pane fade in ">
 
-                        <!-- Create New Job Steps Flow -->
-                        <div class="stepsFlow">
+                        <!-- Create New Job Steps Flow Begins-->
+                        <div class="stepsFlow ">
                             <div class="row smpl-step" style="border-bottom: 0; min-width: 500px;">
 
                                 <div class="col-xs-3 smpl-step-step disabled" id="flowStepCreate">
@@ -173,9 +178,9 @@
                                     <div class="smpl-step-info text-center">View the results</div>
                                 </div>
 
-
                             </div>
                         </div>
+                        <!-- Create New Job Steps Flow Ends-->
 
 
                         <!-- Tab Titles under Create New Job -->
@@ -194,7 +199,7 @@
                             <!-- Submit Job Tab Content Begins  -->
                             <div id="newJob" class="tab-pane fade in active">
                                 <form class="form-horizontal">
-                                    
+
                                     <!-- <div class="input-group">
                                       <span class="input-group-addon" id="basic-addon1">Job Name</span>
                                       <input type="text" class="form-control" placeholder="Username" aria-describedby="basic-addon1">
@@ -404,9 +409,14 @@
     <!-- Include all compiled plugins (below), or include individual files as needed -->
     <script src="js/bootstrap.min.js"></script>
     <script src="js/jquery.csvToTable.js"></script>
+    <!--
+    <script src="http://code.angularjs.org/1.2.3/angular-animate.js"></script>
+    <script src="ui-bootstrap-0.13.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/0.13.0/ui-bootstrap-tpls.min.js"></script>
+    -->
     <script src="smart-table.min.js"></script>
     <script src="js/adhoc.js"></script>
-    
+
 </body>
 
 </html>
