@@ -4,40 +4,15 @@ var app = angular.module('dashboardApp', ['ui.bootstrap','smart-table', 'ngAnima
 
 app.controller('adHocController', function($scope, $http) {
 
-    
+    console.log($("#jobResultPanelBodyContent").width());
+    console.log($('#jobResultTab').width());
+    console.log($('#tabular').width());
+
     // experiment with smart table
     $scope.recentAdHocJobs = [];
     $scope.displayedCollection = [];
 
 
-    $scope.populateRecentAdHocJobTable = function(){
-        var getRecentAdHocJobs = '/adHocJob'
-
-        $http.get(getRecentAdHocJobs, $scope.formData)
-            .success(function(data) {
-                $scope.recentAdHocJobs = data;
-                $scope.displayedCollection = [].concat($scope.recentAdHocJobs);
-            })
-            .error(function(err) {
-                // $scope.submittedJobStatus='FAILED'
-                $scope.jobLog = 'Fetching RecentAdHocJobs Failed :' + err;
-                console.log(err)
-
-            });
-    }
-
-    //$scope.populateRecentAdHocJobTable();
-
-    $scope.removeItem = function removeItem(row) {
-        var index = $scope.recentAdHocJobs.indexOf(row);
-        if (index !== -1) {
-            $scope.recentAdHocJobs.splice(index, 1);
-        }
-    }
-
-
-    // experiment with smart table
-    
 
     // disable tab
     $("#navLinkStatus").addClass('disabled');
@@ -72,8 +47,6 @@ app.controller('adHocController', function($scope, $http) {
     $("#navLinkResult").click();
 
     activaTab('jobResult');*/
-
-
 
 
     $scope.refreshInterval;
@@ -121,7 +94,7 @@ app.controller('adHocController', function($scope, $http) {
         $("#navLinkStatus").find('a').attr("data-toggle", "tab");
         $("#navLinkStatus").click();
 
-        activaTab('jobStatus');
+        activaTab('jobStatusTab');
 
         // Disable Create New Job 
         $("#navLinkNewJob").addClass('disabled');
@@ -165,7 +138,7 @@ app.controller('adHocController', function($scope, $http) {
         $("#navLinkStatus").find('a').attr("data-toggle", "tab");
         $("#navLinkStatus").click();
 
-        activaTab('jobStatus');
+        activaTab('jobStatusTab');
 
         // Disable Create New Job 
         $("#navLinkNewJob").addClass('disabled');
@@ -207,16 +180,13 @@ app.controller('adHocController', function($scope, $http) {
         }
 
 
-
-        /* if($scope.submittedJobStatus == 'JOB_SUCCESSFUL' )
-          $scope.viewJogResult();
-*/
     }
 
-    $scope.viewJobLog = function() {
+
+ /*$scope.viewCurrentJobLog = function() {
         $scope.showJobLog = true
         console.log("View Job Log");
-        $scope.checkLogURL = '/jobLog?jobID=' + $scope.formData.jobID
+        $scope.checkLogURL = '/jobLog/' + $scope.formData.jobID
 
         $http.get($scope.checkLogURL, $scope.formData)
             .success(function(data) {
@@ -232,9 +202,90 @@ app.controller('adHocController', function($scope, $http) {
             });
 
     }
+    */
 
 
-    $scope.viewJobResult = function() {
+
+    $scope.populateRecentAdHocJobTable = function(){
+        var getRecentAdHocJobs = '/adHocJob'
+
+        $http.get(getRecentAdHocJobs, $scope.formData)
+            .success(function(data) {
+                $scope.recentAdHocJobs = data;
+                $scope.displayedCollection = [].concat($scope.recentAdHocJobs);
+            })
+            .error(function(err) {
+                // $scope.submittedJobStatus='FAILED'
+                $scope.jobLog = 'Fetching RecentAdHocJobs Failed :' + err;
+                console.log(err)
+
+            });
+    }
+
+    // Model - View Job Log
+    $scope.viewLog = function(adHocJob){
+        $('#modelViewLog').modal('show')
+
+        $("#modelViewLog").find('#JobName').text(adHocJob.JobName);
+        $("#modelViewLog").find('#JobStatus').text("(" + adHocJob.Status + ")");
+
+        $scope.getJobLog(adHocJob.JobID, function(){
+            console.log("In callback");
+            $scope.jobLogSelected = $scope.jobLogRetrieved;
+            $("#modelViewLog").find('#jobLogPre').text($scope.jobLogRetrieved);
+
+        })
+
+    }
+
+    $scope.viewResults = function(adHocJob){
+
+        $('#modelViewResults').modal('show')
+
+        jobResultTabContent = $("#jobResultTab").html();
+
+        $("#modelViewResults").find('#JobName').text(adHocJob.JobName);
+        $("#modelViewResults").find('.modal-body').html(jobResultTabContent);
+        $("#modelViewResults").find('#JobID').text("(" + adHocJob.JobID + ")");
+
+        $("#modelViewResults").find('.modal-body').html(jobResultTabContent);
+        $("#modelViewResults").find('#submittedHiveQuery').text(adHocJob.SQLQuery);
+
+        $scope.computeJobResults(adHocJob.JobID);
+
+    }
+
+    $scope.viewCurrentJobLog = function() {
+        $scope.showJobLog = true
+        console.log("View Job Log");
+        $scope.getJobLog($scope.formData.jobID, function(){
+            $scope.jobLog = $scope.jobLogRetrieved;            
+        })
+
+    }
+
+    $scope.getJobLog = function(jobID, callBack) {
+        
+        $scope.checkLogURL = '/jobLog/' + jobID
+        $scope. jobLogRetrieved;
+        $http.get($scope.checkLogURL, $scope.formData)
+            .success(function(data) {
+                $scope.jobLogRetrieved =  data;
+                console.log("Successfully retrieved JobLog");  
+                callBack();
+                
+            })
+            .error(function(err) {
+                $scope.jobLogRetrieved =  "Fetching Log Failed" + err
+                console.log("Fetching Log Failed");
+                callBack();
+            });
+
+
+    }
+
+
+    $scope.viewJobResult_BackUp = function() {
 
         if ($scope.submittedJobStatus != 'JOB_SUCCESSFUL') {
             return false;
@@ -245,7 +296,7 @@ app.controller('adHocController', function($scope, $http) {
         $("#navLinkResult").find('a').attr("data-toggle", "tab");
         $("#navLinkResult").click();
 
-        activaTab('jobResult');
+        activaTab('jobResultTab');
 
         // Disable Create New Job 
         $("#navLinkStatus").addClass('disabled');
@@ -281,6 +332,64 @@ app.controller('adHocController', function($scope, $http) {
             });
 
     }
+
+    // Refactor View Results Begins
+    $scope.viewJobResult = function() {
+
+        if ($scope.submittedJobStatus != 'JOB_SUCCESSFUL') {
+            return false;
+        }
+
+        /*enable tab*/
+        $("#navLinkResult").removeClass('disabled');
+        $("#navLinkResult").find('a').attr("data-toggle", "tab");
+        $("#navLinkResult").click();
+
+        activaTab('jobResultTab');
+
+        // Disable Create New Job 
+        $("#navLinkStatus").addClass('disabled');
+        $("#navLinkStatus").find('a').removeAttr("data-toggle");
+
+        $scope.computeJobResults($scope.formData.jobID)
+
+    }
+
+    $scope.computeJobResults = function(jobID){
+
+        $scope.checkResultURL = '/jobResultFile/' + jobID
+
+        $http.get($scope.checkResultURL)
+            .success(function(data) {
+                $scope.jobResult = data;
+                $scope.createResultTable(createAndEnableCharts);
+                
+//                $scope.createCharts(enableChartTabs);
+                 function createAndEnableCharts(){
+
+                    $scope.createCharts(enableChartTabs);
+                    function enableChartTabs () {
+                        /*enable tab*/
+                        $("#navChart1").removeClass('disabled');
+                        $("#navChart1").find('a').attr("data-toggle", "tab");
+
+                        $("#navChart2").removeClass('disabled');
+                        $("#navChart2").find('a').attr("data-toggle", "tab");
+
+                        $("#flowStepResult").removeClass('disabled');
+                        $("#flowStepResult").addClass('complete');  
+                    }       
+                }
+            })
+                
+            .error(function(err) {
+                // $scope.submittedJobStatus='FAILED'
+                $scope.jobResult = 'Fetching Result Failed :' + err;
+                console.log(err)
+
+            });
+    }
+    // Refactor View Results Ends
 
     $scope.createHTMLTable = function(divId, data) {
 
@@ -321,14 +430,13 @@ app.controller('adHocController', function($scope, $http) {
         });
     }
 
-    $scope.createResultTable = function() {
-        console.log($scope.jobResult);
+    $scope.createResultTable = function(callback) {
         $scope.createHTMLTable('jobResultTable', $scope.jobResult);
-
+        callback();
     }
 
 
-    $scope.execute = function() {
+   /* $scope.execute = function() {
 
 
 
@@ -344,7 +452,7 @@ app.controller('adHocController', function($scope, $http) {
             });
 
         console.log("Clicked Execute")
-    }
+    }*/
 
     $scope.reset = function() {
         $scope.user = angular.copy($scope.master);
@@ -352,7 +460,13 @@ app.controller('adHocController', function($scope, $http) {
 
     $scope.reset();
 
-    $scope.createCharts = function generateChart(callbackFunction) {
+    $scope.createCharts = function (callbackFunction) {
+
+        // Compute the Width for the Charts
+        var chartWidth = $("#jobResultTab").width()
+        console.log($("#jobResultPanelBodyContent").width());
+        console.log($('#jobResultTab').width());
+        console.log($('#tabular').width());
 
         // Parse the TSV Result file into Array of Data 
         var x = $scope.jobResult.split('\n');
@@ -362,7 +476,6 @@ app.controller('adHocController', function($scope, $http) {
         }
 
         $scope.chartData = x
-        console.log(x)
 
         // $scope.chartDataHeader = x[0]
         // $scope.chartDataSplit = x.slice(1);
@@ -390,7 +503,11 @@ app.controller('adHocController', function($scope, $http) {
                     },
                     height: 130
                 }
+            },
+            size: {
+                width: chartWidth
             }
+
 
 
         });
@@ -412,17 +529,19 @@ app.controller('adHocController', function($scope, $http) {
                     },
                     height: 130
                 }
+            },
+            size: {
+                width: chartWidth
             }
 
 
         });
-
         callbackFunction();
 
     }
 
 
-    $scope.createChart = function() {
+    $scope.createChart_backup = function() {
 
         //        $scope.checkResultURL = '/jobResultFile?jobID='+$scope.formData.jobID
         $scope.checkResultURL = '/jobResultFile?jobID=' + 'nyse'

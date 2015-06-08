@@ -12,9 +12,9 @@ module.exports = function(app){
     app.get('/jobStatus/:JobID', adHocJobHandler.getStatus);
     app.put('/jobStatus/:JobID', adHocJobHandler.updateStatus);
 
-    app.get('/jobLog', adHocJobHandler.getJobLog);
-    app.get('/jobResult',adHocJobHandler.getJobResult);
-    app.get('/jobResultFile', adHocJobHandler.getJobResultFile);
+    app.get('/jobLog/:JobID', adHocJobHandler.getJobLog);
+    app.get('/jobResult/:JobID',adHocJobHandler.getJobResult);
+    app.get('/jobResultFile/:JobID', adHocJobHandler.getJobResultFile);
 
 
     var fileHandler = require('./controllers/fileHandler');

@@ -116,15 +116,17 @@
                                         <button type="button" ng-click="viewResults(row)" class="btn btn-success btn-xs" ng-show="row.Status == 'JOB_SUCCESSFUL'">
                                             <span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span> Results
                                         </button>
-                                        <button type="button" ng-click="viewLog(row)" class="btn btn-warning btn-xs" ng-show="row.Status == 'JOB_IN_PROGRESS'">
+                                        
+                                        <button type="button" ng-click="viewLog(row)" class="btn btn-warning btn-xs" ng-show="row.Status == 'JOB_IN_PROGRESS'" >
                                             <span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span> View Log
                                         </button>
-                                        <button type="button" ng-click="viewLog(row)" class="btn btn-danger btn-xs" ng-show="row.Status == 'JOB_FAILED'">
+<!-- data-toggle="modal" data-target="#modelViewLog" -->
+                                        <button type="button" ng-click="viewLog(row)" class="btn btn-danger btn-xs" ng-show="row.Status == 'JOB_FAILED'" >
                                             <span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span> View Log
                                         </button>
                                     </td>
                                     <td>
-                                        <button type="button" ng-click="removeItem(row)" class="btn btn-info btn-xs">
+                                        <button type="button" ng-click="viewLog(row)" class="btn btn-info btn-xs">
                                             <i class="fa fa-share-square-o"></i> Edit | Resubmit
                                         </button>
 
@@ -139,6 +141,60 @@
                                 </tr>
                             </tfoot>
                         </table>
+
+
+
+                        <!-- View Job Log Modal -->
+                        <div class="modal fade" id="modelViewLog" tabindex="-1" role="dialog" aria-labelledby="View Log" aria-hidden="true">
+                          <div class="modal-dialog modal-lg">
+                            <div class="modal-content">
+                              <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                <h4 class="modal-title" id="myModalLabel">  Log - 
+                                    <span id="JobName">JobName</span>
+                                    <small id="JobStatus">JobStatus</small>
+                                    
+                                </h4>
+                                
+                              </div>
+                              <div class="modal-body">
+                                <!-- Job Log -->
+                                <div id="jobLogDiv">
+                                    <pre class="pre-scrollable" id="jobLogPre"><samp>{{jobLogSelected}}</samp></pre>
+                                </div>
+                              </div>
+                              <div class="modal-footer">
+                                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+
+
+                        <!-- View Job Results Modal -->
+                        <div class="modal fade" id="modelViewResults" tabindex="-1" role="dialog" aria-labelledby="View Results" aria-hidden="true">
+                          <div class="modal-dialog modal-lg">
+                            <div class="modal-content">
+                              <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                <h4 class="modal-title" id="myModalLabel"> Results -  
+                                    <span id="JobName">JobName</span>
+                                    <small id="JobID">JobID</small>
+                                </h4>
+                                
+                              </div>
+                              
+                              <div class="modal-body">
+                                <!-- Resutls placeholder -->
+                              </div>
+
+                              <div class="modal-footer">
+                                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+
 
                     </div>
                     <!-- Recent Job Tab Content Ends-->
@@ -185,11 +241,11 @@
 
                         <!-- Tab Titles under Create New Job -->
                         <ul class="nav nav-tabs nav-justified" id="adHocJobTabs" ng-hide="true">
-                            <li class="active" id="navLinkNewJob"> <a data-toggle="tab" href="#newJob">Create</a>
+                            <li class="active" id="navLinkNewJob"> <a data-toggle="tab" href="#newJobTab">Create</a>
                             </li>
-                            <li class="disabled" id="navLinkStatus"> <a data-toggle="tab" href="#jobStatus">Status</a>
+                            <li class="disabled" id="navLinkStatus"> <a data-toggle="tab" href="#jobStatusTab">Status</a>
                             </li>
-                            <li class="disabled" id="navLinkResult"> <a data-toggle="tab" href="#jobResult">Result</a>
+                            <li class="disabled" id="navLinkResult"> <a data-toggle="tab" href="#jobResultTab">Result</a>
                             </li>
                         </ul>
 
@@ -197,7 +253,7 @@
                         <div class="tab-content">
 
                             <!-- Submit Job Tab Content Begins  -->
-                            <div id="newJob" class="tab-pane fade in active">
+                            <div id="newJobTab" class="tab-pane fade in active">
                                 <form class="form-horizontal">
 
                                     <!-- <div class="input-group">
@@ -230,13 +286,13 @@
 
 
                             <!-- Job Status Tab Content Begins-->
-                            <div id="jobStatus" class="tab-pane fade">
+                            <div id="jobStatusTab" class="tab-pane fade">
                                 <h3><!-- {{formData.jobID}}  -->{{formData.jobName}}<small> - Job Status </small>
                             <div class="jobStatusBtn">
                             <button type="button" class="btn btn-primary btn-sm" ng-click="refreshJobStatus()" id="refreshBtn" ng-show="submittedJobStatus == 'JOB_IN_PROGRESS'">
                                 <span class="glyphicon glyphicon-refresh" aria-hidden="true"  ></span> Refresh
                             </button> 
-                            <button type="button" class="btn btn-primary btn-sm" ng-click="viewJobLog()" id="viewLogBtn" ng-hide="submittedJobStatus == 'JOB_NOT_STARTED'" >
+                            <button type="button" class="btn btn-primary btn-sm" ng-click="viewCurrentJobLog()" id="viewLogBtn" ng-hide="submittedJobStatus == 'JOB_NOT_STARTED'" >
                                 <span class="glyphicon glyphicon-list-alt" aria-hidden="true" ></span> View Log
                             </button>
                             <button type="button" class="btn btn-primary btn-sm" ng-click="viewJobResult()" id="viewResultBtn" ng-show="submittedJobStatus == 'JOB_SUCCESSFUL'"  >
@@ -249,6 +305,8 @@
                                     <dt>Submitted Hive Query</dt>
                                     <dd><pre class="pre-scrollable" id="submittedHiveQuery"><samp>{{formData.hiveQuery}}</samp></pre></dd>
                                 </dl>
+
+                                  submittedJobStatus:  {{submittedJobStatus}}
 
                                 <!-- Job Status Alerts -->
                                 <div class="row">
@@ -278,16 +336,16 @@
                                     <pre class="pre-scrollable" id="jobLog"><samp>{{jobLog}}</samp></pre>
                                 </div>
                             </div>
-                            <!-- Job Status Tab Content Begins-->
+                            <!-- Job Status Tab Content Ends-->
 
 
                             <!-- Job Results Tab Content Begins-->
-                            <div id="jobResult" class="tab-pane fade">
+                            <div id="jobResultTab" class="tab-pane fade">
                                 <br>
                                 <div>
                                     <dl>
                                         <dt>Submitted Hive Query</dt>
-                                        <dd><pre class="pre-scrollable" id="submittedHiveQuery"><samp>{{formData.hiveQuery}}</samp></pre></dd>
+                                        <dd><pre class="pre-scrollable"><samp id="submittedHiveQuery">{{formData.hiveQuery}}</samp></pre></dd>
                                     </dl>
                                 </div>
 
@@ -295,7 +353,7 @@
                                 <!-- Results Display Type Tab Begins -->
                                 <ul class="nav nav-pills right-to-left" id="adHocResultTypeTabs">
                                     </li>
-                                    <li class="disabled" id="navChart1"> <a data-toggle="tab" href="#chart1" ng-click="m()">Line Chart</a>
+                                    <li class="disabled" id="navChart1"> <a data-toggle="tab" href="#chart1">Line Chart</a>
                                     </li>
                                     <li class="disabled" id="navChart2"> <a data-toggle="tab" href="#chart2">Bar Chart</a>
                                     </li>
@@ -306,12 +364,12 @@
                                 <br>
 
                                 <!-- Panel for Display Results Begins-->
-                                <div class="panel panel-info">
+                                <div class="panel panel-info" >
                                     <div class="panel-heading">
                                         <h3 class="panel-title"><!-- {{formData.jobID}} --> {{formData.jobName}}</h3>
                                     </div>
                                     <div class="panel-body">
-                                        <div class="tab-content">
+                                        <div class="tab-content" id="jobResultPanelBodyContent">
                                             <div id="tabular" class="tab-pane fade in active">
                                                 <div id="jobResultTable"> </div>
                                             </div>

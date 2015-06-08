@@ -35,21 +35,39 @@ AdHocJob = require('../models/AdHocJob');
 exports.getAllAdHocJobs = function(req, res) {
 
 	var clientIPaddress = req.ip || req.header('x-forwarded-for') || req.connection.remoteAddress;
-	detailLogger.info(' GET - Retrieved all AdHoc Jobs: ', { clientIPaddress: clientIPaddress });
+	
+    var callback = function(err, adHocJobs) {
+        if (err){
+            detailLogger.error('GET - Error retrieving all record: %s' ,jobID, JSON.stringify({ clientIPaddress: clientIPaddress, error: err}));
+            res.status(500)
+            return res.send(err)
+        } else {
+            detailLogger.debug(' GET - Retrieved all AdHoc Jobs by ', { clientIPaddress: clientIPaddress });
+            res.send(adHocJobs);
+        }
+    
+    }
 
-    AdHocJob.find(function(err, adHocJobs) {
-        if (err) return detailLogger.error(err);
-        res.send(adHocJobs)
-    });
+    AdHocJob
+    .find()
+    .limit(100)
+    .sort('-UpdatedTimeStamp')
+    .exec(callback);
+
 }
 
 // Get AdHoc Job based on Job ID
 exports.getAdHocJobByJobID = function (req, res) {
-    return AdHocJob.findById(req.params.JobID, function (err, adHocJob) {
+    var jobID = req.params.JobID;
+    var clientIPaddress = req.ip || req.header('x-forwarded-for') || req.connection.remoteAddress;
+    return AdHocJob.findById(jobID, function (err, adHocJob) {
     if (!err) {
-      return res.send(adHocJob);
+        detailLogger.debug(' JobID - %s information retrieved by: %s', jobID, JSON.stringify({ clientIPaddress: clientIPaddress }));
+        return res.send(adHocJob);
     } else {
-      return console.log(err);
+        detailLogger.debug(' JobID - %s information retrieval failed by: %s', jobID, JSON.stringify({ clientIPaddress: clientIPaddress, error: err  }));
+        res.status(500)
+        return res.send(err)
     }
   });
 }
@@ -196,22 +214,7 @@ exports.getStatus = function(req,res){
     }
 };
 
-/*exports.updateStatus = function(req,res){
 
-    var conditions = {'JobID': jobID}
-    var update = {$push: {'Status':req.body.newStatus,
-                        'UpdatedTimeStamp' :new Date() }}
-    var options = {safe: true, upsert: true}
-    var callback = function(err, model) {
-        if (err){
-            console.log("Error: "+ err);
-            res.send(err);
-        }
-        res.send(true)
-    }
-    AdHocJob.findOneAndUpdate(conditions, update, options, callback);
-
-}*/
 
 exports.updateStatus = function(req,res){
     var JobID = req.params.JobID
@@ -236,8 +239,8 @@ exports.updateStatus = function(req,res){
 
 exports.getJobLog = function(req,res){
 
-	var clientIPaddress = req.ip || req.header('x-forwarded-for') || req.connection.remoteAddress;
-	var jobID = req.query["jobID"];
+    var jobID = req.params.JobID;
+    var clientIPaddress = req.ip || req.header('x-forwarded-for') || req.connection.remoteAddress;
 	if (jobID != null){
         
         jobLogFile = dataDir+jobID+"/log.txt";
@@ -264,9 +267,10 @@ exports.getJobLog = function(req,res){
 
 exports.getJobResultFile = function(req,res){
 
-	var clientIPaddress = req.ip || req.header('x-forwarded-for') || req.connection.remoteAddress;
-	var jobID = req.query["jobID"];
-	if (jobID != null){
+    var jobID = req.params.JobID;
+    var clientIPaddress = req.ip || req.header('x-forwarded-for') || req.connection.remoteAddress;
+	
+    if (jobID != null){
         		
 		var options = {
 			root: __dirname + '../../../' + dataDir+jobID,
@@ -303,9 +307,10 @@ exports.getJobResultFile = function(req,res){
 
 exports.getJobResult = function(req,res){
 
-	var clientIPaddress = req.ip || req.header('x-forwarded-for') || req.connection.remoteAddress;
-	var jobID = req.query["jobID"];
-	if (jobID != null){
+    var jobID = req.params.JobID;
+    var clientIPaddress = req.ip || req.header('x-forwarded-for') || req.connection.remoteAddress;
+	
+    if (jobID != null){
         
         jobResultFile = dataDir+jobID+"/result.txt";
 		fs.readFile(jobResultFile, 'utf8', function (err,data) {
