@@ -4,9 +4,13 @@ module.exports = function(app){
 
     var adHocJobHandler = require('./controllers/adHocJobHandler');
 
-    app.get('/adHocJob', adHocJobHandler.getAdHocJob);
+    app.get('/adHocJob', adHocJobHandler.getAllAdHocJobs);
+    app.get('/adHocJob/:JobID',adHocJobHandler.getAdHocJobByJobID);
+
     app.post('/submitNewAdHocJob', adHocJobHandler.submitNewAdHocJob);
-    app.get('/jobStatus', adHocJobHandler.getStatus);
+    
+    app.get('/jobStatus/:JobID', adHocJobHandler.getStatus);
+    app.put('/jobStatus/:JobID', adHocJobHandler.updateStatus);
 
     app.get('/jobLog', adHocJobHandler.getJobLog);
     app.get('/jobResult',adHocJobHandler.getJobResult);
@@ -26,8 +30,5 @@ module.exports = function(app){
     app.get('/', function (req, res) {
         res.sendFile('dashboard.html', { root: __dirname + '/../public/'}); 
     });
-
-
-
 
 }

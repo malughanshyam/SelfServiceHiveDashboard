@@ -8,9 +8,7 @@
 
     <title> Self Service Dashboard</title>
 
-
     <link rel="stylesheet" type="text/css" href="css/metro-bootstrap.min.css">
-
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
 
@@ -31,22 +29,22 @@
 
 
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.0.7/angular.min.js"></script>
-    <script type="text/javascript" src="js/adhoc.js"></script>
+
 </head>
 
 <body ng-app="dashboardApp">
 
     <div class="page-header alignTextCenter">
-        <h2>Self Service Dashboard<br><small>A Self Service Dashboard to Schedule or Run Adhoc Hive Queries</small></h2>
+        <h1>Self Service Dashboard<br><small>A Self Service Dashboard to Schedule or Run Adhoc Hive Queries</small></h1>
     </div>
 
     <div class="container" role="main">
 
         <ul class="nav nav-pills nav-justified" id="adHocJobTabs">
-            <li id="navAdHoc"> <a data-toggle="tab" href="#adHocTab"><h4><i class="fa fa-1x fa-gavel"></i>  AdHoc Jobs</h4></a>
+            <li id="navAdHoc"> <a data-toggle="tab" href="#adHocTab"><h3><i class="fa fa-1x fa-gavel"></i>  AdHoc Jobs</h3></a>
             </li>
 
-            <li id="navScheduled"> <a data-toggle="tab" href="#scheduledTab"><h4><i class="fa fa-1x fa-clock-o"></i> Scheduled Jobs</h4></a>
+            <li id="navScheduled"> <a data-toggle="tab" href="#scheduledTab"><h3><i class="fa fa-1x fa-clock-o"></i> Scheduled Jobs</h3></a>
             </li>
         </ul>
 
@@ -55,86 +53,180 @@
             <div id="adHocTab" class="tab-pane fade in" ng-controller="adHocController">
                 <!--  Ad Hoc Tab Begins -->
 
-
-                <div class="stepsFlow">
-                    <div class="row smpl-step" style="border-bottom: 0; min-width: 500px;">
-
-                        <div class="col-xs-3 smpl-step-step disabled" id="flowStepCreate">
-                            <div class="text-center smpl-step-num">Create</div>
-                            <div class="progress">
-                                <div class="progress-bar"></div>
-                            </div>
-                            <a class="smpl-step-icon"><i class="fa fa-3x fa-edit" style="padding-left: 25%; padding-top: 20%; color: black; opacity: 0.3;" ></i></a>
-                            <div class="smpl-step-info text-center">Create New Job</div>
-                        </div>
-
-                        <div class="col-xs-3 smpl-step-step disabled" id="flowStepStatus">
-                            <div class="text-center smpl-step-num">Status</div>
-                            <div class="progress">
-                                <div class="progress-bar"></div>
-                            </div>
-                            <a class="smpl-step-icon"><i class="fa fa-3x fa-search" style="padding-left: 25%; padding-top: 20%; color: black; opacity: 0.3;" ></i></a>
-                            <div class="smpl-step-info text-center">Check the Status</div>
-                        </div>
-
-
-                        <div class="col-xs-3 smpl-step-step disabled" id="flowStepResult">
-                            <div class="text-center smpl-step-num">Result</div>
-                            <div class="progress">
-                                <div class="progress-bar"></div>
-                            </div>
-                            <a class="smpl-step-icon"><i class="fa fa-3x fa-eye" style="padding-left: 20%; padding-top: 18%; color: black; opacity: 0.3;" ></i></a>
-                            <div class="smpl-step-info text-center">View the results</div>
-                        </div>
-
-
-                    </div>
-                </div>
-
-
-
-
-
-                <ul class="nav nav-tabs nav-justified" id="adHocJobTabs" ng-hide="true">
-                    <li class="active" id="navLinkNewJob"> <a data-toggle="tab" href="#newJob">Create</a>
+                <!-- Tabs Titles under AdHoc Category Begins -->
+                <ul class="nav nav-tabs" id="adHocJobTabs">
+                    <li id="navRecentAdHoc"> <a data-toggle="tab" href="#recentAdHocTab"><h4><i class="fa fa-1x fa-history"></i>  Recent Jobs</h4></a>
                     </li>
-                    <li class="disabled" id="navLinkStatus"> <a data-toggle="tab" href="#jobStatus">Status</a>
-                    </li>
-                    <li class="disabled" id="navLinkResult"> <a data-toggle="tab" href="#jobResult">Result</a>
+
+                    <li id="navNewAdHoc"> <a data-toggle="tab" href="#newAdHocTab"><h4><i class="fa fa-1x fa-edit"></i> Create New Job</h4></a>
                     </li>
                 </ul>
+                <!-- Tabs Titles under AdHoc Category Begins -->
 
+                <!-- Tabs Content under Adhco Category Begins-->
                 <div class="tab-content">
-                    <div id="newJob" class="tab-pane fade in active">
-                        <h3>Create New Job</h3>
-                        <form class="form-horizontal">
-                            <div class="form-group">
-                                <label for="jobName" class="col-sm-2 control-label">Job Name</label>
-                                <div class="col-sm-10">
-                                    <input type="text" class="form-control" id="jobName" placeholder="Job Name" ng-model="formData.jobName">
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label for="hiveQuery" class="col-sm-2 control-label">Hive Query</label>
-                                <div class="col-sm-10">
-                                    <textarea class="form-control" id="hiveQuery" ng-model="formData.hiveQuery" rows="3" placeholder="Enter your query here..."></textarea>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <div class="col-sm-offset-2 col-sm-10">
-                                    <button ng-click="submitJob()" type="submit" class="btn btn-primary">Submit Query</button>
-                                    <button ng-click="reset()" class="btn btn-default">Clear</button>
-                                </div>
-                            </div>
+
+                    <!-- Recent Jobs Tab Content Begins-->
+                    <div id="recentAdHocTab" class="tab-pane fade in ">
+                        <h3>Recent Jobs</h3>
+                       
+                        <button type="button" ng-click="addRandomItem(row)" class="btn btn-sm btn-success pull-right">
+                            <i class="fa fa-refresh">
+                            </i> Refresh
+                        </button>
 
 
-                        </form>
+                        <table st-table="displayedCollection" st-safe-src="recentAdHocJobs" class="table table-striped">
+                            <thead>
+                            <tr>
+                                <!-- <th st-sort="JobID">JobID</th> -->
+                                <th st-sort="JobName" style="white-space: nowrap">
+                                    <a data-toggle="tooltip" title="Click to sort by Job Name" >Job Name</a></th>
+                                <th st-sort="SQLQuery">
+                                    <a data-toggle="tooltip" title="Click to sort by Hive Query">Hive Query</a></th>
+                                <th st-sort="Status">
+                                    <a data-toggle="tooltip" title="Click to sort by Status">Status</a></th>
+                                <th st-sort="UpdatedTimeStamp" st-sort-default="reverse">
+                                    <a data-toggle="tooltip" title="Click to sort by TimeStamp">UpdatedTimeStamp</a></th>
+                            </tr>
+                            <tr>
+                                <th colspan="7"> 
+                                    <div class="input-group">
+                                      <span class="input-group-addon" id="basic-addon1"> <i class="fa fa-1x fa-search"></i>  </span>
+                                      <input st-search="" class="form-control" placeholder="Search anything..." type="text" aria-describedby="basic-addon1"/>
+                                      
+                                    </div>
+                                    
+                                    
+                                </th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr ng-repeat="row in displayedCollection">
+                                <!-- <td>{{row.JobID}}</td> -->
+                                <td>{{row.JobName}}</td>
+                                <td>{{row.SQLQuery}}</td>
+                                <td>{{row.Status}}</td>
+                                <td>{{row.UpdatedTimeStamp}}</td>
+                                <td>
+                                <!-- <button type="button" ng-click="removeItem(row)" class="btn btn-sm btn-danger">
+                                    <i class="glyphicon glyphicon-remove-circle">
+                                    </i>
+                                </button> -->
+                                
+        
+                                    <button type="button" ng-click="viewResults(row)" class="btn btn-success btn-xs" ng-show="row.Status == 'JOB_SUCCESSFUL'">
+                                        <span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span> Results
+                                    </button>
+                                    <button type="button" ng-click="viewLog(row)" class="btn btn-warning btn-xs" ng-show="row.Status == 'JOB_IN_PROGRESS'" >
+                                        <span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span> View Log
+                                    </button>
+                                    <button type="button" ng-click="viewLog(row)" class="btn btn-danger btn-xs" ng-show="row.Status == 'JOB_FAILED'" >
+                                        <span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span> View Log
+                                    </button>
+                                </td>
+                                <td>
+                                    <button type="button" ng-click="removeItem(row)" class="btn btn-info btn-xs">
+                                        <i class="fa fa-share-square-o"></i> Edit | Resubmit
+                                    </button>
 
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
 
                     </div>
+                    <!-- Recent Job Tab Content Ends-->
 
-                    <div id="jobStatus" class="tab-pane fade">
-                        <h3><!-- {{formData.jobID}}  -->{{formData.jobName}}<small> - Job Status </small>
+                    <!-- New Job Tab Content Begins-->
+                    <div id="newAdHocTab" class="tab-pane fade in ">
+
+                        <!-- Create New Job Steps Flow -->
+                        <div class="stepsFlow">
+                            <div class="row smpl-step" style="border-bottom: 0; min-width: 500px;">
+
+                                <div class="col-xs-3 smpl-step-step disabled" id="flowStepCreate">
+                                    <div class="text-center smpl-step-num">Create</div>
+                                    <div class="progress">
+                                        <div class="progress-bar"></div>
+                                    </div>
+                                    <a class="smpl-step-icon"><i class="fa fa-3x fa-edit" style="padding-left: 25%; padding-top: 20%; color: black; opacity: 0.3;" ></i></a>
+                                    <div class="smpl-step-info text-center">Create New Job</div>
+                                </div>
+
+                                <div class="col-xs-3 smpl-step-step disabled" id="flowStepStatus">
+                                    <div class="text-center smpl-step-num">Status</div>
+                                    <div class="progress">
+                                        <div class="progress-bar"></div>
+                                    </div>
+                                    <a class="smpl-step-icon"><i class="fa fa-3x fa-search" style="padding-left: 25%; padding-top: 20%; color: black; opacity: 0.3;" ></i></a>
+                                    <div class="smpl-step-info text-center">Check the Status</div>
+                                </div>
+
+
+                                <div class="col-xs-3 smpl-step-step disabled" id="flowStepResult">
+                                    <div class="text-center smpl-step-num">Result</div>
+                                    <div class="progress">
+                                        <div class="progress-bar"></div>
+                                    </div>
+                                    <a class="smpl-step-icon"><i class="fa fa-3x fa-eye" style="padding-left: 20%; padding-top: 18%; color: black; opacity: 0.3;" ></i></a>
+                                    <div class="smpl-step-info text-center">View the results</div>
+                                </div>
+
+
+                            </div>
+                        </div>
+
+
+                        <!-- Tab Titles under Create New Job -->
+                        <ul class="nav nav-tabs nav-justified" id="adHocJobTabs" ng-hide="true">
+                            <li class="active" id="navLinkNewJob"> <a data-toggle="tab" href="#newJob">Create</a>
+                            </li>
+                            <li class="disabled" id="navLinkStatus"> <a data-toggle="tab" href="#jobStatus">Status</a>
+                            </li>
+                            <li class="disabled" id="navLinkResult"> <a data-toggle="tab" href="#jobResult">Result</a>
+                            </li>
+                        </ul>
+
+                        <!-- Tab Conent under Create New Job begins-->
+                        <div class="tab-content">
+
+                            <!-- Submit Job Tab Content Begins  -->
+                            <div id="newJob" class="tab-pane fade in active">
+                                <form class="form-horizontal">
+                                    
+                                    <!-- <div class="input-group">
+                                      <span class="input-group-addon" id="basic-addon1">Job Name</span>
+                                      <input type="text" class="form-control" placeholder="Username" aria-describedby="basic-addon1">
+                                      <textarea class="form-control" id="hiveQuery" ng-model="formData.hiveQuery" rows="3" placeholder="Enter your query here..."></textarea>
+                                    </div> -->
+
+                                    <div class="form-group">
+                                        <label for="jobName" class="col-sm-2 control-label">Job Name</label>
+                                        <div class="col-sm-10">
+                                            <input type="text" class="form-control" id="jobName" placeholder="Job Name" ng-model="formData.jobName">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="hiveQuery" class="col-sm-2 control-label">Hive Query</label>
+                                        <div class="col-sm-10">
+                                            <textarea class="form-control" id="hiveQuery" ng-model="formData.hiveQuery" rows="3" placeholder="Enter your query here..."></textarea>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="col-sm-offset-2 col-sm-10">
+                                            <button ng-click="submitJob()" type="submit" class="btn btn-primary">Submit Query</button>
+                                            <button ng-click="reset()" class="btn btn-default">Clear</button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                            <!-- Submit Job Tab Content Ends  -->
+
+
+                            <!-- Job Status Tab Content Begins-->
+                            <div id="jobStatus" class="tab-pane fade">
+                                <h3><!-- {{formData.jobID}}  -->{{formData.jobName}}<small> - Job Status </small>
                             <div class="jobStatusBtn">
                             <button type="button" class="btn btn-primary btn-sm" ng-click="refreshJobStatus()" id="refreshBtn" ng-show="submittedJobStatus == 'JOB_IN_PROGRESS'">
                                 <span class="glyphicon glyphicon-refresh" aria-hidden="true"  ></span> Refresh
@@ -147,110 +239,100 @@
                             </button>     
                           </h3>
 
-                        <br>
-                        <dl>
-                            <dt>Submitted Hive Query</dt>
-                            <dd><pre class="pre-scrollable" id="submittedHiveQuery"><samp>{{formData.hiveQuery}}</samp></pre></dd>
-                        </dl>
+                                <br>
+                                <dl>
+                                    <dt>Submitted Hive Query</dt>
+                                    <dd><pre class="pre-scrollable" id="submittedHiveQuery"><samp>{{formData.hiveQuery}}</samp></pre></dd>
+                                </dl>
 
-                        <!-- Job Status Alerts -->
-                        <div class="row">
-                            <div class="span12" align="center">
+                                <!-- Job Status Alerts -->
+                                <div class="row">
+                                    <div class="span12" align="center">
 
-                                <div class="alert alert-success" ng-show="submittedJobStatus == 'JOB_SUCCESSFUL'" role="alert" id="alertJobSuccess">
-                                    <span class="glyphicon glyphicon-ok" aria-hidden="true"></span> Job Succeeded
+                                        <div class="alert alert-success" ng-show="submittedJobStatus == 'JOB_SUCCESSFUL'" role="alert" id="alertJobSuccess">
+                                            <span class="glyphicon glyphicon-ok" aria-hidden="true"></span> Job Succeeded
+                                        </div>
+
+                                        <div class="alert alert-danger" ng-show="submittedJobStatus == 'JOB_FAILED'" role="alert" id="alertJobFail">
+                                            <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span> Job Failed
+                                        </div>
+
+                                        <div class="alert alert-info" ng-show="submittedJobStatus == 'JOB_IN_PROGRESS'" role="alert" id="alertJobInProgress">
+                                            <span class="fa fa-spinner fa-cog" aria-hidden="true"></span> Job execution in progress
+                                        </div>
+
+                                        <div class="alert alert-info" ng-show="submittedJobStatus == 'JOB_NOT_STARTED'" role="alert" id="alertJobNotStarted">
+                                            <span class="glyphicon glyphicon-time" aria-hidden="true"></span> Initiating the Job
+                                        </div>
+                                    </div>
                                 </div>
 
-                                <div class="alert alert-danger" ng-show="submittedJobStatus == 'JOB_FAILED'" role="alert" id="alertJobFail">
-                                    <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span> Job Failed
-                                </div>
-
-                                <div class="alert alert-info" ng-show="submittedJobStatus == 'JOB_IN_PROGRESS'" role="alert" id="alertJobInProgress">
-                                    <span class="fa fa-spinner fa-pulse" aria-hidden="true"></span> Job execution in progress
-                                </div>
-
-                                <div class="alert alert-info" ng-show="submittedJobStatus == 'JOB_NOT_STARTED'" role="alert" id="alertJobNotStarted">
-                                    <span class="glyphicon glyphicon-time" aria-hidden="true"></span> Initiating the Job
+                                <!-- Job Log -->
+                                <div id="jobLogDiv" ng-show="showJobLog == true">
+                                    <span id="jobLogLabel">Job Log</span>
+                                    <pre class="pre-scrollable" id="jobLog"><samp>{{jobLog}}</samp></pre>
                                 </div>
                             </div>
+                            <!-- Job Status Tab Content Begins-->
+
+
+                            <!-- Job Results Tab Content Begins-->
+                            <div id="jobResult" class="tab-pane fade">
+                                <br>
+                                <div>
+                                    <dl>
+                                        <dt>Submitted Hive Query</dt>
+                                        <dd><pre class="pre-scrollable" id="submittedHiveQuery"><samp>{{formData.hiveQuery}}</samp></pre></dd>
+                                    </dl>
+                                </div>
+
+
+                                <!-- Results Display Type Tab Begins -->
+                                <ul class="nav nav-pills right-to-left" id="adHocResultTypeTabs">
+                                    </li>
+                                    <li class="disabled" id="navChart1"> <a data-toggle="tab" href="#chart1" ng-click="m()">Line Chart</a>
+                                    </li>
+                                    <li class="disabled" id="navChart2"> <a data-toggle="tab" href="#chart2">Bar Chart</a>
+                                    </li>
+                                    <li class="active" id="navTabular"> <a data-toggle="tab" href="#tabular">Tabular</a>
+                                </ul>
+                                <!-- Results Display Type Tab Begins -->
+
+                                <br>
+
+                                <!-- Panel for Display Results Begins-->
+                                <div class="panel panel-info">
+                                    <div class="panel-heading">
+                                        <h3 class="panel-title"><!-- {{formData.jobID}} --> {{formData.jobName}}</h3>
+                                    </div>
+                                    <div class="panel-body">
+                                        <div class="tab-content">
+                                            <div id="tabular" class="tab-pane fade in active">
+                                                <div id="jobResultTable"> </div>
+                                            </div>
+                                            <div id="chart1" class="tab-pane fade in ">
+                                                <div id="chartLine" class="chartResult"> </div>
+                                            </div>
+                                            <div id="chart2" class="tab-pane fade in ">
+                                                <div id="chartBar" class="chartResult"> </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Panel for Display Results Ends-->
+                            </div>
+                            <!-- Job Results Tab Content Ends-->
                         </div>
-
-
-                        <div id="jobLogDiv" ng-show="showJobLog == true">
-                            <span id="jobLogLabel">Job Log</span>
-                            <pre class="pre-scrollable" id="jobLog"><samp>{{jobLog}}</samp></pre>
-                        </div>
-
+                        <!-- Tab Conent under Create New Job ends-->
                     </div>
-
-                    <!-- Results Tab-->
-                    <div id="jobResult" class="tab-pane fade">
-
-                        <br>
-
-                        <div>
-                            <dl>
-                                <dt>Submitted Hive Query</dt>
-                                <dd><pre class="pre-scrollable" id="submittedHiveQuery"><samp>{{formData.hiveQuery}}</samp></pre></dd>
-                            </dl>
-                        </div>
-
-
-                        <ul class="nav nav-pills right-to-left" id="adHocResultTypeTabs">
-
-                            </li>
-                            <li class="disabled" id="navChart1"> <a data-toggle="tab" href="#chart1" ng-click="m()">Line Chart</a>
-                            </li>
-                            <li class="disabled" id="navChart2"> <a data-toggle="tab" href="#chart2">Bar Chart</a>
-                            </li>
-                            <li class="active" id="navTabular"> <a data-toggle="tab" href="#tabular">Tabular</a>
-
-                        </ul>
-
-                        <br>
-
-                        <div class="panel panel-info">
-                            <div class="panel-heading">
-                                <h3 class="panel-title"><!-- {{formData.jobID}} --> {{formData.jobName}}</h3>
-
-
-                            </div>
-                            <div class="panel-body">
-
-
-
-                                <div class="tab-content">
-
-                                    <div id="tabular" class="tab-pane fade in active">
-                                        <div id="jobResultTable"> </div>
-                                    </div>
-
-                                    <div id="chart1" class="tab-pane fade in ">
-                                        <div id="chartLine" class="chartResult"> </div>
-                                    </div>
-
-                                    <div id="chart2" class="tab-pane fade in ">
-                                        <div id="chartBar" class="chartResult"> </div>
-                                    </div>
-
-                                </div>
-
-                            </div>
-                        </div>
-
-
-
-
-
-                    </div>
+                    <!-- New Job Tab Content Ends-->
 
                 </div>
+                <!-- Tabs Content under Adhco Category Ends-->
+
+
 
                 <br>
-
-
-
-
             </div>
             <!-- AdHoc Tab Ends-->
 
@@ -322,6 +404,9 @@
     <!-- Include all compiled plugins (below), or include individual files as needed -->
     <script src="js/bootstrap.min.js"></script>
     <script src="js/jquery.csvToTable.js"></script>
+    <script src="smart-table.min.js"></script>
+    <script src="js/adhoc.js"></script>
+    
 </body>
 
 </html>

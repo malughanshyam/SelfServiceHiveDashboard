@@ -131,3 +131,22 @@ pre {
   }
 }
 
+.stepsFlow{
+    padding-left: 20%
+}
+
+
+/*style.css*/
+.gridStyle {
+    border: 1px solid rgb(212,212,212);
+    width: 400px; 
+    height: 300px
+}
+
+.st-sort-ascent:before{
+    content: '\25B2';
+}
+
+.st-sort-descent:before{
+    content: '\25BC';
+}

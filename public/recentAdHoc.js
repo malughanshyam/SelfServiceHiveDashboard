@@ -1,45 +1,8 @@
-// var app = angular.module('dashboardApp', []);
-
-
-var app = angular.module('dashboardApp',['smart-table']);
-
+var app = angular.module('dashboardApp', []);
 
 app.controller('adHocController', function($scope, $http) {
 
     
-    // experiment with smart table
-    $scope.recentAdHocJobs = [];
-
-
-    $scope.populateRecentAdHocJobTable = function(){
-        var getRecentAdHocJobs = '/adHocJob'
-
-        $http.get(getRecentAdHocJobs, $scope.formData)
-            .success(function(data) {
-                $scope.recentAdHocJobs = data;
-                $scope.displayedCollection = [].concat($scope.recentAdHocJobs);
-            })
-            .error(function(err) {
-                // $scope.submittedJobStatus='FAILED'
-                $scope.jobLog = 'Fetching RecentAdHocJobs Failed :' + err;
-                console.log(err)
-
-            });
-    }
-
-    $scope.populateRecentAdHocJobTable();
-
-    $scope.removeItem = function removeItem(row) {
-        var index = $scope.recentAdHocJobs.indexOf(row);
-        if (index !== -1) {
-            $scope.recentAdHocJobs.splice(index, 1);
-        }
-    }
-
-
-    // experiment with smart table
-    
-
     // disable tab
     $("#navLinkStatus").addClass('disabled');
     $("#navLinkStatus").find('a').removeAttr("data-toggle");
@@ -141,15 +104,11 @@ app.controller('adHocController', function($scope, $http) {
     $scope.refreshJobStatus = function() {
 
         console.log("Refreshing Job Status");
-        $scope.checkStatusURL = '/jobStatus/' + $scope.formData.jobID
+        $scope.checkStatusURL = '/jobStatus?jobID=' + $scope.formData.jobID
 
         $http.get($scope.checkStatusURL, $scope.formData)
             .success(function(data) {
-                var newStatus = data.trim()
-                if ($scope.submittedJobStatus != newStatus){
-                    $scope.updateJobStatus($scope.formData.jobID, newStatus);
-                }
-                $scope.submittedJobStatus = newStatus;
+                $scope.submittedJobStatus = data.trim();
 
             })
             .error(function(err) {
@@ -183,30 +142,6 @@ app.controller('adHocController', function($scope, $http) {
             $("#flowStepResult").find('i').css({"opacity": "1"});
             
         }
-
-        // Update the JobID with the new Status
-        $scope.updateJobStatus = function(jobID, newJobStatus){
-
-            console.log("Refreshing Job Status");
-            var updateStatusURL = '/jobStatus/' + jobID
-
-            var reqBody = {
-                'Status' : newJobStatus
-            } 
-
-            $http.put(updateStatusURL, reqBody)
-                .success(function(data) {
-                    console.log("New Job Status Updated")
-                })
-                .error(function(err) {
-                    // $scope.submittedJobStatus='FAILED'
-                    console.log("New Job Status Failed")
-                    console.log(err)
-                });
-
-
-        }
-
 
 
         /* if($scope.submittedJobStatus == 'JOB_SUCCESSFUL' )

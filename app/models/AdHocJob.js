@@ -1,6 +1,7 @@
 var mongoose = require('mongoose');
 
 var schema = mongoose.Schema({
+	_id				: String,
     JobID      	 	: String,
     JobName     	: String,
     SQLQuery    	: String, 

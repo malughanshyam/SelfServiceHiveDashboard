@@ -32,7 +32,7 @@ detailLogger.info(' Logged In');
 AdHocJob = require('../models/AdHocJob');
 
 // Get all the AdHoc Jobs
-exports.getAdHocJob = function(req, res) {
+exports.getAllAdHocJobs = function(req, res) {
 
 	var clientIPaddress = req.ip || req.header('x-forwarded-for') || req.connection.remoteAddress;
 	detailLogger.info(' GET - Retrieved all AdHoc Jobs: ', { clientIPaddress: clientIPaddress });
@@ -43,6 +43,18 @@ exports.getAdHocJob = function(req, res) {
     });
 }
 
+// Get AdHoc Job based on Job ID
+exports.getAdHocJobByJobID = function (req, res) {
+    return AdHocJob.findById(req.params.JobID, function (err, adHocJob) {
+    if (!err) {
+      return res.send(adHocJob);
+    } else {
+      return console.log(err);
+    }
+  });
+}
+
+// Create new AdHoc Job
 exports.submitNewAdHocJob = function(req, res) {
 
 	
@@ -58,7 +70,7 @@ exports.submitNewAdHocJob = function(req, res) {
     }
 
     var clientIPaddress = req.ip || req.header('x-forwarded-for') || req.connection.remoteAddress;
-    var jobStatus = 'NOT_STARTED'
+    var jobStatus = 'JOB_NOT_STARTED'
 
     // Create a new Job ID 	
     var ObjectId = mongoose.Types.ObjectId;
@@ -157,10 +169,11 @@ exports.submitNewAdHocJob = function(req, res) {
 
 };
 
+// Get Job Status from the data/jobID/status.txt file
 exports.getStatus = function(req,res){
 
 	var clientIPaddress = req.ip || req.header('x-forwarded-for') || req.connection.remoteAddress;
-	var jobID = req.query["jobID"];
+	var jobID = req.params.JobID
 	if (jobID != null){
         jobStatusFile = dataDir+jobID+"/status.txt";
 
@@ -183,6 +196,43 @@ exports.getStatus = function(req,res){
     }
 };
 
+/*exports.updateStatus = function(req,res){
+
+    var conditions = {'JobID': jobID}
+    var update = {$push: {'Status':req.body.newStatus,
+                        'UpdatedTimeStamp' :new Date() }}
+    var options = {safe: true, upsert: true}
+    var callback = function(err, model) {
+        if (err){
+            console.log("Error: "+ err);
+            res.send(err);
+        }
+        res.send(true)
+    }
+    AdHocJob.findOneAndUpdate(conditions, update, options, callback);
+
+}*/
+
+exports.updateStatus = function(req,res){
+    var JobID = req.params.JobID
+  return AdHocJob.findById(JobID, function (err, adHocJob) {
+    console.log('JobID -'+ adHocJob.JobID+ '  Old Job Status: '  + req.body.Status + "Object: " + JSON.stringify(adHocJob));
+    detailLogger.debug('JobID - %s Old Job Status: %s; ObjectID:',adHocJob.JobID,req.body.Status, JSON.stringify( adHocJob));
+    adHocJob.Status = req.body.Status;
+    adHocJob.UpdatedTimeStamp = new Date();
+    console.log('JobID -'+ adHocJob.JobID+ '  Updated Job Status to: '  + JSON.stringify(adHocJob));
+    detailLogger.debug('JobID - %s Updated Job Status to: %s',adHocJob.JobID, JSON.stringify( adHocJob));
+    
+    return adHocJob.save(function (err) {
+      if (!err) {
+        console.log("updated");
+      } else {
+        console.log(err);
+      }
+      return res.send(adHocJob);
+    });
+  });
+}
 
 
 exports.getJobLog = function(req,res){
