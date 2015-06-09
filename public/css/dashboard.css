@@ -164,3 +164,9 @@ pre {
     white-space:pre; /* you can also try white-space: normal; */
     max-width:none;
 }
+
+
+/* Width of modal */
+#modelDialogViewLog, #modelDialogViewResult {
+  width: 90%;
+}

@@ -39,6 +39,8 @@ public class HiveExecutor {
 	private ResultSet res;
 	private Exception occurredException;
 	private PrintWriter writerLog;
+
+	public static int HIVE_CONNECTION_TIMEOUT = 10 ; //seconds
 	
 	public enum JobStatus {
 		NOT_STARTED, SUCCESS, FAILED, IN_PROGRESS
@@ -128,6 +130,7 @@ public class HiveExecutor {
 		}
 		
 		String connectionURL = "jdbc:hive2://" + hiveHost + "/" + dbName;
+		DriverManager.setLoginTimeout(HIVE_CONNECTION_TIMEOUT);
 		this.con = DriverManager.getConnection(connectionURL, hiveUser, "");
 		// Connection con = DriverManager.getConnection("jdbc:hive2://172.16.226.129:10000/default", "hive", "");
 		this.stmt = con.createStatement();

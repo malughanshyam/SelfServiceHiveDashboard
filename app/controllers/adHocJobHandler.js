@@ -139,7 +139,10 @@ exports.submitNewAdHocJob = function(req, res) {
 		        var ws = fs.createOutputStream(queryFile)
 		        ws.write(sqlQuery)
 		        detailLogger.debug('JobID - %s  Hive Query written to file: %s',jobID, JSON.stringify({ QueryFile : queryFile}));
-		        executeHiveScript()
+		        res.send({
+                    "JobID": jobID
+                });
+                executeHiveScript()
 
             }
         })
@@ -157,7 +160,7 @@ exports.submitNewAdHocJob = function(req, res) {
 
         var options = {
             cwd: execDirPath,
-            timeout: 5000
+            timeout: 0
         }
 
         function callback(error, results) {
@@ -165,13 +168,11 @@ exports.submitNewAdHocJob = function(req, res) {
             	detailLogger.error('JobID - %s  Execution of Hive Query failed: %s',jobID, JSON.stringify({ error: error}));
             	highLevelLogger.error('JobID - %s  Execution of Hive Query failed: %s',jobID, JSON.stringify({ error: error}));
             	highLevelLogger.info(' JobID - %s  AdHoc Job failed: %s', jobID, JSON.stringify({ clientIPaddress: clientIPaddress,  JobName : jobName, sqlQuery : sqlQuery, error: error  }));
-                res.status(500)
-                return res.send(error)
+                
             } else {
-            	detailLogger.debug('JobID - %s  Hive Query Script Execution Initiated',jobID)
-                res.send({
-                    "JobID": jobID
-                });
+            	detailLogger.debug('JobID - %s  Hive Query Script Execution Completed',jobID)
+                highLevelLogger.debug('JobID - %s  Hive Query Script Execution Completed',jobID)
+                
             }
         }
 

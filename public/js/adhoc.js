@@ -63,20 +63,34 @@ app.controller('adHocController', function($scope, $compile, $http) {
                 $scope.formData.jobID = data.JobID;
                 console.log("FormData.jobID: " );
                 console.log($scope.formData.jobID);
-
-                $scope.refreshInterval = setInterval(function() {
-                    refreshTimer()
-                }, 1000);
-
-                function refreshTimer() {
-                    $scope.refreshJobStatus();
-                }
+                $scope.activateCurrentJobStatusTab()
 
             })
             .error(function(err) {
+                console.log("Failed")
+                console.log(err)
+                $scope.formData.jobID = err.JobID;
                 $scope.submittedJobStatus = 'FAILED';
+                $scope.activateCurrentJobStatusTab()
             });
 
+        console.log("Outside")
+
+
+
+        console.log("Clicked Execute")
+    }
+
+    $scope.activateCurrentJobStatusTab = function(){
+
+        // 1 second = 1000 milliseconds
+        $scope.refreshInterval = setInterval(function() {
+                    refreshTimer()
+                }, 2000); // milliseconds
+
+        function refreshTimer() {
+            $scope.refreshJobStatus();
+        }
 
         /*enable tab*/
         $("#navLinkStatus").removeClass('disabled');
@@ -91,13 +105,9 @@ app.controller('adHocController', function($scope, $compile, $http) {
 
         $("#flowStepCreate").removeClass('disabled');
         $("#flowStepCreate").addClass('complete');
-       
+    
         $("#flowStepStatus").find('i').css({"opacity": "1"});
-
-
-        console.log("Clicked Execute")
     }
-
 
     $scope.refreshJobStatus = function() {
 
@@ -136,9 +146,6 @@ app.controller('adHocController', function($scope, $compile, $http) {
 
         if ($scope.submittedJobStatus == 'JOB_SUCCESSFUL' || $scope.submittedJobStatus == 'JOB_FAILED') {
             clearInterval($scope.refreshInterval)
-        }
-
-        if ($scope.submittedJobStatus == 'JOB_SUCCESSFUL'){
             $("#flowStepStatus").removeClass('disabled');
             $("#flowStepStatus").addClass('complete');
             $("#flowStepResult").find('i').css({"opacity": "1"});
@@ -351,7 +358,8 @@ app.controller('adHocController', function($scope, $compile, $http) {
         $("#navLinkStatus").find('a').removeAttr("data-toggle");
 
         $scope.computeJobResults($scope.formData.jobID)
-
+        $("#flowStepResult").removeClass('disabled');
+        $("#flowStepResult").addClass('complete'); 
     }
 
     $scope.computeJobResults = function(jobID){
@@ -361,9 +369,7 @@ app.controller('adHocController', function($scope, $compile, $http) {
         $http.get($scope.checkResultURL)
             .success(function(data) {
                 $scope.jobResult = data;
-                $scope.createResultTable();  
-                $("#flowStepResult").removeClass('disabled');
-                $("#flowStepResult").addClass('complete');    
+                $scope.createResultTable();          
             })
                 
             .error(function(err) {

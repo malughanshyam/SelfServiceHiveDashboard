@@ -15,8 +15,8 @@ detailLogger.info(' ***** Server Started ***** ');
 // Don't crash when an error occurs, instead log it
 process.on('uncaughtException', function(err){
 	console.log(err);
-	highLevelLogger.error(' uncaughtException: %s ', err );
-	detailLogger.error(' uncaughtException: %s ', err);
+	highLevelLogger.error(' uncaughtException : ', err );
+	detailLogger.error(' uncaughtException : ', err);
 });
 
 

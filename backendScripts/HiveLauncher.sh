@@ -26,6 +26,8 @@ hiveHost="172.16.226.129:10000";
 dbName="default";
 hiveUser="hive";
 
+statusFile='status.txt'
+logFile='log.txt'
 
 #jobID="$hiveUser`date '+%Y%m%d%H%M%S'`" 	
 jobID=$1 	
@@ -44,4 +46,11 @@ done
 
 java -cp $CLASSPATH HiveExecutor $jobID $outputDataDir $hiveUser $hiveHost $dbName $inputQueryFile
 
-#java -cp $CLASSPATH HiveExecutor $1 $2 $3 $4
+# Check the exitStatus
+exitStatus=$?
+
+# If not 0, update the status file of the JobID
+if [ $exitStatus -ne 0 ]; then
+        echo -e "JOB_FAILED" > $outputDataDir/$statusFile
+        echo -e "Hive Launcher Script Failed! Check if Hive server is up. " > $outputDataDir/$logFile
+fi
