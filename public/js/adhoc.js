@@ -4,10 +4,6 @@ var app = angular.module('dashboardApp', ['ui.bootstrap','smart-table', 'ngAnima
 
 app.controller('adHocController', function($scope, $compile, $http) {
 
-    console.log($("#jobResultPanelBodyContent").width());
-    console.log($('#jobResultTab').width());
-    console.log($('#tabular').width());
-
     // experiment with smart table
     $scope.recentAdHocJobs = [];
     $scope.displayedCollection = [];
@@ -15,8 +11,6 @@ app.controller('adHocController', function($scope, $compile, $http) {
     // Variables to store the data for Bar and Line charts to prevent recomputing the already populated charts
     $scope.barChartComputedData;
     $scope.lineChartComputedData;
-
-
 
     // disable tab
     $("#navLinkStatus").addClass('disabled');
@@ -742,30 +736,22 @@ app.controller('adHocController', function($scope, $compile, $http) {
     }
 
     $scope.saveAsPicture = function (element){
+        
         html2canvas(element, {
+            allowTaint:true,
+            useCORS: true,
             onrendered: function(canvas) {
+                document.body.appendChild(canvas);
                 canvas.toBlob(function(blob) {
+                    //document.body.appendChild(canvas);
                     saveAs(blob, "dashboard.png"); 
                 });
 
             }
         });
+
+       
     }
 
-});
-/*
-$(function() { 
-    $("#saveAsPicture").click(function() { 
-        console.log("clicked me")
-        html2canvas($("#html"), {
-            onrendered: function(canvas) {
-                theCanvas = canvas;
-                document.body.appendChild(canvas);
 
-                canvas.toBlob(function(blob) {
-                    saveAs(blob, "Dashboard.png"); 
-                });
-            }
-        });
-    });
-}); */
+});

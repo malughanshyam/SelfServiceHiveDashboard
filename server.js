@@ -2,6 +2,24 @@
 var express  = require('express');
 var app      = express(); 								// create our app w/ express
 
+var logger = require('./app/config/logger'); 			// load the Logger config
+
+// Load the loggers
+var winston = require('winston');
+var highLevelLogger = winston.loggers.get('HighLevelLog');
+var detailLogger = winston.loggers.get('DetailedLog');
+
+highLevelLogger.info(' ***** Server Started ***** ');
+detailLogger.info(' ***** Server Started ***** ');
+
+// Don't crash when an error occurs, instead log it
+process.on('uncaughtException', function(err){
+	console.log(err);
+	highLevelLogger.error(' uncaughtException: %s ', err );
+	detailLogger.error(' uncaughtException: %s ', err);
+});
+
+
 var mongoose = require('mongoose'); 					// mongoose for mongodb
 var port  	 = process.env.PORT || 8080; 				// set the port
 var morgan = require('morgan'); 		// log requests to the console (express4)
@@ -9,8 +27,8 @@ var bodyParser = require('body-parser'); 	// pull information from HTML POST (ex
 var methodOverride = require('method-override'); // simulate DELETE and PUT (express4)
 var cookieParser = require('cookie-parser');
 
-var logger = require('./app/config/logger'); 			// load the Logger config
 var database = require('./app/config/database'); 			// load the database config
+var cors = require("cors");
 
 // configuration ===============================================================
 mongoose.connect(database.url); 	// connect to mongoDB database on modulus.io
@@ -24,6 +42,7 @@ app.use(function(req, res, next) {
 });
 */
 app.use(express.static(__dirname + '/public')); 				// set the static files location /public/img will be /img for users
+app.use(cors());
 app.use(morgan('dev')); 										// log every request to the console
 app.use(bodyParser.urlencoded({'extended':'true'})); 			// parse application/x-www-form-urlencoded
 app.use(bodyParser.json()); 									// parse application/json

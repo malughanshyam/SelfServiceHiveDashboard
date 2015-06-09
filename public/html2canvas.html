@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title> Self Service Dashboard</title>
+
+    <!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css"> -->
+    <link rel="stylesheet" href="css/metro-bootstrap.min.css">
+
+    <!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css"> -->
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+
+
+    <!-- <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css"> -->
+    <link rel="stylesheet" href="css/font-awesome.min.css">
+
+    <!--<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.3.13/angular.js"></script> -->
+    <script src="js/angular.min.js"></script>
+
+
+    <!--   <script src="//angular-ui.github.io/bootstrap/ui-bootstrap-tpls-0.13.0.js"></script> -->
+    <script src="js/ui-bootstrap-tpls-0.13.0.min.js"></script>
+
+
+    <!--    <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.3.13/angular-animate.min.js"></script> -->
+    <script src="js/angular-animate.min.js"></script>
+
+
+    <!-- Load c3.css -->
+    <link href="css/c3.min.css" rel="stylesheet" type="text/css">
+
+    <!-- Load d3.js and c3.js -->
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min.js" charset="utf-8"></script> -->
+    <script src="js/d3.min.js" charset="utf-8"></script>
+
+    <script src="js/c3.min.js"></script>
+
+    <!-- Bootstrap core CSS -->
+    <!-- <link href="css/bootstrap.min.css" rel="stylesheet"> -->
+    <!-- Bootstrap theme -->
+    <link href="css/bootstrap-theme.min.css" rel="stylesheet">
+    <link href="css/dashboard.css" rel="stylesheet">
+    <link href="css/common_template.css" rel="stylesheet">
+
+
+</head>
+<body>
+
+
+<div class="jumbotron">
+  <h1>Hello, world!</h1>
+  <p><a class="btn btn-primary btn-lg" href="#" role="button" id="clickBtn">Learn more</a></p>
+      <div>Hello</div>
+
+</div>
+
+    <div id="div">  <p id="para">...</p> </div>
+
+
+
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script> -->
+    <script src="js/jquery.min.js"></script>
+
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/jquery.csvToTable.js"></script>
+    <!--
+    <script src="http://code.angularjs.org/1.2.3/angular-animate.js"></script>
+    <script src="ui-bootstrap-0.13.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/0.13.0/ui-bootstrap-tpls.min.js"></script>
+    -->
+    <script src="js/smart-table.min.js"></script>
+    <script src="js/adhoc.js"></script>
+    <script src="js/html2canvas.js"></script>
+    <script src="js/canvas-toBlob.js"></script>
+    <script src="js/FileSaver.min.js"></script>
+
+    <script>
+
+    $('#div').html("<div> Added dynamically </div>")
+
+    $( "#clickBtn" ).click(function() {
+      console.log( "Handler for .click() called." );
+
+      html2canvas(, {
+            useCORS:true,
+            onrendered: function(canvas) {
+                canvas.toBlob(function(blob) {
+                    document.body.appendChild(canvas);
+                    //saveAs(blob, "dashboard.png"); 
+                });
+
+            }
+        });
+
+
+});
+
+    </script>
+
+
+</body>
+
+</html>

@@ -11,10 +11,6 @@ var winston = require('winston');
 var highLevelLogger = winston.loggers.get('HighLevelLog');
 var detailLogger = winston.loggers.get('DetailedLog');
 
-
-highLevelLogger.info(' ***** Server Started ***** ');
-detailLogger.info(' ***** Server Started ***** ');
-
 // highLevelLogger.debug("Debug")
 // highLevelLogger.verbose("verbose")
 // highLevelLogger.info("info")
