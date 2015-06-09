@@ -249,8 +249,14 @@ app.controller('adHocController', function($scope, $compile, $http) {
         $compile($('#modelViewResults'))($scope);
 
         $("#modelViewResults").find('#submittedHiveQuery').text(adHocJob.SQLQuery);
+        $("#modelViewResults").find('#resultPanelTitle').text(adHocJob.JobName);
 
         $scope.computeJobResults(adHocJob.JobID);
+
+        $('#modelViewResults').on('hidden.bs.modal', function () {
+            $scope.barChartComputedData  = null;
+            $scope.lineChartComputedData = null;
+        })
 
     }
 
@@ -497,6 +503,7 @@ app.controller('adHocController', function($scope, $compile, $http) {
 
         // Variable to store the data for chart to prevent duplicate computation/drawing of the charts
         $scope.barChartComputedData = $scope.jobResult   
+        $('#downloadBarChartBtnId').removeClass('disabled');     
 
     }
 
@@ -554,6 +561,7 @@ app.controller('adHocController', function($scope, $compile, $http) {
 
         // Variable to store the data for chart to prevent duplicate computation/drawing of the charts
         $scope.lineChartComputedData = $scope.jobResult   
+        $('#downloadLineChartBtnId').removeClass('disabled');
 
     }
 
@@ -728,5 +736,36 @@ app.controller('adHocController', function($scope, $compile, $http) {
 
     }
 
+    $scope.saveDivAsPicture = function (){
+        console.log("clicked me")
+        $scope.saveAsPicture ($("#resultPanel"))
+    }
+
+    $scope.saveAsPicture = function (element){
+        html2canvas(element, {
+            onrendered: function(canvas) {
+                canvas.toBlob(function(blob) {
+                    saveAs(blob, "dashboard.png"); 
+                });
+
+            }
+        });
+    }
 
 });
+/*
+$(function() { 
+    $("#saveAsPicture").click(function() { 
+        console.log("clicked me")
+        html2canvas($("#html"), {
+            onrendered: function(canvas) {
+                theCanvas = canvas;
+                document.body.appendChild(canvas);
+
+                canvas.toBlob(function(blob) {
+                    saveAs(blob, "Dashboard.png"); 
+                });
+            }
+        });
+    });
+}); */

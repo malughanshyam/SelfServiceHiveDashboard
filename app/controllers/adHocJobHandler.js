@@ -12,8 +12,8 @@ var highLevelLogger = winston.loggers.get('HighLevelLog');
 var detailLogger = winston.loggers.get('DetailedLog');
 
 
-highLevelLogger.info(' Logged In');
-detailLogger.info(' Logged In');
+highLevelLogger.info(' ***** Server Started ***** ');
+detailLogger.info(' ***** Server Started ***** ');
 
 // highLevelLogger.debug("Debug")
 // highLevelLogger.verbose("verbose")

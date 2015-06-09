@@ -155,3 +155,12 @@ pre {
 @-moz-document url-prefix() {
   fieldset { display: table-cell; }
 }
+
+#adHocResultTypeTabs li {
+    padding-left: 1em;
+}
+
+.tooltip-inner  {
+    white-space:pre; /* you can also try white-space: normal; */
+    max-width:none;
+}
