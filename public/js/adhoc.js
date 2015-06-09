@@ -2,7 +2,7 @@
 
 var app = angular.module('dashboardApp', ['ui.bootstrap','smart-table', 'ngAnimate']);
 
-app.controller('adHocController', function($scope, $http) {
+app.controller('adHocController', function($scope, $compile, $http) {
 
     console.log($("#jobResultPanelBodyContent").width());
     console.log($('#jobResultTab').width());
@@ -11,6 +11,10 @@ app.controller('adHocController', function($scope, $http) {
     // experiment with smart table
     $scope.recentAdHocJobs = [];
     $scope.displayedCollection = [];
+    
+    // Variables to store the data for Bar and Line charts to prevent recomputing the already populated charts
+    $scope.barChartComputedData;
+    $scope.lineChartComputedData;
 
 
 
@@ -20,12 +24,6 @@ app.controller('adHocController', function($scope, $http) {
 
     $("#navLinkResult").addClass('disabled');
     $("#navLinkResult").find('a').removeAttr("data-toggle");
-
-    $("#navChart1").addClass('disabled');
-    $("#navChart1").find('a').removeAttr("data-toggle");
-
-    $("#navChart2").addClass('disabled');
-    $("#navChart2").find('a').removeAttr("data-toggle");
 
     $("#flowStepCreate").find('i').css({"opacity": "1"});    
 
@@ -68,8 +66,6 @@ app.controller('adHocController', function($scope, $http) {
 
         $http.post('/submitNewAdHocJob', $scope.formData)
             .success(function(data) {
-                console.log("Back in adhoc.js. \n Data Received: " + data)
-                
                 $scope.formData.jobID = data.JobID;
                 console.log("FormData.jobID: " );
                 console.log($scope.formData.jobID);
@@ -81,7 +77,6 @@ app.controller('adHocController', function($scope, $http) {
                 function refreshTimer() {
                     $scope.refreshJobStatus();
                 }
-                console.log("Returned to adhoc.js")
 
             })
             .error(function(err) {
@@ -246,9 +241,13 @@ app.controller('adHocController', function($scope, $http) {
 
         $("#modelViewResults").find('#JobName').text(adHocJob.JobName);
         $("#modelViewResults").find('.modal-body').html(jobResultTabContent);
-        $("#modelViewResults").find('#JobID').text("(" + adHocJob.JobID + ")");
+        // $("#modelViewResults").find('#JobID').text("(" + adHocJob.JobID + ")");
 
         $("#modelViewResults").find('.modal-body').html(jobResultTabContent);
+
+        // compile the element
+        $compile($('#modelViewResults'))($scope);
+
         $("#modelViewResults").find('#submittedHiveQuery').text(adHocJob.SQLQuery);
 
         $scope.computeJobResults(adHocJob.JobID);
@@ -362,31 +361,15 @@ app.controller('adHocController', function($scope, $http) {
         $http.get($scope.checkResultURL)
             .success(function(data) {
                 $scope.jobResult = data;
-                $scope.createResultTable(createAndEnableCharts);
-                
-//                $scope.createCharts(enableChartTabs);
-                 function createAndEnableCharts(){
-
-                    $scope.createCharts(enableChartTabs);
-                    function enableChartTabs () {
-                        /*enable tab*/
-                        $("#navChart1").removeClass('disabled');
-                        $("#navChart1").find('a').attr("data-toggle", "tab");
-
-                        $("#navChart2").removeClass('disabled');
-                        $("#navChart2").find('a').attr("data-toggle", "tab");
-
-                        $("#flowStepResult").removeClass('disabled');
-                        $("#flowStepResult").addClass('complete');  
-                    }       
-                }
+                $scope.createResultTable();  
+                $("#flowStepResult").removeClass('disabled');
+                $("#flowStepResult").addClass('complete');    
             })
                 
             .error(function(err) {
                 // $scope.submittedJobStatus='FAILED'
                 $scope.jobResult = 'Fetching Result Failed :' + err;
                 console.log(err)
-
             });
     }
     // Refactor View Results Ends
@@ -430,9 +413,8 @@ app.controller('adHocController', function($scope, $http) {
         });
     }
 
-    $scope.createResultTable = function(callback) {
+    $scope.createResultTable = function() {
         $scope.createHTMLTable('jobResultTable', $scope.jobResult);
-        callback();
     }
 
 
@@ -459,6 +441,124 @@ app.controller('adHocController', function($scope, $http) {
     };
 
     $scope.reset();
+
+
+    $scope.createBarChart = function() {
+
+           // Compute the Width for the Charts
+        var chartWidth = $("#jobResultPanelBodyContent").width()
+
+        // Check against the locally stored chart data to prevent duplicate computation/drawing of the charts
+        if ($scope.barChartComputedData == $scope.jobResult){
+            return true;
+        }
+        
+        // Parse the TSV Result file into Array of Data 
+        var x = $scope.jobResult.split('\n');
+        for (var i = 0; i < x.length; i++) {
+            y = x[i].split('\t');
+            x[i] = y;
+        }
+
+        $scope.chartData = x
+
+        // $scope.chartDataHeader = x[0]
+        // $scope.chartDataSplit = x.slice(1);
+
+        // console.log("Header: ")
+        // console.log($scope.chartDataHeader)
+
+        // console.log("Data: ")
+        // console.log($scope.chartDataSplit)
+
+        // Generate Bar Chart
+        var chartBar = c3.generate({
+            bindto: '#chartBar',
+            data: {
+                x: $scope.chartData[0][0],
+                rows: $scope.chartData,
+                type: 'bar'
+            },
+            axis: {
+                x: {
+                    type: 'category',
+                    tick: {
+                        rotate: 75,
+                        multiline: false
+                    },
+                    height: 130
+                }
+            },
+            size: {
+                width: chartWidth
+            }
+
+        });    
+
+        // Variable to store the data for chart to prevent duplicate computation/drawing of the charts
+        $scope.barChartComputedData = $scope.jobResult   
+
+    }
+
+
+    $scope.createLineChart = function() {
+
+        // Compute the Width for the Charts
+        var chartWidth = $("#jobResultPanelBodyContent").width()
+        
+        // Check against the locally stored chart data to prevent duplicate computation/drawing of the charts
+        if ($scope.lineChartComputedData == $scope.jobResult){
+            return true;
+        }
+
+        // Parse the TSV Result file into Array of Data 
+        var x = $scope.jobResult.split('\n');
+        for (var i = 0; i < x.length; i++) {
+            y = x[i].split('\t');
+            x[i] = y;
+        }
+
+        $scope.chartData = x
+
+        // $scope.chartDataHeader = x[0]
+        // $scope.chartDataSplit = x.slice(1);
+
+        // console.log("Header: ")
+        // console.log($scope.chartDataHeader)
+
+        // console.log("Data: ")
+        // console.log($scope.chartDataSplit)
+
+        // Generate Line Chart
+        var chartLine = c3.generate({
+            bindto: '#chartLine',
+            data: {
+                x: $scope.chartData[0][0],
+                rows: $scope.chartData,
+                type: 'line'
+            },
+            axis: {
+                x: {
+                    type: 'category',
+                    tick: {
+                        rotate: 75,
+                        multiline: false
+                    },
+                    height: 130
+                }
+            },
+            size: {
+                width: chartWidth
+            }
+        });
+
+        // Variable to store the data for chart to prevent duplicate computation/drawing of the charts
+        $scope.lineChartComputedData = $scope.jobResult   
+
+    }
+
+
+    
 
     $scope.createCharts = function (callbackFunction) {
 
