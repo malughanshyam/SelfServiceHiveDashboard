@@ -56,7 +56,7 @@
     </div>
 
     <div id="impAlertPlaceholder" align="center"> </div>
-        
+
     <div class="container" role="main">
 
 
@@ -145,7 +145,7 @@
                                         </button>
                                     </td>
                                     <td>
-                                        <button type="button" ng-click="viewLog(row)" class="btn btn-info btn-xs">
+                                        <button type="button" ng-click="editAndResubmitJob(row)" class="btn btn-info btn-xs">
                                             <i class="fa fa-share-square-o"></i> Edit | Resubmit
                                         </button>
 
@@ -222,7 +222,7 @@
                     <!-- New Job Tab Content Begins-->
                     <div id="newAdHocTab" class="tab-pane fade in ">
 
-                        <button type="button" ng-click="resetNewJobTab()" class="btn btn-sm btn-success pull-right" ng-show="showCreateNewJobBtn">
+                        <button type="button" ng-click="resetNewJobTab() && flashAlertCheckRecentJobs()" class="btn btn-sm btn-success pull-right" ng-show="showCreateNewJobBtn">
                             <i class="fa fa-plus">
                             </i> New Job
                         </button>

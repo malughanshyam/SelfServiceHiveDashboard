@@ -73,7 +73,7 @@ app.controller('adHocController', function($scope, $compile, $http) {
         $compile($('#newAdHocTab'))($scope);
         //activateTab("newAdHocTab");
         $('#newAdHocTab').addClass('active');
-        $scope.flashAlertCheckRecentJobs();
+        //$scope.flashAlertCheckRecentJobs(); -- Now, directly called from HTML on clicking New Job Button
         console.log("AdHoc Tab Reset");
 
     }
@@ -595,8 +595,6 @@ app.controller('adHocController', function($scope, $compile, $http) {
     }
 
 
-
-
     $scope.createCharts = function(callbackFunction) {
 
         // Compute the Width for the Charts
@@ -785,6 +783,19 @@ app.controller('adHocController', function($scope, $compile, $http) {
             }
         });
 
+    }
+
+    $scope.editAndResubmitJob = function(adHocJob){
+        console.log("received : ");
+        console.log(adHocJob);
+        $('#recentAdHocTab').removeClass('active');
+        $('#navRecentAdHoc').removeClass('active');
+        $('#navNewAdHoc').addClass('active');
+        $scope.resetNewJobTab ();
+        console.log("Reset Done");
+        $scope.formData.hiveQuery = adHocJob.SQLQuery;
+        $scope.formData.jobName = adHocJob.JobName;
+        console.log($scope.formData);
 
     }
 
