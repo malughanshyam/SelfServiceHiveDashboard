@@ -1,6 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="backendScripts"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/J2SE-1.5"/>
+	<classpathentry kind="lib" path="backendScripts/HiveJDBCjars/commons-logging-1.1.3.jar"/>
+	<classpathentry kind="lib" path="backendScripts/HiveJDBCjars/hadoop-0.20.2-dev-core.jar"/>
+	<classpathentry kind="lib" path="backendScripts/HiveJDBCjars/hive-exec-0.13.0.jar"/>
+	<classpathentry kind="lib" path="backendScripts/HiveJDBCjars/hive-jdbc.jar"/>
+	<classpathentry kind="lib" path="backendScripts/HiveJDBCjars/hive-service.jar"/>
+	<classpathentry kind="lib" path="backendScripts/HiveJDBCjars/httpclient-4.2.5.jar"/>
+	<classpathentry kind="lib" path="backendScripts/HiveJDBCjars/httpcore-4.2.5.jar"/>
+	<classpathentry kind="lib" path="backendScripts/HiveJDBCjars/libfb303-0.9.0.jar"/>
+	<classpathentry kind="lib" path="backendScripts/HiveJDBCjars/libthrift-0.9.0.jar"/>
+	<classpathentry kind="lib" path="backendScripts/HiveJDBCjars/log4j-1.2.16.jar"/>
+	<classpathentry kind="lib" path="backendScripts/HiveJDBCjars/slf4j-log4j12-1.6.1.jar"/>
+	<classpathentry kind="lib" path="backendScripts/HiveJDBCjars/slf4j.api-1.6.1.jar"/>
+	<classpathentry kind="var" path="MONGO"/>
+	<classpathentry kind="lib" path="backendScripts/HiveJDBCjars/bson-3.0.2.jar"/>
+	<classpathentry kind="lib" path="backendScripts/HiveJDBCjars/mongo-java-driver-3.0.2.jar"/>
+	<classpathentry kind="lib" path="backendScripts/HiveJDBCjars/mongodb-driver-3.0.2.jar"/>
 	<classpathentry kind="output" path="backendScripts"/>
 </classpath>

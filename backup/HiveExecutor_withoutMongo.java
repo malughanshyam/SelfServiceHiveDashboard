@@ -17,15 +17,15 @@ import java.sql.Statement;
 import java.sql.DriverManager;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
-
 
 public class HiveExecutor {
 	private static String driverName = "org.apache.hive.jdbc.HiveDriver";
 	private String jobID;
 	private String hiveHost;
-	private String hiveDBName;
+	private String dbName;
 	private String hiveUser;
 	private String queryFilePath;
 	private Connection con;
@@ -39,7 +39,6 @@ public class HiveExecutor {
 	private ResultSet res;
 	private Exception occurredException;
 	private PrintWriter writerLog;
-	private MongoExecutor mongoExecutor;
 
 	public static int HIVE_ESTABLISH_CONNECTION_TIMEOUT = 10 ; //seconds
 	
@@ -57,7 +56,7 @@ public class HiveExecutor {
 		this.outputDir = args[1];
 		this.hiveUser = args[2];
 		this.hiveHost = args[3];
-		this.hiveDBName = args[4];
+		this.dbName = args[4];
 		this.queryFilePath = args[5];
 		this.resultFilePath = this.outputDir +"/result.txt";
 		this.statusFilePath = this.outputDir +"/status.txt";
@@ -65,20 +64,6 @@ public class HiveExecutor {
 		this.jobStatus = JobStatus.NOT_STARTED;
 		//this.writerLog = new PrintWriter(this.logFilePath, "UTF-8");		
 		this.writerLog = new PrintWriter(new FileWriter(this.logFilePath, true)); 
-		
-		// Establish MongoDB Connection 
-		// args[6] = mongoHostAddress = "localhost"
-		// args[7] = port = "27017"
-		// args[8] = dashboardDB = "SelfServiceHiveDashboard"
-		// args[9] = dashboardDBCollection = "AdHocJob"
-		
-		try {
-			this.mongoExecutor = new MongoExecutor(args[6], Integer.parseInt(args[7]));
-			this.mongoExecutor.connectDBCollection(args[8], args[9] );		
-		} catch (Exception e) {
-			e.printStackTrace();			
-			System.exit(1);
-		}
 		
 	}
 	
@@ -94,26 +79,57 @@ public class HiveExecutor {
 				
 	}
 	
+	public static void main(String[] args)  throws SQLException, IOException {
+		
+		if (args.length != 6) {
+			usage();
+		}
+
+		 
+
+		HiveExecutor hiveExecObj = new HiveExecutor(args);
+		
+		hiveExecObj.updateStatusFile();
+		
+		hiveExecObj.printMetaData();
+		
+		hiveExecObj.establishConnection();
+		String sql = hiveExecObj.readFile(hiveExecObj.queryFilePath);
+		
+		hiveExecObj.createOutputDirectory();
+		
+		hiveExecObj.jobStatus = JobStatus.IN_PROGRESS;
+		hiveExecObj.updateStatusFile();
+		
+		hiveExecObj.executeQuery(sql);
+				
+		hiveExecObj.exportResult();
+	
+		hiveExecObj.updateStatusFile();
+
+		//hiveExecObj.copyQueryFileToOuputDir();
+
+		hiveExecObj.cleanUp();
+				
+	}
+
 	private static void usage() {
 		System.err.println("Usage : java " + HiveExecutor.class.getName()
-				+ " jobID outputDataDir hiveUserName hiveHost dbName hiveQueryFile mongoDBhost mongoDBport mongoDBName mongoDBCollection");		
+				+ " jobID outputDataDir hiveUserName hiveHost dbName hiveQueryFile");
 		System.exit(1);
 	}
 
-	private void establishHiveConnection()  throws SQLException{
+	private void establishConnection()  throws SQLException{
 		
 		try {
 			Class.forName(driverName);
 		}
 		catch (ClassNotFoundException e) {
-			// Update the Status in MongoDB
-			this.mongoExecutor.updateStatusDocument(this.jobID, getJobStatusValue(JobStatus.FAILED) );		
-			this.mongoExecutor.closeConnection();
-			e.printStackTrace();	
+			e.printStackTrace();
 			System.exit(1);
 		}
 		
-		String connectionURL = "jdbc:hive2://" + hiveHost + "/" + hiveDBName;
+		String connectionURL = "jdbc:hive2://" + hiveHost + "/" + dbName;
 		DriverManager.setLoginTimeout(HIVE_ESTABLISH_CONNECTION_TIMEOUT);
 		this.con = DriverManager.getConnection(connectionURL, hiveUser, "");
 		// Connection con = DriverManager.getConnection("jdbc:hive2://172.16.226.129:10000/default", "hive", "");
@@ -208,20 +224,15 @@ public class HiveExecutor {
 		
 	}
 
-	private void updateStatus() throws FileNotFoundException, UnsupportedEncodingException {
-		
-		// Update the Status File
+	private void updateStatusFile() throws FileNotFoundException, UnsupportedEncodingException {
 		PrintWriter writerStatus = new PrintWriter(this.statusFilePath, "UTF-8");
+		
 		this.writerLog.println(getJobStatusValue(this.jobStatus));
 		writerStatus.print(getJobStatusValue(this.jobStatus));
 		if (this.jobStatus == JobStatus.FAILED){
 			this.occurredException.printStackTrace(this.writerLog);
 		}
-		writerStatus.close();		
-
-		// Update the Status in MongoDB
-		this.mongoExecutor.updateStatusDocument(this.jobID, getJobStatusValue(this.jobStatus) );
-	
+		writerStatus.close();
 	}
 
 	private void cleanUp(){
@@ -248,35 +259,17 @@ public class HiveExecutor {
 			  return null;
 		 }
 	 }
+
+	  
+	private void printColHeaders() throws SQLException {
+		ResultSetMetaData rsmd;
+		while (this.res.next()) {
+			rsmd = this.res.getMetaData();
+			int numOfCols = rsmd.getColumnCount();
+			for (int i = 1; i <= numOfCols; i++) {
+				System.out.print(rsmd.getColumnName(i) + "\t");
+			}
 	
-	public static void main(String[] args)  throws SQLException, IOException {
-		
-		if (args.length != 10) {
-			usage();
 		}
-		HiveExecutor hiveExecObj = new HiveExecutor(args);
-		
-		hiveExecObj.updateStatus();
-		
-		hiveExecObj.printMetaData();
-		
-		hiveExecObj.establishHiveConnection();
-		String sql = hiveExecObj.readFile(hiveExecObj.queryFilePath);
-		
-		hiveExecObj.createOutputDirectory();
-		
-		hiveExecObj.jobStatus = JobStatus.IN_PROGRESS;
-		hiveExecObj.updateStatus();
-		
-		hiveExecObj.executeQuery(sql);
-				
-		hiveExecObj.exportResult();
-
-		hiveExecObj.updateStatus();
-//		//hiveExecObj.copyQueryFileToOuputDir();
-		hiveExecObj.cleanUp();
-				
 	}
-
-	
 }

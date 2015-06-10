@@ -46,8 +46,9 @@ exports.getAllAdHocJobs = function(req, res) {
 
     AdHocJob
     .find()
-    .limit(100)
     .sort('-UpdatedTimeStamp')
+    .limit(100)
+//    .sort('-UpdatedTimeStamp')
     .exec(callback);
 
 }

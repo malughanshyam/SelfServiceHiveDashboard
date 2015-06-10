@@ -44,13 +44,18 @@ for i in ${HIVE_JARS}/*.jar ; do
     CLASSPATH=$CLASSPATH:$i
 done
 
-java -cp $CLASSPATH HiveExecutor $jobID $outputDataDir $hiveUser $hiveHost $dbName $inputQueryFile
+mongoDBhost="localhost"
+mongoDBport="27017"
+dashboardDB="SelfServiceHiveDashboard"
+dashboardDBCollection="AdHocJob"
+
+java -cp $CLASSPATH HiveExecutor $jobID $outputDataDir $hiveUser $hiveHost $dbName $inputQueryFile $mongoDBhost $mongoDBport $dashboardDB $dashboardDBCollection
 
 # Check the exitStatus
 exitStatus=$?
 
 # If not 0, update the status file of the JobID
 if [ $exitStatus -ne 0 ]; then
-        echo -e "JOB_FAILED" > $outputDataDir/$statusFile
-        echo -e "Hive Launcher Script Failed! Check if Hive server is up. " > $outputDataDir/$logFile
+        echo "JOB_FAILED" > $outputDataDir/$statusFile
+        echo "Hive Launcher Script Failed! Check if Hive server is up. " > $outputDataDir/$logFile
 fi

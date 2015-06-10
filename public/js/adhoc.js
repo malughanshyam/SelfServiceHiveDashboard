@@ -117,9 +117,9 @@ app.controller('adHocController', function($scope, $compile, $http) {
         $http.get($scope.checkStatusURL, $scope.formData)
             .success(function(data) {
                 var newStatus = data.trim()
-                if ($scope.submittedJobStatus != newStatus){
+               /* if ($scope.submittedJobStatus != newStatus){
                     $scope.updateJobStatus($scope.formData.jobID, newStatus);
-                }
+                }*/
                 $scope.submittedJobStatus = newStatus;
 
             })
@@ -152,7 +152,7 @@ app.controller('adHocController', function($scope, $compile, $http) {
             
         }
 
-        // Update the JobID with the new Status
+        /*// Update the JobID with the new Status
         $scope.updateJobStatus = function(jobID, newJobStatus){
 
             console.log("Refreshing Job Status");
@@ -173,33 +173,10 @@ app.controller('adHocController', function($scope, $compile, $http) {
                 });
 
 
-        }
+        }*/
 
 
     }
-
-
- /*$scope.viewCurrentJobLog = function() {
-        $scope.showJobLog = true
-        console.log("View Job Log");
-        $scope.checkLogURL = '/jobLog/' + $scope.formData.jobID
-
-        $http.get($scope.checkLogURL, $scope.formData)
-            .success(function(data) {
-
-                $scope.jobLog = data;
-
-            })
-            .error(function(err) {
-                // $scope.submittedJobStatus='FAILED'
-                $scope.jobLog = 'Fetching Log Failed :' + err;
-                console.log(err)
-
-            });
-
-    }
-    */
-
 
 
     $scope.populateRecentAdHocJobTable = function(){
@@ -207,6 +184,8 @@ app.controller('adHocController', function($scope, $compile, $http) {
 
         $http.get(getRecentAdHocJobs, $scope.formData)
             .success(function(data) {
+                $scope.recentAdHocJobs = '';
+                $scope.displayedCollection = '';
                 $scope.recentAdHocJobs = data;
                 $scope.displayedCollection = [].concat($scope.recentAdHocJobs);
             })
@@ -424,23 +403,6 @@ app.controller('adHocController', function($scope, $compile, $http) {
     }
 
 
-   /* $scope.execute = function() {
-
-
-
-        $http.post('/execute', $scope.formData)
-            .success(function(data) {
-                $scope.formData = {}
-                    // $scope.hiveQuery = ''
-                alert("Executing query..: " + data)
-
-            })
-            .error(function(err) {
-                alert("Error" + err)
-            });
-
-        console.log("Clicked Execute")
-    }*/
 
     $scope.reset = function() {
         $scope.user = angular.copy($scope.master);
