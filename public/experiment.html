@@ -49,13 +49,16 @@
 
 </head>
 
-<body ng-app="dashboardApp">
+<body ng-app="dashboardApp" ng-controller="adHocController">
 
     <div class="page-header alignTextCenter">
         <h1>Self Service Dashboard<br><small>A Self Service Dashboard to Schedule or Run Adhoc Hive Queries</small></h1>
     </div>
 
+    <div id="impAlertPlaceholder" align="center"> </div>
+        
     <div class="container" role="main">
+
 
         <ul class="nav nav-pills nav-justified" id="adHocJobTabs">
             <li id="navAdHoc"> <a data-toggle="tab" href="#adHocTab"><h3><i class="fa fa-1x fa-gavel"></i>  AdHoc Jobs</h3></a>
@@ -67,10 +70,8 @@
 
         <div class="tab-content">
 
-            <div id="adHocTab" class="tab-pane fade in" ng-controller="adHocController">
+            <div id="adHocTab" class="tab-pane fade in">
                 <!--  Ad Hoc Tab Begins -->
-
-
 
 
 
@@ -79,7 +80,7 @@
                     <li id="navRecentAdHoc"> <a data-toggle="tab" href="#recentAdHocTab" ng-click="populateRecentAdHocJobTable()"><h4><i class="fa fa-1x fa-history"></i>  Recent Jobs</h4></a>
                     </li>
 
-                    <li id="navNewAdHoc"> <a data-toggle="tab" href="#newAdHocTab"><h4><i class="fa fa-1x fa-edit"></i>  New Job</h4></a>
+                    <li id="navNewAdHoc"> <a data-toggle="tab" href="#newAdHocTab" ng-click="initializeNewJobTab()"><h4><i class="fa fa-1x fa-edit"></i>  New Job</h4></a>
                     </li>
                 </ul>
                 <!-- Tabs Titles under AdHoc Category Begins -->
@@ -154,7 +155,7 @@
                             <tfoot>
                                 <tr>
                                     <td colspan="5" class="text-center">
-                                        <div st-pagination="" st-items-by-page="15"></div>
+                                        <div st-pagination="" st-items-by-page="15" st-displayed-pages="15"></div>
                                     </td>
                                 </tr>
                             </tfoot>
@@ -221,7 +222,7 @@
                     <!-- New Job Tab Content Begins-->
                     <div id="newAdHocTab" class="tab-pane fade in ">
 
-                        <button type="button" ng-click="populateRecentAdHocJobTable()" class="btn btn-sm btn-success pull-right">
+                        <button type="button" ng-click="resetNewJobTab()" class="btn btn-sm btn-success pull-right" ng-show="showCreateNewJobBtn">
                             <i class="fa fa-plus">
                             </i> New Job
                         </button>
@@ -235,7 +236,7 @@
                                     <div class="progress">
                                         <div class="progress-bar"></div>
                                     </div>
-                                    <a class="smpl-step-icon"><i class="fa fa-3x fa-edit" style="padding-left: 25%; padding-top: 20%; color: black; opacity: 0.3;" ></i></a>
+                                    <a class="smpl-step-icon"><i class="fa fa-3x fa-edit" style="padding-left: 25%; padding-top: 20%; color: black; opacity: 1;" ></i></a>
                                     <div class="smpl-step-info text-center">Create New Job</div>
                                 </div>
 
@@ -537,9 +538,6 @@
     <script src="js/canvas-toBlob.js"></script>
     <script src="js/FileSaver.min.js"></script>
 
-    <script src="https://raw.github.com/niklasvh/html2canvas/v0.34/src/plugins/jquery.plugin.html2canvas.js"></script>
-
-    <div id="tempDivClone"> </div>
 </body>
 
 </html>

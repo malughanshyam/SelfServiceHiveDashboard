@@ -7,7 +7,6 @@ app.controller('adHocController', function($scope, $compile, $http) {
     $scope.recentAdHocJobs = [];
     $scope.displayedCollection = [];
 
-
     activateTab = function(tab) {
         $('.nav-tabs a[href="#' + tab + '"]').tab('show');
 
@@ -74,6 +73,7 @@ app.controller('adHocController', function($scope, $compile, $http) {
         $compile($('#newAdHocTab'))($scope);
         //activateTab("newAdHocTab");
         $('#newAdHocTab').addClass('active');
+        $scope.flashAlertCheckRecentJobs();
         console.log("AdHoc Tab Reset");
 
     }
@@ -108,8 +108,41 @@ app.controller('adHocController', function($scope, $compile, $http) {
                 $scope.submittedJobStatus = 'FAILED';
                 $scope.activateCurrentJobStatusTab()
             });
-        $scope.showCreateNewJobBtn = true
+
+            $scope.showCreateNewJobBtn = true
+
     }
+
+    $scope.flashAlertCheckRecentJobs = function(){            
+        type = 'info';
+        message = "You can check the status of the submitted job under Recent Jobs";
+        // alertLink = '#recentAdHocTab';
+        // alertLinkTitle = "Recent Jobs";
+        $scope.flashImpAlert(type,message,4000);
+    }
+
+
+    $scope.flashImpAlert = function(type,message, displayTime, alertLink, alertLinkTitle) {
+        if (['success', 'info', 'warning', 'danger'].indexOf(type) < 0) {
+            type = 'info' 
+        }
+        
+        if (alertLink == null || alertLinkTitle == null){
+            alertLink = '';
+            alertLinkTitle='';
+        }
+
+        alertHtml  = ' <div class="row"> <div class="alert alert-' + type ;
+        alertHtml += ' alert-dismissible alignTextCenter" role="alert"> <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button> ' ;
+        alertHtml += message + ' <a href="' + alertLink + '" class="alert-link">' + alertLinkTitle + '</a> </div> </div> </br>';
+
+        $('#impAlertPlaceholder').html(alertHtml);
+
+        setTimeout(function(){
+            $('#impAlertPlaceholder .alert').remove()
+        }, displayTime);
+    }
+
 
     $scope.activateCurrentJobStatusTab = function() {
 
@@ -754,6 +787,5 @@ app.controller('adHocController', function($scope, $compile, $http) {
 
 
     }
-
 
 });
