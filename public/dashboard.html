@@ -221,6 +221,11 @@
                     <!-- New Job Tab Content Begins-->
                     <div id="newAdHocTab" class="tab-pane fade in ">
 
+                        <button type="button" ng-click="populateRecentAdHocJobTable()" class="btn btn-sm btn-success pull-right">
+                            <i class="fa fa-plus">
+                            </i> New Job
+                        </button>
+
                         <!-- Create New Job Steps Flow Begins-->
                         <div class="stepsFlow ">
                             <div class="row smpl-step" style="border-bottom: 0; min-width: 500px;">
@@ -339,7 +344,7 @@
                                         </div>
 
                                         <div class="alert alert-info" ng-show="submittedJobStatus == 'JOB_IN_PROGRESS'" role="alert" id="alertJobInProgress">
-                                            <span class="fa fa-cog fa-spin" aria-hidden="true"></span> Job execution in progress
+                                            <span class="fa fa-2x fa-cog fa-spin" aria-hidden="true"></span> Job execution in progress
                                         </div>
 
                                         <div class="alert alert-info" ng-show="submittedJobStatus == 'JOB_NOT_STARTED'" role="alert" id="alertJobNotStarted">
