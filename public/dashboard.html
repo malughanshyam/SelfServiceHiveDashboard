@@ -46,6 +46,8 @@
     <link href="css/dashboard.css" rel="stylesheet">
     <link href="css/common_template.css" rel="stylesheet">
 
+    <link href="https://gitcdn.github.io/bootstrap-toggle/2.2.0/css/bootstrap-toggle.min.css" rel="stylesheet">
+
 
 </head>
 
@@ -64,16 +66,14 @@
             <li id="navAdHoc"> <a data-toggle="tab" href="#adHocTab"><h3><i class="fa fa-1x fa-gavel"></i>  AdHoc Jobs</h3></a>
             </li>
 
-            <li id="navScheduled"> <a data-toggle="tab" href="#scheduledTab"><h3><i class="fa fa-1x fa-clock-o"></i> Scheduled Jobs</h3></a>
+            <li id="navScheduled"> <a data-toggle="tab" href="#scheduledTab"><h3><i class="fa fa-1x fa-clock-o"></i> Scheduler</h3></a>
             </li>
         </ul>
 
         <div class="tab-content">
 
+            <!--  Ad Hoc Tab Begins -->
             <div id="adHocTab" class="tab-pane fade in">
-                <!--  Ad Hoc Tab Begins -->
-
-
 
                 <!-- Tabs Titles under AdHoc Category Begins -->
                 <ul class="nav nav-tabs" id="adHocJobTabs">
@@ -85,7 +85,7 @@
                 </ul>
                 <!-- Tabs Titles under AdHoc Category Begins -->
 
-                <!-- Tabs Content under Adhco Category Begins-->
+                <!-- Tabs Content under Adhoc Category Begins-->
                 <div class="tab-content">
 
                     <!-- Recent Jobs Tab Content Begins-->
@@ -144,36 +144,40 @@
                                             <span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span> View Log
                                         </button>
                                     </td>
-                                    
+
                                     <td>
                                         <div class="btn-group" role="group" id="editSubmitBtnGrp">
 
                                             <button type="button" class="btn btn-info btn-xs dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-                                              <i class="fa fa-share-square-o"></i> Edit / Resubmit
-                                              <span class="caret"></span>
+                                                <i class="fa fa-share-square-o"></i> Edit / Resubmit
+                                                <span class="caret"></span>
                                             </button>
 
                                             <ul class="dropdown-menu" role="menu">
-                                              <li><a ng-click="editAndResubmitJob(row)"> <i class="fa fa-edit"></i> Edit &amp; Submit</a> </li>
-                                              <li><a ng-click="resubmitJob(row)"> <i class="fa fa-mail-forward"></i> Resubmit</a></li>
-                                              <li class="divider"></li>
+                                                <li>
+                                                    <a ng-click="editAndResubmitJob(row)"> <i class="fa fa-edit"></i> Edit &amp; Submit</a>
+                                                </li>
+                                                <li>
+                                                    <a ng-click="resubmitJob(row)"> <i class="fa fa-mail-forward"></i> Resubmit</a>
+                                                </li>
+                                                <li class="divider"></li>
 
-                                              <li ng-show="row.Status == 'JOB_SUCCESSFUL'">
-                                                <a role="menuitem" ng-click="scheduleJob(row)">
-                                                    <i class="fa fa-clock-o"></i> Schedule
-                                                </a>
-                                              </li>
+                                                <li ng-show="row.Status == 'JOB_SUCCESSFUL'">
+                                                    <a role="menuitem" ng-click="scheduleJob(row)">
+                                                        <i class="fa fa-clock-o"></i> Schedule
+                                                    </a>
+                                                </li>
 
-                                              <li class="disabled" ng-show="row.Status != 'JOB_SUCCESSFUL'">
-                                                <a role="menuitem">
-                                                    <i class="fa fa-clock-o"></i> Schedule
-                                                </a>
-                                              </li>
+                                                <li class="disabled" ng-show="row.Status != 'JOB_SUCCESSFUL'">
+                                                    <a role="menuitem">
+                                                        <i class="fa fa-clock-o"></i> Schedule
+                                                    </a>
+                                                </li>
 
 
                                             </ul>
                                         </div>
-                                        
+
                                         <button type="button" ng-click="scheduleJob(row)" class="btn btn-warning btn-xs" id="scheduleBtn" ng-show="row.Status == 'JOB_SUCCESSFUL'">
                                             <span class="glyphicon glyphicon-time" aria-hidden="true"></span> Schedule
                                         </button>
@@ -408,7 +412,7 @@
 
                                     <li id="navChart1">
                                         <div class="btn-group" role="group" aria-label="...">
-                                            <button type="button" class="btn btn-default btn-xs" data-toggle="tab" href="#chart1" ng-click="createLineChart()" data-tooltip="Plot Line Chart"> Line Chart</button>
+                                            <button type="button" id="createLineChartBtn" class="btn btn-default btn-xs" data-toggle="tab" href="#chart1" ng-click="createLineChart()" data-tooltip="Plot Line Chart" data-loading-text="Loading..." autocomplete="off"> Line Chart</button>
 
                                             <button type="button" class="btn btn-success btn-xs disabled" ng-click="saveDivAsPicture()" id="downloadLineChartBtnId" data-tooltip="Save As Image"><span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span></button>
                                         </div>
@@ -416,7 +420,7 @@
 
                                     <li id="navChart2">
                                         <div class="btn-group" role="group" aria-label="...">
-                                            <button type="button" class="btn btn-default btn-xs" data-toggle="tab" href="#chart2" ng-click="createBarChart()" data-tooltip="Plot Bar Chart"> Bar Chart</button>
+                                            <button type="button" id="createBarChartBtn" class="btn btn-default btn-xs" data-toggle="tab" href="#chart2" ng-click="createBarChart()" data-tooltip="Plot Bar Chart" data-loading-text="Loading..." autocomplete="off"> Bar Chart</button>
 
                                             <button type="button" class="btn btn-success btn-xs disabled" ng-click="saveDivAsPicture()" id="downloadBarChartBtnId" data-tooltip="Save As Image"><span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span></button>
                                         </div>
@@ -432,21 +436,7 @@
                                         </div>
                                     </li>
                                 </ul>
-                                <!-- Results Display Type Tab Begins -->
-
-                                <!-- Results Display Type Tab Begins -->
-                                <!--                        <ul class="nav nav-pills right-to-left" id="adHocResultTypeTabs">
-                                    </li>
-                                    <li id="navChart1">
-
-                                        <a data-toggle="tab" href="#chart1" ng-click="createLineChart()">Line Chart</a>
-                                    </li>
-                                    <li id="navChart2"> <a data-toggle="tab" href="#chart2" ng-click="createBarChart()">Bar Chart</a>
-                                    </li>
-                                    <li class="active" id="navTabular"> <a data-toggle="tab" href="#tabular">Tabular</a>
-                                </ul>
-          -->
-                                <!-- Results Display Type Tab Begins -->
+                                <!-- Results Display Type Tab Ends -->
 
                                 <br>
 
@@ -478,44 +468,331 @@
                     <!-- New Job Tab Content Ends-->
 
                 </div>
-                <!-- Tabs Content under Adhco Category Ends-->
-
-
+                <!-- Tabs Content under Adhoc Category Ends-->
 
                 <br>
             </div>
             <!-- AdHoc Tab Ends-->
 
+
+
+
+
+            <!-- Scheduler Tab Begins-->
             <div id="scheduledTab" class="tab-pane fade in ">
-                <!-- Scheduled Tab Begins-->
-                <h3>Scheduled Queries</h3>
+
+
+                <!-- Tabs Titles under Scheduler Category Begins -->
+                <ul class="nav nav-tabs nav-justified" id="schedJobTabs">
+                    <li id="navSchedJobList"> <a data-toggle="tab" href="#schedJobListTab" ng-click="populateSchedJobList()"><h4><i class="fa fa-1x fa-history"></i>  Scheduled Jobs</h4></a>
+                    </li>
+
+                    <li id="navSchedJobNew"> <a data-toggle="tab" href="#newSchedJobTab" ng-click="initNewSchedJobTabTab()"><h4><i class="fa fa-1x fa-edit"></i>  Schedule New Job</h4></a>
+                    </li>
+
+                    <li id="navSchedJobMonitor"> <a data-toggle="tab" href="#newSchedJobMonitorTab" ng-click="populateSchedJobMonitorTab()"><h4><i class="fa fa-1x fa-align-left"></i>  Scheduled Jobs - Monitor</h4></a>
+                    </li>
+                </ul>
+                <!-- Tabs Titles under Scheduler Category Begins -->
+
+                <!-- Tabs Content under Scheduled Category Begins-->
+                <div class="tab-content">
+
+                    <!-- Scheduled Jobs Tab Content Begins-->
+                    <div id="schedJobListTab" class="tab-pane fade in ">
+                        <h3>Scheduled Jobs
+                       
+                        <button type="button" ng-click="populateSchedJobList()" class="btn btn-sm btn-success pull-right">
+                            <i class="fa fa-refresh">
+                            </i> Refresh
+                        </button>
+                        </h3>
+
+
+                    </div>
+                    <!-- Scheduled Jobs Tab Content Ends-->
+
+
+
+                    <!-- New Scheduled Job Tab Content Begins-->
+                    <div id="newSchedJobTab" class="tab-pane fade in ">
+
+
+
+                        <!-- Tab Titles under Create New Job -->
+                        <ul class="nav nav-tabs nav-justified" id="" ng-hide="true">
+                            <li class="active" id="navLinkNewJob"> <a data-toggle="tab" href="#newJobTab">Create</a>
+                            </li>
+                            <li class="disabled" id="navLinkStatus"> <a data-toggle="tab" href="#jobStatusTab">Status</a>
+                            </li>
+                        </ul>
+
+                        <!-- Tab Content under Create New Job begins-->
+                        <div class="tab-content">
+
+                            <!-- Submit Job Tab Content Begins  -->
+                            <div id="newJobTab" class="tab-pane fade in active">
+                                <form class="form-horizontal">
+
+                                    <div class="form-group">
+                                        <label for="schedJobName" class="col-sm-2 control-label">Job Name</label>
+                                        <div class="col-sm-10 col-lg-6">
+                                            <input type="text" class="form-control" id="schedJobName" placeholder="Job Name" ng-model="schedJob.schedJobName" required>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="schedhiveQuery" class="col-sm-2 control-label">Hive Query</label>
+                                        <div class="col-sm-10 col-lg-6">
+                                            <textarea class="form-control" id="schedhiveQuery" ng-model="schedJob.schedQuery" rows="3" placeholder="Enter your query here..."></textarea>
+                                        </div>
+                                    </div>
+
+
+
+                                    <div class="form-group">
+                                        <label for="runDayChkBoxDiv" class="col-sm-2 control-label">Execute On</label>
+                                        <div id="runDayChkBoxDiv" class="col-sm-10">
+                                            <div class="btn-group">
+                                                <label class="btn btn-default" ng-model="schedJob.days.sun" btn-checkbox>SUN</label>
+                                                <label class="btn btn-default" ng-model="schedJob.days.mon" btn-checkbox>MON</label>
+                                                <label class="btn btn-default" ng-model="schedJob.days.tue" btn-checkbox>TUE</label>
+                                                <label class="btn btn-default" ng-model="schedJob.days.wed" btn-checkbox>WED</label>
+                                                <label class="btn btn-default" ng-model="schedJob.days.thu" btn-checkbox>THU</label>
+                                                <label class="btn btn-default" ng-model="schedJob.days.fri" btn-checkbox>FRI</label>
+                                                <label class="btn btn-default" ng-model="schedJob.days.sat" btn-checkbox>SAT</label>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="jobSchedTimePicker" class="col-sm-2 control-label">Trigger Time</label>
+                                        <div class="col-sm-10 col-lg-6">
+                                            <div>
+                                                <timepicker ng-model="schedJob.jobSchedTime.completeTime" id="jobSchedTimePicker" ng-change="changed()" hour-step="1" minute-step="15" show-meridian="false"></timepicker>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="notifyChkBox" class="col-sm-2 control-label">Notify by Email</label>
+                                        <div class="col-sm-10">
+                                            <div class="btn-group" id="notifyChkBox">
+                                                <label class="btn btn-default" ng-model="schedJob.notifyEmailFlag" btn-radio="'false'">No</label>
+                                                <label class="btn btn-default" ng-model="schedJob.notifyEmailFlag" btn-radio="'true'">Yes</label>
+                                            </div>
+                                        </div>
+                                    </div>
+
+
+                                    <div class="form-group" ng-show="schedJob.notifyEmailFlag=='true'">
+                                        <label for="notifyEmailInputID" class="col-sm-2 control-label">Email</label>
+                                        <div class="col-sm-10 col-lg-6">
+                                            <div class="input-group">
+                                                <div class="input-group-addon">@</div>
+                                                <input type="email" class="form-control" id="notifyEmailInputID" placeholder="email@domain.com" ng-model="schedJob.notifyEmailID">
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <div class="col-sm-offset-2 col-sm-10">
+                                            <button ng-click="scheduleJob()" type="submit" class="btn btn-primary">Schedule Job</button>
+                                            <button ng-click="schedReset()" class="btn btn-default">Clear</button>
+                                        </div>
+                                    </div>
+                                </form>
+
+                                <pre> {{schedJob}} </pre>
+                            </div>
+                            <!-- Submit Job Tab Content Ends  -->
+
+
+                            <!-- Job Status Tab Content Begins-->
+                            <div id="" class="tab-pane fade in">
+                                <h3> Job Status </h3>
+
+                            </div>
+                            <!-- Job Status Tab Content Ends-->
+                        </div>
+                        <!-- Tab Conent under Create New Job ends-->
+                    </div>
+                    <!-- New Scheduled Job Tab Content Ends-->
+
+                    <!-- Scheduled Jobs Tab Content Begins-->
+                    <div id="newSchedJobMonitorTab" class="tab-pane fade in ">
+                        <h3>Scheduled Jobs - Monitor
+                       
+                         <button type="button" ng-click="populateRecentAdHocJobTable()" class="btn btn-sm btn-success pull-right">
+                            <i class="fa fa-refresh">
+                            </i> Refresh
+                        </button>
+                        </h3>
+
+
+                        <table st-table="displayedSchedJobMonitorCollection" st-safe-src="schedJobMonitor" class="table table-striped table-responsive table-hover">
+                            <thead>
+                                <tr>
+                                    <!-- <th st-sort="JobID">JobID</th> -->
+                                    <th st-sort="JobName" style="white-space: nowrap">
+                                        <a data-toggle="tooltip" title="Click to sort by Job Name">Job Name</a></th>
+                                    <th st-sort="SQLQuery">
+                                        <a data-toggle="tooltip" title="Click to sort by Hive Query">Hive Query</a></th>
+                                    <th st-sort="Status">
+                                        <a data-toggle="tooltip" title="Click to sort by Status">Status</a></th>
+                                    <th st-sort="UpdatedTimeStamp" st-sort-default="reverse">
+                                        <a data-toggle="tooltip" title="Click to sort by TimeStamp">UpdatedTimeStamp</a></th>
+                                    <th> </th>
+                                    <th> </th>
+                                </tr>
+                                <tr>
+                                    <th colspan="7">
+                                        <div class="input-group">
+                                            <span class="input-group-addon" id="basic-addon1"> <i class="fa fa-1x fa-search"></i>  </span>
+                                            <input st-search="" class="form-control" placeholder="Search anything..." type="text" aria-describedby="basic-addon1" />
+
+                                        </div>
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr ng-repeat="row in displayedCollection">
+                                    <!-- <td>{{row.JobID}}</td> -->
+                                    <td>{{row.JobName}}</td>
+                                    <td>{{row.SQLQuery}}</td>
+                                    <td>{{row.Status}}</td>
+                                    <td>{{row.UpdatedTimeStamp}}</td>
+                                    <td>
+                                        <button type="button" ng-click="viewResults(row)" class="btn btn-success btn-xs" ng-show="row.Status == 'JOB_SUCCESSFUL'">
+                                            <span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span> Results
+                                        </button>
+
+                                        <button type="button" ng-click="viewLog(row)" class="btn btn-warning btn-xs" ng-show="row.Status == 'JOB_IN_PROGRESS'">
+                                            <span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span> View Log
+                                        </button>
+                                        <!-- data-toggle="modal" data-target="#modelViewLog" -->
+                                        <button type="button" ng-click="viewLog(row)" class="btn btn-danger btn-xs" ng-show="row.Status == 'JOB_FAILED'">
+                                            <span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span> View Log
+                                        </button>
+                                    </td>
+
+                                    <td>
+                                        <div class="btn-group" role="group" id="editSubmitBtnGrp">
+
+                                            <button type="button" class="btn btn-info btn-xs dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                                                <i class="fa fa-share-square-o"></i> Edit / Resubmit
+                                                <span class="caret"></span>
+                                            </button>
+
+                                            <ul class="dropdown-menu" role="menu">
+                                                <li>
+                                                    <a ng-click="editAndResubmitJob(row)"> <i class="fa fa-edit"></i> Edit &amp; Submit</a>
+                                                </li>
+                                                <li>
+                                                    <a ng-click="resubmitJob(row)"> <i class="fa fa-mail-forward"></i> Resubmit</a>
+                                                </li>
+                                                <li class="divider"></li>
+
+                                                <li ng-show="row.Status == 'JOB_SUCCESSFUL'">
+                                                    <a role="menuitem" ng-click="scheduleJob(row)">
+                                                        <i class="fa fa-clock-o"></i> Schedule
+                                                    </a>
+                                                </li>
+
+                                                <li class="disabled" ng-show="row.Status != 'JOB_SUCCESSFUL'">
+                                                    <a role="menuitem">
+                                                        <i class="fa fa-clock-o"></i> Schedule
+                                                    </a>
+                                                </li>
+
+
+                                            </ul>
+                                        </div>
+
+                                        <button type="button" ng-click="scheduleJob(row)" class="btn btn-warning btn-xs" id="scheduleBtn" ng-show="row.Status == 'JOB_SUCCESSFUL'">
+                                            <span class="glyphicon glyphicon-time" aria-hidden="true"></span> Schedule
+                                        </button>
+
+                                    </td>
+                                </tr>
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <td colspan="5" class="text-center">
+                                        <div st-pagination="" st-items-by-page="15" st-displayed-pages="15"></div>
+                                    </td>
+                                </tr>
+                            </tfoot>
+                        </table>
+
+
+
+                        <!-- View Job Log Modal -->
+                        <div class="modal fade" id="modelViewLog" tabindex="-1" role="dialog" aria-labelledby="View Log" aria-hidden="true">
+                            <div class="modal-dialog modal-lg" id="modelDialogViewLog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                        <h4 class="modal-title" id="myModalLabel">  Log - 
+                                    <span id="JobName">JobName</span>
+                                    <small id="JobStatus">JobStatus</small>
+                                    
+                                </h4>
+
+                                    </div>
+                                    <div class="modal-body">
+                                        <!-- Job Log -->
+                                        <div id="jobLogDiv">
+                                            <pre class="pre-scrollable" id="jobLogPre"><samp>{{jobLogSelected}}</samp></pre>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <!-- View Job Results Modal -->
+                        <div class="modal fade" id="modelViewResults" tabindex="-1" role="dialog" aria-labelledby="View Results" aria-hidden="true">
+                            <div class="modal-dialog modal-lg" id="modelDialogViewResult">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                        <h4 class="modal-title" id="myModalLabel">  
+                                    <span id="JobName">JobName</span>
+                                    <!-- <small id="JobID">JobID</small> -->
+                                    <small>Results</small>
+                                </h4>
+
+                                    </div>
+
+                                    <div class="modal-body">
+                                        <!-- Resutls placeholder -->
+                                    </div>
+
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
+                    </div>
+                    <!-- Scheduled Jobs Tab Content Ends-->
+
+                </div>
+                <!-- Tabs Content under Adhoc Category Ends-->
+
+
+
+
+
             </div>
-            <!-- Scheduled Tab Ends-->
+            <!-- Scheduler Tab Ends-->
 
         </div>
-
-
-        <!-- 
-
-        <div class="center">
-            <div class="col-sm-6 col-md-4">
-                <a href="adhoc.html" class="fa-links">
-                    <div class="thumbnail tile tile-medium tile-green">
-                        <h3 class="tile-text">Ad Hoc Jobs</h3>
-                        <i class="fa fa-3x fa-gavel"></i>
-                    </div>
-                </a>
-            </div>
-
-            <div class="col-sm-6 col-md-4">
-                <a href="adhoc.html" class="fa-links">
-                    <div class="thumbnail tile tile-medium tile-orange">
-                        <h3 class="tile-text">Scheduled Jobs</h3>
-                        <i class="fa fa-3x fa-clock-o"></i>
-                    </div>
-                </a>
-            </div>
-        </div> -->
 
     </div>
     <!-- /container -->
@@ -549,6 +826,9 @@
     </footer> -->
 
 
+
+
+
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
     <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script> -->
     <script src="js/jquery.min.js"></script>
@@ -558,14 +838,21 @@
     <script src="js/jquery.csvToTable.js"></script>
     <!--
     <script src="http://code.angularjs.org/1.2.3/angular-animate.js"></script>
-    <script src="ui-bootstrap-0.13.0.min.js"></script>
+    
+    <script src="js/ui-bootstrap-tpls-0.13.0.min.js"></script>    
+    <script src="js/ui-bootstrap-0.13.0.min.js"></script>
+-->
+    <script src="https://gitcdn.github.io/bootstrap-toggle/2.2.0/js/bootstrap-toggle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/0.13.0/ui-bootstrap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/0.13.0/ui-bootstrap-tpls.min.js"></script>
-    -->
+
     <script src="js/smart-table.min.js"></script>
     <script src="js/adhoc.js"></script>
     <script src="js/html2canvas.js"></script>
     <script src="js/canvas-toBlob.js"></script>
     <script src="js/FileSaver.min.js"></script>
+
+
 
 </body>
 

@@ -174,3 +174,24 @@ pre {
 #editSubmitBtnGrp {
     padding-bottom:  0.5em;
 }
+
+
+/* Change active color of Day Button clicked in New Scheule Job Tab*/
+#runDayChkBoxDiv .btn.active, .btn:active {
+    background-color: #2aabd2;
+    color: #fff;
+    text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.2);
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 1.42857;
+}
+
+#notifyChkBox .btn.active, .btn:active {
+    background-color: #2aabd2;
+    color: #fff;
+    outline: 0 none;
+    text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.2);
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 1.42857;
+}

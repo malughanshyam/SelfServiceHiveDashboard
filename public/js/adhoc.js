@@ -109,36 +109,36 @@ app.controller('adHocController', function($scope, $compile, $http) {
                 $scope.activateCurrentJobStatusTab()
             });
 
-            $scope.showCreateNewJobBtn = true
+        $scope.showCreateNewJobBtn = true
 
     }
 
-    $scope.flashAlertCheckRecentJobs = function(){            
+    $scope.flashAlertCheckRecentJobs = function() {
         type = 'info';
         message = "You can check the status of the submitted job under Recent Jobs";
         // alertLink = '#recentAdHocTab';
         // alertLinkTitle = "Recent Jobs";
-        $scope.flashImpAlert(type,message,4000);
+        $scope.flashImpAlert(type, message, 4000);
     }
 
 
-    $scope.flashImpAlert = function(type,message, displayTime, alertLink, alertLinkTitle) {
+    $scope.flashImpAlert = function(type, message, displayTime, alertLink, alertLinkTitle) {
         if (['success', 'info', 'warning', 'danger'].indexOf(type) < 0) {
-            type = 'info' 
-        }
-        
-        if (alertLink == null || alertLinkTitle == null){
-            alertLink = '';
-            alertLinkTitle='';
+            type = 'info'
         }
 
-        alertHtml  = ' <div class="row"> <div class="alert alert-' + type ;
-        alertHtml += ' alert-dismissible alignTextCenter" role="alert"> <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button> ' ;
+        if (alertLink == null || alertLinkTitle == null) {
+            alertLink = '';
+            alertLinkTitle = '';
+        }
+
+        alertHtml = ' <div class="row"> <div class="alert alert-' + type;
+        alertHtml += ' alert-dismissible alignTextCenter" role="alert"> <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button> ';
         alertHtml += message + ' <a href="' + alertLink + '" class="alert-link">' + alertLinkTitle + '</a> </div> </div> </br>';
 
         $('#impAlertPlaceholder').html(alertHtml);
 
-        setTimeout(function(){
+        setTimeout(function() {
             $('#impAlertPlaceholder .alert').remove()
         }, displayTime);
     }
@@ -363,19 +363,19 @@ app.controller('adHocController', function($scope, $compile, $http) {
 
     $scope.computeJobResults = function(jobID) {
 
-            $scope.checkResultURL = '/jobResultFile/' + jobID
+        $scope.checkResultURL = '/jobResultFile/' + jobID
 
-            $http.get($scope.checkResultURL)
-                .success(function(data) {
-                    $scope.jobResult = data;
-                    $scope.createResultTable();
-                })
+        $http.get($scope.checkResultURL)
+            .success(function(data) {
+                $scope.jobResult = data;
+                $scope.createResultTable();
+            })
 
-            .error(function(err) {
-                // $scope.submittedJobStatus='FAILED'
-                $scope.jobResult = 'Fetching Result Failed :' + err;
-                console.log(err)
-            });
+        .error(function(err) {
+            // $scope.submittedJobStatus='FAILED'
+            $scope.jobResult = 'Fetching Result Failed :' + err;
+            console.log(err)
+        });
     }
 
 
@@ -433,6 +433,8 @@ app.controller('adHocController', function($scope, $compile, $http) {
 
     $scope.createBarChart = function() {
 
+
+
         // Compute the Width for the Charts
         var chartWidth = $("#jobResultPanelBodyContent").width()
 
@@ -440,6 +442,8 @@ app.controller('adHocController', function($scope, $compile, $http) {
         if ($scope.barChartComputedData == $scope.jobResult) {
             return true;
         }
+
+        $('#createBarChartBtn').button('loading');
 
         // Parse the TSV Result file into Array of Data 
         var x = $scope.jobResult.split('\n');
@@ -486,6 +490,7 @@ app.controller('adHocController', function($scope, $compile, $http) {
         // Variable to store the data for chart to prevent duplicate computation/drawing of the charts
         $scope.barChartComputedData = $scope.jobResult
         $('#downloadBarChartBtnId').removeClass('disabled');
+        $('#createBarChartBtn').button('reset');
 
     }
 
@@ -499,6 +504,8 @@ app.controller('adHocController', function($scope, $compile, $http) {
         if ($scope.lineChartComputedData == $scope.jobResult) {
             return true;
         }
+
+        $('#createLineChartBtn').button('loading');
 
         // Parse the TSV Result file into Array of Data 
         var x = $scope.jobResult.split('\n');
@@ -544,6 +551,7 @@ app.controller('adHocController', function($scope, $compile, $http) {
         // Variable to store the data for chart to prevent duplicate computation/drawing of the charts
         $scope.lineChartComputedData = $scope.jobResult
         $('#downloadLineChartBtnId').removeClass('disabled');
+        $('#createLineChartBtn').button('reset');
 
     }
 
@@ -738,28 +746,28 @@ app.controller('adHocController', function($scope, $compile, $http) {
 
     }
 
-    $scope.editAndResubmitJob = function(adHocJob){
+    $scope.editAndResubmitJob = function(adHocJob) {
         $('#recentAdHocTab').removeClass('active');
         $('#navRecentAdHoc').removeClass('active');
         $('#navNewAdHoc').addClass('active');
-        $scope.resetNewJobTab ();
+        $scope.resetNewJobTab();
         $scope.formData.hiveQuery = adHocJob.SQLQuery;
         $scope.formData.jobName = adHocJob.JobName;
 
     }
 
-    $scope.resubmitJob = function(adHocJob){
-        $scope.resetNewJobTab ();
+    $scope.resubmitJob = function(adHocJob) {
+        $scope.resetNewJobTab();
         $scope.formData.hiveQuery = adHocJob.SQLQuery;
         $scope.formData.jobName = adHocJob.JobName;
         $scope.submitJob();
         console.log("Job Resubmitted")
-        setTimeout(function(){
+        setTimeout(function() {
             $scope.populateRecentAdHocJobTable()
         }, 1000);
     }
 
-    $scope.downloadJobResultFile = function(){
+    $scope.downloadJobResultFile = function() {
 
         $scope.downloadJobResultURL = '/downloadJobResultFile/' + $scope.formData.jobID
 
@@ -767,5 +775,68 @@ app.controller('adHocController', function($scope, $compile, $http) {
         console.log("Downloaded Result File for JobID: " + $scope.formData.jobID)
 
     }
+
+
+    // ---------------------------------
+    // Scheduled Job Section
+    // ---------------------------------
+
+
+    // Initialize Schedule New Job
+    $scope.initializeScheduleNewJob = function() {
+        $scope.schedJob = {};
+
+        $scope.schedJobName = "unnamed";
+        $scope.schedQuery = "";
+
+
+        // Scheduled Job Default Time
+        var defaultSchedTime = new Date();
+        defaultSchedTime.setHours(22);
+        defaultSchedTime.setMinutes(0);
+
+        // Scheduled Job Execution Time
+        $scope.schedJob.jobSchedTime = {};
+        $scope.schedJob.jobSchedTime.completeTime = defaultSchedTime;
+
+        $scope.schedJob.days = {
+            "sun": false,
+            "mon": false,
+            "tue": false,
+            "wed": false,
+            "thu": false,
+            "fri": false,
+            "sat": false
+        };
+
+        $scope.schedJob.jobSchedTime.hours = $scope.schedJob.jobSchedTime.completeTime.getHours();
+        $scope.schedJob.jobSchedTime.minutes = $scope.schedJob.jobSchedTime.completeTime.getMinutes();
+
+        $scope.schedJob.notifyEmailFlag = 'false';
+        $scope.schedJob.notifyEmailID = '';
+
+
+    }
+
+    $scope.scheduleJob = function() {
+        $scope.schedJob.jobSchedTime.hours = $scope.schedJob.jobSchedTime.completeTime.getHours();
+        $scope.schedJob.jobSchedTime.minutes = $scope.schedJob.jobSchedTime.completeTime.getMinutes();
+        console.log($scope.schedJob.jobSchedTime.hours + ":" + $scope.schedJob.jobSchedTime.minutes);
+
+
+    }
+
+
+    $scope.schedReset = function() {
+
+        $scope.schedJob = {};
+        $scope.initializeScheduleNewJob();
+
+    }
+
+
+    $scope.initializeScheduleNewJob();
+
+
 
 });
