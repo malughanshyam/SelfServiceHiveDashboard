@@ -16,6 +16,8 @@ module.exports = function(app){
     app.get('/jobResult/:JobID',adHocJobHandler.getJobResult);
     app.get('/jobResultFile/:JobID', adHocJobHandler.getJobResultFile);
 
+    app.get('/downloadJobResultFile/:JobID', adHocJobHandler.downloadFile)
+
 
     var fileHandler = require('./controllers/fileHandler');
     

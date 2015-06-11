@@ -6,7 +6,7 @@
 }
 .smpl-step {
     border-bottom: solid 1px #e0e0e0;
-    spadding: 0 0 10px 0;
+    padding: 0 0 10px 0;
 }
 .smpl-step > .smpl-step-step {
     padding: 0;
@@ -169,4 +169,8 @@ pre {
 /* Width of modal */
 #modelDialogViewLog, #modelDialogViewResult {
   width: 90%;
+}
+
+#editSubmitBtnGrp {
+    padding-bottom:  0.5em;
 }

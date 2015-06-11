@@ -289,7 +289,6 @@ exports.getJobResultFile = function(req,res){
 			else {
 				detailLogger.debug('JobID - %s User retrieved Job Result File: %s',jobID, JSON.stringify({ clientIPaddress: clientIPaddress, fileName: fileName, path: options.root}));
 			  	highLevelLogger.debug('JobID - %s User retrieved Job Result File: %s',jobID, JSON.stringify({ clientIPaddress: clientIPaddress, fileName: fileName, path: options.root}));
-				console.log('Sent:', fileName);
 				}
 		});
 
@@ -301,7 +300,26 @@ exports.getJobResultFile = function(req,res){
 
 };
 
+exports.downloadFile = function(req,res){
+    var jobID = req.params.JobID;
+    var clientIPaddress = req.ip || req.header('x-forwarded-for') || req.connection.remoteAddress;
+    
+    if (jobID != null){
+                
+        var fileName = 'result.txt'
+        var file = __dirname + '../../../' + dataDir+jobID +'/'+fileName;
+        var newFileName = 'result-'+jobID+'.txt';
+        detailLogger.debug('JobID - %s User downloaded Job Result File: %s',jobID, JSON.stringify({ clientIPaddress: clientIPaddress, fileName: file}));
+        highLevelLogger.debug('JobID - %s User downloaded Job Result File: %s',jobID, JSON.stringify({ clientIPaddress: clientIPaddress, fileName: file}));
+        res.download(path.resolve(file),newFileName); // Set disposition and send it.
 
+    } else{
+        detailLogger.error('JobID - %s Error fetching Job Result: %s' ,jobID, JSON.stringify({ clientIPaddress: clientIPaddress, error: err, fileName: fileName, path: options.root}));
+        highLevelLogger.error('JobID - %s Error fetching Job Result %s' ,jobID, JSON.stringify({ clientIPaddress: clientIPaddress, error: err, fileName: fileName, path: options.root}));
+        return res.status(err.status).end();
+    }
+   
+}
 
 exports.getJobResult = function(req,res){
 

@@ -144,9 +144,25 @@
                                             <span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span> View Log
                                         </button>
                                     </td>
+                                    
                                     <td>
-                                        <button type="button" ng-click="editAndResubmitJob(row)" class="btn btn-info btn-xs">
-                                            <i class="fa fa-share-square-o"></i> Edit | Resubmit
+                                        <div class="btn-group" role="group" id="editSubmitBtnGrp">
+
+                                            <button type="button" class="btn btn-info btn-xs dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                                              <i class="fa fa-share-square-o"></i> Edit / Resubmit
+                                              <span class="caret"></span>
+                                            </button>
+
+                                            <ul class="dropdown-menu" role="menu">
+                                              <li><a ng-click="editAndResubmitJob(row)"> <i class="fa fa-edit"></i> Edit &amp; Submit</a> </li>
+                                              <li><a ng-click="resubmitJob(row)"> <i class="fa fa-mail-forward"></i> Resubmit</a></li>
+                                              <li role="presentation" class="divider"></li>
+                                              <li role="presentation" ng-show="row.Status == 'JOB_SUCCESSFUL'"><a role="menuitem" ng-click="scheduleJob(row)"><i class="fa fa-clock-o"></i> Schedule</a></li>
+                                            </ul>
+                                        </div>
+                                        
+                                        <button type="button" ng-click="scheduleJob(row)" class="btn btn-warning btn-xs" id="scheduleBtn" ng-show="row.Status == 'JOB_SUCCESSFUL'">
+                                            <span class="glyphicon glyphicon-time" aria-hidden="true"></span> Schedule
                                         </button>
 
                                     </td>
@@ -399,7 +415,7 @@
                                         <div class="btn-group" role="group" aria-label="...">
                                             <button type="button" class="btn btn-default btn-xs" data-toggle="tab" href="#tabular" data-tooltip="Show Raw Data"> Tabular</button>
 
-                                            <button type="button" class="btn btn-success btn-xs" ng-click="saveDivAsPicture()" id="downloadTSVBtnId" data-tooltip="Save As TSV"><span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span></button>
+                                            <button type="button" class="btn btn-success btn-xs" ng-click="downloadJobResultFile(formData.jobID)" id="downloadTSVBtnId" data-tooltip="Save As TSV"><span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span></button>
                                         </div>
                                     </li>
                                 </ul>

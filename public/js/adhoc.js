@@ -282,6 +282,8 @@ app.controller('adHocController', function($scope, $compile, $http) {
 
     $scope.viewResults = function(adHocJob) {
 
+        $scope.initializeNewJobTab();
+
         $('#modelViewResults').modal('show')
 
         jobResultTabContent = $("#jobResultTab").html();
@@ -298,6 +300,7 @@ app.controller('adHocController', function($scope, $compile, $http) {
         $("#modelViewResults").find('#submittedHiveQuery').text(adHocJob.SQLQuery);
         $("#modelViewResults").find('#resultPanelTitle').text(adHocJob.JobName);
 
+        $scope.formData.jobID = adHocJob.JobID;
         $scope.computeJobResults(adHocJob.JobID);
 
         $('#modelViewResults').on('hidden.bs.modal', function() {
@@ -336,56 +339,6 @@ app.controller('adHocController', function($scope, $compile, $http) {
 
     }
 
-
-    $scope.viewJobResult_BackUp = function() {
-
-        if ($scope.submittedJobStatus != 'JOB_SUCCESSFUL') {
-            return false;
-        }
-
-        /*enable tab*/
-        $("#navLinkResult").removeClass('disabled');
-        $("#navLinkResult").find('a').attr("data-toggle", "tab");
-        $("#navLinkResult").click();
-
-        activateTab('jobResultTab');
-
-        // Disable Create New Job 
-        $("#navLinkStatus").addClass('disabled');
-        $("#navLinkStatus").find('a').removeAttr("data-toggle");
-
-
-        $scope.checkResultURL = '/jobResultFile?jobID=' + $scope.formData.jobID
-
-        $http.get($scope.checkResultURL, $scope.formData)
-            .success(function(data) {
-                $scope.jobResult = data;
-                $scope.createResultTable();
-                $scope.createCharts(enableChartTabs);
-
-                function enableChartTabs() {
-                    /*enable tab*/
-                    $("#navChart1").removeClass('disabled');
-                    $("#navChart1").find('a').attr("data-toggle", "tab");
-
-                    $("#navChart2").removeClass('disabled');
-                    $("#navChart2").find('a').attr("data-toggle", "tab");
-
-                    $("#flowStepResult").removeClass('disabled');
-                    $("#flowStepResult").addClass('complete');
-                }
-
-            })
-            .error(function(err) {
-                // $scope.submittedJobStatus='FAILED'
-                $scope.jobResult = 'Fetching Result Failed :' + err;
-                console.log(err)
-
-            });
-
-    }
-
-    // Refactor View Results Begins
     $scope.viewJobResult = function() {
 
         if ($scope.submittedJobStatus != 'JOB_SUCCESSFUL') {
@@ -423,8 +376,8 @@ app.controller('adHocController', function($scope, $compile, $http) {
                 $scope.jobResult = 'Fetching Result Failed :' + err;
                 console.log(err)
             });
-        }
-        // Refactor View Results Ends
+    }
+
 
     $scope.createHTMLTable = function(divId, data) {
 
@@ -786,16 +739,32 @@ app.controller('adHocController', function($scope, $compile, $http) {
     }
 
     $scope.editAndResubmitJob = function(adHocJob){
-        console.log("received : ");
-        console.log(adHocJob);
         $('#recentAdHocTab').removeClass('active');
         $('#navRecentAdHoc').removeClass('active');
         $('#navNewAdHoc').addClass('active');
         $scope.resetNewJobTab ();
-        console.log("Reset Done");
         $scope.formData.hiveQuery = adHocJob.SQLQuery;
         $scope.formData.jobName = adHocJob.JobName;
-        console.log($scope.formData);
+
+    }
+
+    $scope.resubmitJob = function(adHocJob){
+        $scope.resetNewJobTab ();
+        $scope.formData.hiveQuery = adHocJob.SQLQuery;
+        $scope.formData.jobName = adHocJob.JobName;
+        $scope.submitJob();
+        console.log("Job Resubmitted")
+        setTimeout(function(){
+            $scope.populateRecentAdHocJobTable()
+        }, 1000);
+    }
+
+    $scope.downloadJobResultFile = function(){
+
+        $scope.downloadJobResultURL = '/downloadJobResultFile/' + $scope.formData.jobID
+
+        window.open($scope.downloadJobResultURL);
+        console.log("Downloaded Result File for JobID: " + $scope.formData.jobID)
 
     }
 
