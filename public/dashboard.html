@@ -156,8 +156,21 @@
                                             <ul class="dropdown-menu" role="menu">
                                               <li><a ng-click="editAndResubmitJob(row)"> <i class="fa fa-edit"></i> Edit &amp; Submit</a> </li>
                                               <li><a ng-click="resubmitJob(row)"> <i class="fa fa-mail-forward"></i> Resubmit</a></li>
-                                              <li role="presentation" class="divider"></li>
-                                              <li role="presentation" ng-show="row.Status == 'JOB_SUCCESSFUL'"><a role="menuitem" ng-click="scheduleJob(row)"><i class="fa fa-clock-o"></i> Schedule</a></li>
+                                              <li class="divider"></li>
+
+                                              <li ng-show="row.Status == 'JOB_SUCCESSFUL'">
+                                                <a role="menuitem" ng-click="scheduleJob(row)">
+                                                    <i class="fa fa-clock-o"></i> Schedule
+                                                </a>
+                                              </li>
+
+                                              <li class="disabled" ng-show="row.Status != 'JOB_SUCCESSFUL'">
+                                                <a role="menuitem">
+                                                    <i class="fa fa-clock-o"></i> Schedule
+                                                </a>
+                                              </li>
+
+
                                             </ul>
                                         </div>
                                         
