@@ -181,8 +181,6 @@ exports.submitNewAdHocJob = function(req, res) {
         child_process.execFile(execFileName, args, options, callback)
     }
 
-//    				highLevelLogger.info(' AdHoc Job failed', { clientIPaddress: clientIPaddress, JobID: jobID,  JobName : jobName, sqlQuery : sqlQuery, error: error  });
-
 };
 
 // Get Job Status from the data/jobID/status.txt file

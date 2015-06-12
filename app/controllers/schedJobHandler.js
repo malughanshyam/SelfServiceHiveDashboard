@@ -2,7 +2,7 @@
 var fs = require('fs-extra');
 var sys = require('sys')
 var child_process = require('child_process');
-var dataDir = "data/";
+var dataDir = "data/scheduledJobs/";
 var path = require('path');
 var mongoose = require('mongoose');
 
@@ -30,18 +30,39 @@ ScheduledJob = require('../models/ScheduledJob');
 // Get all Scheduled Jobs
 exports.getAllSchedJobs = function(req, res){
 
+	var clientIPaddress = req.ip || req.header('x-forwarded-for') || req.connection.remoteAddress;
+	
+    var callback = function(err, scheduledJobs) {
+        if (err){
+            detailLogger.error('GET - Error retrieving all record: %s' ,jobID, JSON.stringify({ clientIPaddress: clientIPaddress, error: err}));
+            res.status(500)
+            return res.send(err)
+        } else {
+            detailLogger.debug(' GET - Retrieved all AdHoc Jobs by ', { clientIPaddress: clientIPaddress });
+            res.send(scheduledJobs);
+        }
+    
+    }
+
+    ScheduledJob
+    .find()
+    .sort('-UpdatedTimeStamp')
+    .limit(100)
+//    .sort('-UpdatedTimeStamp')
+    .exec(callback);
+
 };
 
 // Create new AdHoc Job
 exports.submitNewScheduledJob = function(req, res) {
 	
     // Initialize the AdHoc Job Variables
-    var jobName = req.body.jobName;
-    if (jobName == null || jobName == '') {
-        jobName = 'UnNamed Job'
+    var schedJobName = req.body.schedJobName;
+    if (schedJobName == null || schedJobName == '') {
+        schedJobName = 'UnnamedJob';
     }
 
-    var sqlQuery = req.body.hiveQuery;
+    var sqlQuery = req.body.schedQuery;
     if (sqlQuery == null) {
         sqlQuery = '';
     }
@@ -55,33 +76,50 @@ exports.submitNewScheduledJob = function(req, res) {
 
     jobID = jobID.toString();
 
-    detailLogger.info(' JobID - %s New AdHoc Job Submitted: %s', jobID, JSON.stringify({ clientIPaddress: clientIPaddress, JobName : jobName, sqlQuery : sqlQuery  }));
-    highLevelLogger.info(' JobID - %s New AdHoc Job Submitted: %s', jobID, JSON.stringify({ clientIPaddress: clientIPaddress, JobName : jobName, sqlQuery : sqlQuery  }));
+    detailLogger.info(' JobID - %s New Scheduled Job Submitted: %s', jobID, JSON.stringify({ clientIPaddress: clientIPaddress, JobName : schedJobName, SQLQuery : sqlQuery, ScheduledTime : req.body.jobSchedTime, ScheduledDays : req.body.days , NotifyFlag: req.body.notifyEmailFlag, NotifyEmailID : req.body.notifyEmailID}));
+    highLevelLogger.info(' JobID - %s New Scheduled Job Submitted: %s', jobID, JSON.stringify({ clientIPaddress: clientIPaddress, JobName : schedJobName, SQLQuery : sqlQuery, ScheduledTime : req.body.jobSchedTime, ScheduledDays : req.body.days , NotifyFlag: req.body.notifyEmailFlag, NotifyEmailID : req.body.notifyEmailID}));
 
     res.set('Access-Control-Allow-Origin', '*');
 
+/* 
+        $scope.schedJob.notifyEmailFlag = 'false';
+        $scope.schedJob.notifyEmailID = '';
+        */
+
+	/*
+    
+   */
+
     // Create a MongoDB record for the AdHoc Job
-    AdHocJob.create({
+    ScheduledJob.create({
         _id: jobID,
         JobID: jobID,
-        JobName: jobName,
+        JobName: schedJobName,
         SQLQuery: sqlQuery,
         SubmittedByIP: clientIPaddress,
         Status: jobStatus,
+		ExecutionTime	: { Hours: req.body.jobSchedTime.Hours, Minutes: req.body.jobSchedTime.Minutes} ,
+		ExecutionDays	: { SUN: req.body.days.sun, MON : req.body.days.mon , TUE : req.body.days.tue, WED: req.body.days.wed, THU: req.body.days.thu, FRI: req.body.days.fri, SAT: req.body.days.sat },
+		NotifyFlag 		: req.body.notifyEmailFlag,
+		NotifyEmail 	: req.body.notifyEmailID,
+		LastRunStatus 	: "NA",
         CreatedTimeStamp: new Date(),
         UpdatedTimeStamp: new Date()
-    }, function(err, adHocQuery) {
+
+    }, function(err, scheduledJob) {
         if (err) {
         	detailLogger.error('JobID - %s Error creating new record: %s' ,jobID, JSON.stringify({ error: err}));
             res.status(500)
             return res.send(err)
         } else {
-       		detailLogger.debug('JobID - %s  New Job details inserted into database', jobID  );
-        	createJobDirectory();
+       		detailLogger.debug('JobID - %s  New Job details inserted into database : %s', jobID , JSON.stringify({ scheduledJob: scheduledJob}) );
+       		res.send({"JobID" : jobID });
+        	//createJobDirectory();
         }
 
     });
 
+    /*
     // Create a directory for the JobID
     createJobDirectory = function() {
 
@@ -143,20 +181,7 @@ exports.submitNewScheduledJob = function(req, res) {
         child_process.execFile(execFileName, args, options, callback)
     }
 
-//    				highLevelLogger.info(' AdHoc Job failed', { clientIPaddress: clientIPaddress, JobID: jobID,  JobName : jobName, sqlQuery : sqlQuery, error: error  });
+    */
 
 };
-
-	/*_id				: String,
-    JobID      	 	: String,
-    JobName     	: String,
-    SQLQuery    	: String,
-    ExecutionTime	: { Hours: Number, Minutes: Number} 
-    ExecutionDays	: { SUN: Boolean, MON : Boolean , TUE : Boolean, WED: Boolean, THU: Boolean, FRI: Boolean, SAT: Boolean }
-    NotifyFlag 		: Boolean,
-    NotifyEmail 	: [String],
-    SubmittedByIP 	: String,
-    LastRunStatus 	: String,
-    CreatedTimeStamp: { type: Date, default:Date.now },
-    UpdatedTimeStamp: { type: Date, default:Date.now }*/
 
