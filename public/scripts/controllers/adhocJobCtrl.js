@@ -1,7 +1,6 @@
-// var app = angular.module('dashboardApp', []);
-var app = angular.module('dashboardApp', ['ui.bootstrap', 'smart-table', 'ngAnimate']);
+angular.module('dashboardApp')
 
-app.controller('adHocController', function($scope, $compile, $http) {
+    .controller('adHocJobCtrl', function($scope, $compile, $http) {
 
     // experiment with smart table
     $scope.recentAdHocJobs = [];
@@ -143,6 +142,11 @@ app.controller('adHocController', function($scope, $compile, $http) {
         }, displayTime);
     }
 
+
+    $scope.flashAlertAndResetNewJobTab = function(){
+        $scope.resetNewJobTab();
+        $scope.flashAlertCheckRecentJobs();
+    }
 
     $scope.activateCurrentJobStatusTab = function() {
 
@@ -637,93 +641,6 @@ app.controller('adHocController', function($scope, $compile, $http) {
     }
 
 
-    $scope.createChart_backup = function() {
-
-        //        $scope.checkResultURL = '/jobResultFile?jobID='+$scope.formData.jobID
-        $scope.checkResultURL = '/jobResultFile?jobID=' + 'nyse'
-
-        $http.get($scope.checkResultURL, $scope.formData)
-            .success(function(data) {
-                $scope.chartData = data.trim();
-                console.log("Data retrieved: ")
-                console.log($scope.chartData)
-                generateChart()
-            })
-            .error(function(err) {
-                // $scope.submittedJobStatus='FAILED'
-                console.log(err)
-
-            });
-
-        function generateChart() {
-
-            // Parse the TSV Result file into Array of Data 
-            var x = $scope.chartData.split('\n');
-            for (var i = 0; i < x.length; i++) {
-                y = x[i].split('\t');
-                x[i] = y;
-            }
-
-            $scope.chartData = x
-            console.log(x)
-
-            // $scope.chartDataHeader = x[0]
-            // $scope.chartDataSplit = x.slice(1);
-
-            // console.log("Header: ")
-            // console.log($scope.chartDataHeader)
-
-            // console.log("Data: ")
-            // console.log($scope.chartDataSplit)
-
-            // Generate Bar Chart
-            var chartBar = c3.generate({
-                bindto: '#chartBar',
-                data: {
-                    x: $scope.chartData[0][0],
-                    rows: $scope.chartData,
-                    type: 'bar'
-                },
-                axis: {
-                    x: {
-                        type: 'category',
-                        tick: {
-                            rotate: 75,
-                            multiline: false
-                        },
-                        height: 130
-                    }
-                }
-
-
-            });
-
-            // Generate Line Chart
-            var chartBar = c3.generate({
-                bindto: '#chartLine',
-                data: {
-                    x: $scope.chartData[0][0],
-                    rows: $scope.chartData,
-                    type: 'line'
-                },
-                axis: {
-                    x: {
-                        type: 'category',
-                        tick: {
-                            rotate: 75,
-                            multiline: false
-                        },
-                        height: 130
-                    }
-                }
-
-
-            });
-
-        }
-
-    }
-
     $scope.saveDivAsPicture = function() {
         console.log("clicked me")
         $scope.saveAsPicture($("#resultPanel"))
@@ -777,66 +694,5 @@ app.controller('adHocController', function($scope, $compile, $http) {
     }
 
 
-    // ---------------------------------
-    // Scheduled Job Section
-    // ---------------------------------
-
-
-    // Initialize Schedule New Job
-    $scope.initializeScheduleNewJob = function() {
-        $scope.schedJob = {};
-
-        $scope.schedJobName = "unnamed";
-        $scope.schedQuery = "";
-
-
-        // Scheduled Job Default Time
-        var defaultSchedTime = new Date();
-        defaultSchedTime.setHours(22);
-        defaultSchedTime.setMinutes(0);
-
-        // Scheduled Job Execution Time
-        $scope.schedJob.jobSchedTime = {};
-        $scope.schedJob.jobSchedTime.completeTime = defaultSchedTime;
-
-        $scope.schedJob.days = {
-            "sun": false,
-            "mon": false,
-            "tue": false,
-            "wed": false,
-            "thu": false,
-            "fri": false,
-            "sat": false
-        };
-
-        $scope.schedJob.jobSchedTime.hours = $scope.schedJob.jobSchedTime.completeTime.getHours();
-        $scope.schedJob.jobSchedTime.minutes = $scope.schedJob.jobSchedTime.completeTime.getMinutes();
-
-        $scope.schedJob.notifyEmailFlag = 'false';
-        $scope.schedJob.notifyEmailID = '';
-
-
-    }
-
-    $scope.scheduleJob = function() {
-        $scope.schedJob.jobSchedTime.hours = $scope.schedJob.jobSchedTime.completeTime.getHours();
-        $scope.schedJob.jobSchedTime.minutes = $scope.schedJob.jobSchedTime.completeTime.getMinutes();
-        console.log($scope.schedJob.jobSchedTime.hours + ":" + $scope.schedJob.jobSchedTime.minutes);
-
-
-    }
-
-
-    $scope.schedReset = function() {
-
-        $scope.schedJob = {};
-        $scope.initializeScheduleNewJob();
-
-    }
-
-
-    $scope.initializeScheduleNewJob();
-
-
-
 });
+
