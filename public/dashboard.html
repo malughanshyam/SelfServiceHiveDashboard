@@ -533,7 +533,7 @@
 
                             <!-- Submit Job Tab Content Begins  -->
                             <div id="newJobTab" class="tab-pane fade in active">
-                                <form class="form-horizontal">
+                                <form class="form-horizontal" ng-submit="scheduleJob()">
 
                                     <div class="form-group">
                                         <label for="schedJobName" class="col-sm-2 control-label">Job Name</label>
@@ -605,7 +605,7 @@
 
                                     <div class="form-group">
                                         <div class="col-sm-offset-2 col-sm-10">
-                                            <button ng-click="scheduleJob()" type="submit" class="btn btn-primary">Schedule Job</button>
+                                            <button type="submit" class="btn btn-primary">Schedule Job</button>
                                             <button ng-click="schedReset()" class="btn btn-default">Clear</button>
                                         </div>
                                     </div>

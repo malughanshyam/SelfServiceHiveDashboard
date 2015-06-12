@@ -76,7 +76,7 @@ exports.submitNewScheduledJob = function(req, res) {
 
     // Create a new Job ID 	
     var ObjectId = mongoose.Types.ObjectId;
-    jobID = new ObjectId;
+    var jobID = new ObjectId;
 
     jobID = jobID.toString();
 
@@ -106,7 +106,7 @@ exports.submitNewScheduledJob = function(req, res) {
         if (err) {
         	detailLogger.error('JobID - %s Error creating new record: %s' ,jobID, JSON.stringify({ error: err}));
             res.status(500)
-            return res.send(err)
+            return res.send({JobID : null, err : err})
         } else {
        		detailLogger.debug('JobID - %s  New Job details inserted into database : %s', jobID , JSON.stringify({ scheduledJob: scheduledJob}) );
        		//res.send({"JobID" : jobID });
@@ -130,16 +130,13 @@ exports.submitNewScheduledJob = function(req, res) {
             if (err) {
             	detailLogger.error('JobID - %s Error creating new directory: %s', jobID,  JSON.stringify({Directory: dir, error: err}));
                 res.status(500)
-                return res.send(err)
+                return res.send({JobID : null, err : err})
             } else {
 	            detailLogger.debug('JobID - %s  New JobID directory created: %s',jobID, JSON.stringify ({Directory: dir}));
 		        var ws = fs.createOutputStream(queryFile)
 		        ws.write(sqlQuery)
 		        detailLogger.debug('JobID - %s  Hive Query written to file: %s',jobID, JSON.stringify({ QueryFile : queryFile}));
-		        res.send({
-                    "JobID": jobID
-                });
-                createCronJob()
+                createCronCmd()
 
             }
         })
@@ -147,7 +144,14 @@ exports.submitNewScheduledJob = function(req, res) {
     }
 
 
-    createCronJob = function() {
+    createCronCmd = function() {
+
+        // Create Parameters for the CRON job
+        // MIN HOUR DOM MON DOW CMD
+
+        // Sample CRON : 
+        // croncmd="ls -l"
+        // cronjob="0 0 * * * $croncmd" 
 
         var min = executionTime.minutes;
         var hours = executionTime.hours;
@@ -217,72 +221,90 @@ exports.submitNewScheduledJob = function(req, res) {
             dayOfWeek +="6";
         } 
 
-        cronCmd = "ls -la"
 
-        // MIN HOUR DOM MON DOW CMD
-        crontabCmd = min + " " + hours + " " + dayOfMonth + " " + month + " " + dayOfWeek + " " + cronCmd;
-        detailLogger.info('JobID - %s Cron Job Command : %s' ,jobID, JSON.stringify({ clientIPaddress: clientIPaddress, crontabCmd: crontabCmd }));
-
-        executeInsertCrontabCommand();
-
-   }
-
-/*
-
-croncmd="ls -l"
-cronjob="0 0 * * * $croncmd"
-
-To add it to the crontab, with no duplication:
-
-( crontab -l | grep -v "$croncmd" ; echo "$cronjob" ) | crontab -
-
-To remove it from the crontab:
-
-( crontab -l | grep -v "$croncmd" ) | crontab -
-
-*/
-
-
- 
-    executeInsertCrontabCommand = function () { 
 
         
 
-    }
-
-/*
-
-    executeHiveScript = function() {
+        // Prepare Command to be run by CRON
 
         var execDirPath = '/Users/gmalu/Documents/Project/SelfServiceHiveDashboard/backendScripts/',
             execFileName = './HiveLauncher.sh',
             normalizePath = "../"
+    
+        args = jobID + " " + normalizePath  + queryFile  + " " + normalizePath + dir
 
-        args = [jobID, normalizePath + queryFile, normalizePath + dir]
 
         var options = {
             cwd: execDirPath,
             timeout: 0
         }
 
-        function callback(error, results) {
-            if (error) {
-            	detailLogger.error('JobID - %s  Execution of Hive Query failed: %s',jobID, JSON.stringify({ error: error}));
-            	highLevelLogger.error('JobID - %s  Execution of Hive Query failed: %s',jobID, JSON.stringify({ error: error}));
-            	highLevelLogger.info(' JobID - %s  AdHoc Job failed: %s', jobID, JSON.stringify({ clientIPaddress: clientIPaddress,  JobName : jobName, sqlQuery : sqlQuery, error: error  }));
-                
+        // Log File to store the CRON output
+        cronlogFile = " > " + normalizePath + dataDir + "cronLogs.log 2>&1"
+
+        // Finalized command to be run by CRON
+        cronCmd = "cd " + execDirPath + " && " + execFileName + " " + args + cronlogFile;
+
+
+        // Final CRON Job
+        // MIN HOUR DOM MON DOW CMD
+        crontabJobCmd = min + " " + hours + " " + dayOfMonth + " " + month + " " + dayOfWeek + " " + cronCmd;
+
+
+        detailLogger.debug('JobID - %s  Inserting Cron Job Command : %s' ,jobID, JSON.stringify({ clientIPaddress: clientIPaddress, crontabJobCmd: crontabJobCmd }));
+
+
+        /* 
+        Sample : 
+        ---------------------------------------------------------------
+        croncmd="ls -l"
+        cronjob="0 0 * * * $croncmd"
+
+        To add it to the crontab, with no duplication:
+
+        ( crontab -l | grep -v "$croncmd" ; echo "$cronjob" ) | crontab -
+
+        To remove it from the crontab:
+
+        ( crontab -l | grep -v "$croncmd" ) | crontab -
+        ---------------------------------------------------------------
+        */
+ 
+        //( crontab -l | grep -v "$croncmd" ; echo "$cronjob" ) | crontab -
+        crontabInsertCmd = '( crontab -l | grep -v "' + cronCmd + '" ; echo "' + crontabJobCmd + '" ) | crontab -';
+
+        // Sample : crontab -l | grep -v \"cd /Users/gmalu/Documents/Project/SelfServiceHiveDashboard/backendScripts/ && ./HiveLauncher.sh 557b51d8a502c4091617c3a7 ../data/scheduledJobs/557b51d8a502c4091617c3a7/sql.txt ../data/scheduledJobs/557b51d8a502c4091617c3a7 > data/scheduledJobs/cronLogs.log 2>&1\" ; echo \"45 22 * * 0,1 cd /Users/gmalu/Documents/Project/SelfServiceHiveDashboard/backendScripts/ && ./HiveLauncher.sh 557b51d8a502c4091617c3a7 ../data/scheduledJobs/557b51d8a502c4091617c3a7/sql.txt ../data/scheduledJobs/557b51d8a502c4091617c3a7> data/scheduledJobs/cronLogs.log 2>&1\" ) | crontab -
+        
+        detailLogger.debug('JobID - %s  Executing Crontab Job Insertion Command : %s' ,jobID, JSON.stringify({ clientIPaddress: clientIPaddress, crontabInsertCmd: crontabInsertCmd }));       
+        
+
+        // Callback function to be executed after Command Execution
+        var callback = function (error, stdout, stderr) {
+           if (error) {
+             detailLogger.error('JobID - %s  Inserting CRON Job failed: %s',jobID, JSON.stringify({ error: error}));
+             highLevelLogger.error('JobID - %s  Inserting CRON Job failed: %s',jobID, JSON.stringify({ error: error}));
+           }
+        };
+
+
+        // Execute the command to insert the new CRON job in the CRON file
+        var insertCronJobCmdExec = child_process.exec(crontabInsertCmd, options, callback);
+
+        // Check the exit code of the command 
+        insertCronJobCmdExec.on('exit', function (code) {
+                detailLogger.debug('insertCronJobCmdExec Child process exited with exit code '+code);   
+            if (code == 0) {
+                detailLogger.info('JobID - %s  CRON Job Scheduled successfully: %s',jobID, JSON.stringify({ crontabJobCmd: crontabJobCmd}));
+                highLevelLogger.info('JobID - %s  CRON Job Scheduled successfully: %s',jobID, JSON.stringify({ crontabJobCmd: crontabJobCmd}));
+                res.send({"JobID": jobID});
+                removeJobIDFromDB();         
             } else {
-            	detailLogger.debug('JobID - %s  Hive Query Script Execution Completed',jobID)
-                highLevelLogger.debug('JobID - %s  Hive Query Script Execution Completed',jobID)
-                
+                return res.send({JobID : null, err : err})
+                updateJobIDinDB();
             }
-        }
+        });
 
-        detailLogger.debug('JobID - %s  Executing HiveScriptLauncher: %s',jobID, JSON.stringify({scriptName: execFileName, args : args}));
-        child_process.execFile(execFileName, args, options, callback)
     }
-
-    */
 
 };
 

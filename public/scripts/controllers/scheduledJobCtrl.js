@@ -20,7 +20,7 @@ angular.module('dashboardApp')
         $scope.jobSchedSetDefaultTime();
 
         $scope.schedJob.days = {
-            "sun": false,
+            "sun": true,
             "mon": false,
             "tue": false,
             "wed": false,
@@ -58,6 +58,10 @@ angular.module('dashboardApp')
     }
 
     $scope.scheduleJob = function() {
+
+        $scope.schedJob.schedJobName = "";
+        $scope.schedJob.schedQuery = "";
+        
         $scope.schedJob.jobSchedTime.hours = $scope.schedJob.jobSchedTime.completeTime.getHours();
         $scope.schedJob.jobSchedTime.minutes = $scope.schedJob.jobSchedTime.completeTime.getMinutes();
         console.log($scope.schedJob.jobSchedTime.hours + ":" + $scope.schedJob.jobSchedTime.minutes);
@@ -86,12 +90,13 @@ angular.module('dashboardApp')
     }
 
 
-    $scope.schedReset = function() {
-
+      $scope.schedReset = function() {
         $scope.schedJob = {};
         $scope.initializeScheduleNewJob();
+        $scope.schedJob = angular.copy($scope.schedJob);
+      };
 
-    }
+    $scope.schedReset();
 
     $scope.initializeScheduleNewJob();
 
