@@ -48,7 +48,6 @@ exports.getAllSchedJobs = function(req, res){
     .find()
     .sort('-UpdatedTimeStamp')
     .limit(100)
-//    .sort('-UpdatedTimeStamp')
     .exec(callback);
 
 };
@@ -69,6 +68,11 @@ exports.submitNewScheduledJob = function(req, res) {
 
     var clientIPaddress = req.ip || req.header('x-forwarded-for') || req.connection.remoteAddress;
     var jobStatus = 'JOB_NOT_STARTED'
+    var executionTime = req.body.jobSchedTime;
+    var executionDays = req.body.days;
+    var notifyEmailFlag = req.body.notifyEmailFlag;
+    var notifyEmailID   = req.body.notifyEmailID;
+    var lastRunStatus = "JOB_NOT_STARTED"
 
     // Create a new Job ID 	
     var ObjectId = mongoose.Types.ObjectId;
@@ -81,14 +85,6 @@ exports.submitNewScheduledJob = function(req, res) {
 
     res.set('Access-Control-Allow-Origin', '*');
 
-/* 
-        $scope.schedJob.notifyEmailFlag = 'false';
-        $scope.schedJob.notifyEmailID = '';
-        */
-
-	/*
-    
-   */
 
     // Create a MongoDB record for the AdHoc Job
     ScheduledJob.create({
@@ -98,11 +94,11 @@ exports.submitNewScheduledJob = function(req, res) {
         SQLQuery: sqlQuery,
         SubmittedByIP: clientIPaddress,
         Status: jobStatus,
-		ExecutionTime	: { Hours: req.body.jobSchedTime.Hours, Minutes: req.body.jobSchedTime.Minutes} ,
-		ExecutionDays	: { SUN: req.body.days.sun, MON : req.body.days.mon , TUE : req.body.days.tue, WED: req.body.days.wed, THU: req.body.days.thu, FRI: req.body.days.fri, SAT: req.body.days.sat },
-		NotifyFlag 		: req.body.notifyEmailFlag,
-		NotifyEmail 	: req.body.notifyEmailID,
-		LastRunStatus 	: "NA",
+		ExecutionTime	: { Hours: executionTime.hours, Minutes: executionTime.minutes} ,
+		ExecutionDays	: { SUN: executionDays.sun, MON : executionDays.mon , TUE : executionDays.tue, WED: executionDays.wed, THU: executionDays.thu, FRI: executionDays.fri, SAT: executionDays.sat },
+		NotifyFlag 		: notifyEmailFlag,
+		NotifyEmail 	: notifyEmailID,
+		LastRunStatus 	: lastRunStatus,
         CreatedTimeStamp: new Date(),
         UpdatedTimeStamp: new Date()
 
@@ -113,13 +109,13 @@ exports.submitNewScheduledJob = function(req, res) {
             return res.send(err)
         } else {
        		detailLogger.debug('JobID - %s  New Job details inserted into database : %s', jobID , JSON.stringify({ scheduledJob: scheduledJob}) );
-       		res.send({"JobID" : jobID });
-        	//createJobDirectory();
+       		//res.send({"JobID" : jobID });
+        	createJobDirectory();
         }
 
     });
 
-    /*
+    
     // Create a directory for the JobID
     createJobDirectory = function() {
 
@@ -143,13 +139,118 @@ exports.submitNewScheduledJob = function(req, res) {
 		        res.send({
                     "JobID": jobID
                 });
-                executeHiveScript()
+                createCronJob()
 
             }
         })
 
     }
 
+
+    createCronJob = function() {
+
+        var min = executionTime.minutes;
+        var hours = executionTime.hours;
+
+        var dayOfMonth = "*";
+
+        var month = "*"
+
+        var dayOfWeek = "";
+
+        if (executionDays.sun == true) {
+            dayOfWeek += "0";
+        } 
+
+        if (executionDays.mon == true) {
+            if (dayOfWeek.length > 0)
+            {
+                dayOfWeek += ",";
+            }
+
+            dayOfWeek +="1";
+
+        } 
+
+        if (executionDays.tue == true) {
+            if (dayOfWeek.length > 0)
+            {
+                dayOfWeek += ",";
+            }
+
+            dayOfWeek +="2";
+        } 
+
+        if (executionDays.wed == true) {
+            if (dayOfWeek.length > 0)
+            {
+                dayOfWeek += ",";
+            }
+
+            dayOfWeek +="3";
+        } 
+
+        if (executionDays.thu == true) {
+            if (dayOfWeek.length > 0)
+            {
+                dayOfWeek += ",";
+            }
+
+            dayOfWeek +="4";
+        } 
+
+        if (executionDays.fri == true) {
+            if (dayOfWeek.length > 0)
+            {
+                dayOfWeek += ",";
+            }
+
+            dayOfWeek +="5";
+        } 
+
+        if (executionDays.sat == true) {
+            if (dayOfWeek.length > 0)
+            {
+                dayOfWeek += ",";
+            }
+
+            dayOfWeek +="6";
+        } 
+
+        cronCmd = "ls -la"
+
+        // MIN HOUR DOM MON DOW CMD
+        crontabCmd = min + " " + hours + " " + dayOfMonth + " " + month + " " + dayOfWeek + " " + cronCmd;
+        detailLogger.info('JobID - %s Cron Job Command : %s' ,jobID, JSON.stringify({ clientIPaddress: clientIPaddress, crontabCmd: crontabCmd }));
+
+        executeInsertCrontabCommand();
+
+   }
+
+/*
+
+croncmd="ls -l"
+cronjob="0 0 * * * $croncmd"
+
+To add it to the crontab, with no duplication:
+
+( crontab -l | grep -v "$croncmd" ; echo "$cronjob" ) | crontab -
+
+To remove it from the crontab:
+
+( crontab -l | grep -v "$croncmd" ) | crontab -
+
+*/
+
+
+ 
+    executeInsertCrontabCommand = function () { 
+
+        
+
+    }
+
+/*
 
     executeHiveScript = function() {
 
