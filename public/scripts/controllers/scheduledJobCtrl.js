@@ -59,6 +59,11 @@ angular.module('dashboardApp')
 
     $scope.scheduleJob = function() {
 
+        $('#createSchedJobTab').removeClass('active');
+        $('#createSchedJobStatusTab').addClass('active');
+
+        $('#createSchedJobStatusPlaceholderDiv').html('<h3 align="center"> <i class="fa fa-spinner fa-pulse fa-3x "></i> <br><br> Scheduling Job... </h3>');
+
         $scope.schedJob.jobSchedTime.hours = $scope.schedJob.jobSchedTime.completeTime.getHours();
         $scope.schedJob.jobSchedTime.minutes = $scope.schedJob.jobSchedTime.completeTime.getMinutes();
         console.log($scope.schedJob.jobSchedTime.hours + ":" + $scope.schedJob.jobSchedTime.minutes);
@@ -70,13 +75,15 @@ angular.module('dashboardApp')
                 console.log("Job Scheduled Successfully");
                 $scope.schedJob.jobID = data.JobID;
                 console.log("schedJob.jobID: "+ $scope.schedJob.jobID);
+                $('#createSchedJobStatusPlaceholderDiv').html('<h3 align="center"> <i id="success" class="fa fa-check-square-o fa-3x "></i> <br>Job Scheduled </h3>');
 
             })
             .error(function(err) {
                 console.log("Job Scheduling Failed")
                 console.log(err)
+                $('#createSchedJobStatusPlaceholderDiv').html('<h3 align="center"> <i id="failed" class="fa fa-exclamation-triangle fa-3x "></i> <br>Scheduling Failed </h3>');
+                $('#createSchedJobStatusPlaceholderDiv').append('<pre> <h3>Error</h3><br>' + err + '</pre')
             });
-
 
     }
 
@@ -90,5 +97,10 @@ angular.module('dashboardApp')
     $scope.schedReset();
 
     $scope.initializeScheduleNewJob();
+
+    // delete these lines... only for testing
+    // $('#createSchedJobTab').removeClass('active');
+    // $('#createSchedJobStatusTab').addClass('active');
+    // $scope.scheduleJob();
 
 });

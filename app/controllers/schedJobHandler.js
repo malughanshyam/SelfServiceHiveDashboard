@@ -52,6 +52,22 @@ exports.getAllSchedJobs = function(req, res){
 
 };
 
+// Get Scheduled Job based on Job ID
+exports.getScheduledJobByJobID = function (req, res) {
+    var jobID = req.params.JobID;
+    var clientIPaddress = req.ip || req.header('x-forwarded-for') || req.connection.remoteAddress;
+    return ScheduledJob.findById(jobID, function (err, adHocJob) {
+    if (!err) {
+        detailLogger.debug(' JobID - %s information retrieved by: %s', jobID, JSON.stringify({ clientIPaddress: clientIPaddress }));
+        return res.send(adHocJob);
+    } else {
+        detailLogger.debug(' JobID - %s information retrieval failed by: %s', jobID, JSON.stringify({ clientIPaddress: clientIPaddress, error: err  }));
+        res.status(500)
+        return res.send(err)
+    }
+  });
+}
+
 // Create Scheduled Job
 exports.submitNewScheduledJob = function(req, res) {
 	
@@ -86,6 +102,7 @@ exports.submitNewScheduledJob = function(req, res) {
 
     var jobDir = dataDir + jobID;
     var queryFile = jobDir + '/sql.txt';
+    var crontabInsertCmd ;
 
     // Create a directory for the JobID
     createJobDirectory = function() {
@@ -189,24 +206,20 @@ exports.submitNewScheduledJob = function(req, res) {
             execFileName = './HiveLauncher.sh',
             normalizePath = "../"
     
-        args = jobID + " " + normalizePath  + queryFile  + " " + normalizePath + jobDir
+        var args = jobID + " " + normalizePath  + queryFile  + " " + normalizePath + jobDir
 
 
-        var options = {
-            cwd: execDirPath,
-            timeout: 0
-        }
 
         // Log File to store the CRON output
-        cronlogFile = " > " + normalizePath + dataDir + "cronLogs.log 2>&1"
+        var cronlogFile = " > " + normalizePath + dataDir + "cronLogs.log 2>&1"
 
         // Finalized command to be run by CRON
-        cronCmd = "cd " + execDirPath + " && " + execFileName + " " + args + cronlogFile;
+        var cronCmd = "cd " + execDirPath + " && " + execFileName + " " + args + cronlogFile;
 
 
         // Final CRON Job
         // MIN HOUR DOM MON DOW CMD
-        crontabJobCmd = min + " " + hours + " " + dayOfMonth + " " + month + " " + dayOfWeek + " " + cronCmd;
+        var crontabJobCmd = min + " " + hours + " " + dayOfMonth + " " + month + " " + dayOfWeek + " " + cronCmd;
 
 
         detailLogger.debug('JobID - %s  Inserting Cron Job Command : %s' ,jobID, JSON.stringify({ clientIPaddress: clientIPaddress, crontabJobCmd: crontabJobCmd }));
@@ -245,6 +258,11 @@ exports.submitNewScheduledJob = function(req, res) {
         };
 
 
+        var options = {
+            cwd: execDirPath,
+            timeout: 0
+        }
+
         // Execute the command to insert the new CRON job in the CRON file
         var insertCronJobCmdExec = child_process.exec(crontabInsertCmd, options, callback);
 
@@ -252,8 +270,8 @@ exports.submitNewScheduledJob = function(req, res) {
         insertCronJobCmdExec.on('exit', function (code) {
             detailLogger.debug('insertCronJobCmdExec Child process exited with exit code '+code);   
             if (code == 0) {
-                detailLogger.info('JobID - %s  CRON Job Scheduled successfully: %s',jobID, JSON.stringify({ crontabJobCmd: crontabJobCmd}));
-                highLevelLogger.info('JobID - %s  CRON Job Scheduled successfully: %s',jobID, JSON.stringify({ crontabJobCmd: crontabJobCmd}));
+                detailLogger.info('JobID - %s  CRON Job Scheduled Successfully: %s',jobID, JSON.stringify({ crontabJobCmd: crontabInsertCmd}));
+                highLevelLogger.info('JobID - %s  CRON Job Scheduled Successfully: %s',jobID, JSON.stringify({ crontabJobCmd: crontabInsertCmd}));
                 createDBRecord();        
             } else {
                 res.send({JobID : null, err : err})
@@ -282,6 +300,7 @@ exports.submitNewScheduledJob = function(req, res) {
             NotifyFlag      : notifyEmailFlag,
             NotifyEmail     : notifyEmailID,
             LastRunStatus   : lastRunStatus,
+            CronTabJob      : crontabInsertCmd,
             CreatedTimeStamp: new Date(),
             UpdatedTimeStamp: new Date()
 
@@ -314,6 +333,73 @@ exports.submitNewScheduledJob = function(req, res) {
 
 // Delete Scheduled Job and data 
 exports.removeScheuledJob = function(req, res) {
+    var clientIPaddress = req.ip || req.header('x-forwarded-for') || req.connection.remoteAddress;
+    var jobID = req.params.JobID
+    
+
+    detailLogger.debug('JobID - %s  Removing Crontab Job : %s' ,jobID, JSON.stringify({ clientIPaddress: clientIPaddress, jobID: jobID }));       
+
+    /*
+    To remove from the crontab:
+        ( crontab -l | grep -v "jobID" ) | crontab -
+    */
+
+    //( crontab -l | grep -v "$croncmd" ; echo "$cronjob" ) | crontab -
+    var crontabRemoveCmd = '( crontab -l | grep -v "' + jobID + '" ) | crontab -';
+
+
+    // Callback function to be executed after Command Execution
+    var callback = function (error, stdout, stderr) {
+       if (error) {
+         detailLogger.error('JobID - %s  Removal of CRON Job failed: %s',jobID, JSON.stringify({ error: error}));
+         highLevelLogger.error('JobID - %s  Removal of CRON Job failed: %s',jobID, JSON.stringify({ error: error}));
+       }
+    };
+
+    var options = {
+        //cwd: execDirPath,
+        timeout: 0
+    }
+
+    // Execute the command to REMOVE the CRON job from the CRON file
+    var removeCronJobCmdExec = child_process.exec(crontabRemoveCmd, options, callback);
+
+    // Check the exit code of the command 
+    removeCronJobCmdExec.on('exit', function (code) {
+        detailLogger.debug('removeCronJobCmdExec Child process exited with exit code '+code);   
+        if (code == 0) {
+            detailLogger.info('JobID - %s  CRON Job Removed Successfully: %s',jobID, JSON.stringify({ crontabRemoveCmd: crontabRemoveCmd}));
+            highLevelLogger.info('JobID - %s  CRON Job Removed Successfully: %s',jobID, JSON.stringify({ crontabRemoveCmd: crontabRemoveCmd}));
+            updateStatusInDB();        
+        } else {
+            res.send({status: "failed", err : err})
+        }
+
+    });
+
+
+   // Update the Job in Database
+       updateStatusInDB = function() {
+       
+
+       var query = { _id: jobID };
+       var updateFields = { ScheduleStatus: 'DELETED' }
+   
+       function callback (err) {
+         if (err) {
+               detailLogger.error('JobID - %s Error updating the Job status to Deleted in Database: %s' ,jobID, JSON.stringify({ error: err}));
+               return res.send({status: "failed", err : err})
+           }
+           else {
+              detailLogger.info('JobID - %s Updated the Scheduled Job status to Deleted in Database' ,jobID);
+              return res.send({status: "success"});
+           }
+       }
+
+       ScheduledJob.update(query, updateFields , callback)
+
+   }
+
 
 }
 

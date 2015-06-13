@@ -186,6 +186,7 @@ pre {
     line-height: 1.42857;
 }
 
+/* Change active color of Yes/No button for Notify By Email on Create Scheduled Job form */
 #notifyChkBox .btn.active, .btn:active {
     background-color: #2aabd2;
     color: #fff;
@@ -195,3 +196,22 @@ pre {
     font-weight: 400;
     line-height: 1.42857;
 }
+
+
+/* Place the Create New Scheduled Task Status Div S*/
+
+#createSchedJobStatusPlaceholderDiv {
+    margin-top: 20%; 
+    margin-bottom: 20%;
+}
+
+
+#createSchedJobStatusPlaceholderDiv #success {
+    color: #00CC33 ;
+}
+
+#createSchedJobStatusPlaceholderDiv #failed {
+    color: #FF0000 ;
+}
+
+

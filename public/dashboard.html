@@ -522,9 +522,9 @@
 
                         <!-- Tab Titles under Create New Job -->
                         <ul class="nav nav-tabs nav-justified" id="" ng-hide="true">
-                            <li class="active" id="navLinkNewJob"> <a data-toggle="tab" href="#newJobTab">Create</a>
+                            <li id="navLinkCreateSchedJobTab"> <a data-toggle="tab" href="#createSchedJobTab">Create</a>
                             </li>
-                            <li class="disabled" id="navLinkStatus"> <a data-toggle="tab" href="#jobStatusTab">Status</a>
+                            <li id="navLinkCreateSchedJobStatusTab"> <a data-toggle="tab" href="#createSchedJobStatusTab">Status</a>
                             </li>
                         </ul>
 
@@ -532,7 +532,7 @@
                         <div class="tab-content">
 
                             <!-- Submit Job Tab Content Begins  -->
-                            <div id="newJobTab" class="tab-pane fade in active">
+                            <div id="createSchedJobTab" class="tab-pane fade in active">
                                 <form class="form-horizontal" ng-submit="scheduleJob()">
 
                                     <div class="form-group">
@@ -586,7 +586,7 @@
                                         <label for="notifyChkBox" class="col-sm-2 control-label">Notify by Email</label>
                                         <div class="col-sm-10">
                                             <div class="btn-group" id="notifyChkBox">
-                                                <label class="btn btn-default" ng-model="schedJob.notifyEmailFlag" btn-radio="'false'">No</label>
+                                                <label class="btn btn-default" ng-model="schedJob.notifyEmailFlag" btn-radio="'false'" ng-click="schedJob.notifyEmailID=''">No</label>
                                                 <label class="btn btn-default" ng-model="schedJob.notifyEmailFlag" btn-radio="'true'">Yes</label>
                                             </div>
                                         </div>
@@ -617,9 +617,9 @@
 
 
                             <!-- Job Status Tab Content Begins-->
-                            <div id="" class="tab-pane fade in">
-                                <h3> Job Status </h3>
-
+                            <div id="createSchedJobStatusTab" class="tab-pane fade in">
+                                <div id="createSchedJobStatusPlaceholderDiv">
+                                </div>
                             </div>
                             <!-- Job Status Tab Content Ends-->
                         </div>

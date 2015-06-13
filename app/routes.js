@@ -44,8 +44,16 @@ module.exports = function(app){
     // Get All Scheduled Jobs
     app.get('/schedJob', schedJobHandler.getAllSchedJobs);
 
+    // Get a specific Scheduled Job
+    app.get('/schedJob/:JobID', schedJobHandler.getScheduledJobByJobID);
+
+
     // Submit New Scheduled Job
     app.post('/submitSchedJob', schedJobHandler.submitNewScheduledJob);
+
+    // Submit New Scheduled Job
+    app.put('/removeSchedJob/:JobID', schedJobHandler.removeScheuledJob);
+
 
 
     /* 

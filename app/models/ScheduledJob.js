@@ -12,6 +12,7 @@ var schema = mongoose.Schema({
     SubmittedByIP 	: String,
     ScheduleStatus  : String,
     LastRunStatus 	: String,
+    CronTabJob      : String,
     CreatedTimeStamp: { type: Date, default:Date.now },
     UpdatedTimeStamp: { type: Date, default:Date.now }
 });
