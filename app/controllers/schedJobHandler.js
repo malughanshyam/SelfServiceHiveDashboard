@@ -52,7 +52,7 @@ exports.getAllSchedJobs = function(req, res){
 
 };
 
-// Create new AdHoc Job
+// Create Scheduled Job
 exports.submitNewScheduledJob = function(req, res) {
 	
     // Initialize the AdHoc Job Variables
@@ -67,7 +67,6 @@ exports.submitNewScheduledJob = function(req, res) {
     }
 
     var clientIPaddress = req.ip || req.header('x-forwarded-for') || req.connection.remoteAddress;
-    var jobStatus = 'INACTIVE'
     var executionTime = req.body.jobSchedTime;
     var executionDays = req.body.days;
     var notifyEmailFlag = req.body.notifyEmailFlag;
@@ -85,67 +84,29 @@ exports.submitNewScheduledJob = function(req, res) {
 
     res.set('Access-Control-Allow-Origin', '*');
 
+    var jobDir = dataDir + jobID;
+    var queryFile = jobDir + '/sql.txt';
 
-    // Create a MongoDB record for the AdHoc Job
-    ScheduledJob.create({
-        _id: jobID,
-        JobID: jobID,
-        JobName: schedJobName,
-        SQLQuery: sqlQuery,
-        SubmittedByIP: clientIPaddress,
-        ScheduleStatus: jobStatus,
-		ExecutionTime	: { Hours: executionTime.hours, Minutes: executionTime.minutes} ,
-		ExecutionDays	: { SUN: executionDays.sun, MON : executionDays.mon , TUE : executionDays.tue, WED: executionDays.wed, THU: executionDays.thu, FRI: executionDays.fri, SAT: executionDays.sat },
-		NotifyFlag 		: notifyEmailFlag,
-		NotifyEmail 	: notifyEmailID,
-		LastRunStatus 	: lastRunStatus,
-        CreatedTimeStamp: new Date(),
-        UpdatedTimeStamp: new Date()
-
-    }, function(err, scheduledJob) {
-        if (err) {
-        	detailLogger.error('JobID - %s Error creating new record: %s' ,jobID, JSON.stringify({ error: err}));
-            res.status(500)
-            return res.send({JobID : null, err : err})
-        } else {
-       		detailLogger.debug('JobID - %s  New Job details inserted into database : %s', jobID , JSON.stringify({ scheduledJob: scheduledJob}) );
-       		//res.send({"JobID" : jobID });
-        	createJobDirectory();
-        }
-
-    });
-
-    
     // Create a directory for the JobID
     createJobDirectory = function() {
-
-        dir = dataDir + jobID,
-            queryFile = dir + '/sql.txt';
-
-        console.log("jobID: " + jobID)
-        console.log("Dir: " + dir)
-        console.log("QueryFile: " + queryFile)
-
-        fs.ensureDir(dir, function(err) {
+        
+        fs.ensureDir(jobDir, function(err) {
             if (err) {
-            	detailLogger.error('JobID - %s Error creating new directory: %s', jobID,  JSON.stringify({Directory: dir, error: err}));
+                detailLogger.error('JobID - %s Error creating new directory: %s', jobID,  JSON.stringify({Directory: jobDir, error: err}));
                 res.status(500)
                 return res.send({JobID : null, err : err})
             } else {
-	            detailLogger.debug('JobID - %s  New JobID directory created: %s',jobID, JSON.stringify ({Directory: dir}));
-		        var ws = fs.createOutputStream(queryFile)
-		        ws.write(sqlQuery)
-		        detailLogger.debug('JobID - %s  Hive Query written to file: %s',jobID, JSON.stringify({ QueryFile : queryFile}));
-                createCronCmd()
-
+                detailLogger.debug('JobID - %s  New JobID directory created: %s',jobID, JSON.stringify ({Directory: jobDir}));
+                var ws = fs.createOutputStream(queryFile)
+                ws.write(sqlQuery)
+                detailLogger.debug('JobID - %s  Hive Query written to file: %s',jobID, JSON.stringify({ QueryFile : queryFile}));
+                createCronJob();
             }
         })
+    };
 
-    }
-
-
-    createCronCmd = function() {
-
+  
+    createCronJob = function() {
         // Create Parameters for the CRON job
         // MIN HOUR DOM MON DOW CMD
 
@@ -222,16 +183,13 @@ exports.submitNewScheduledJob = function(req, res) {
         } 
 
 
-
-        
-
         // Prepare Command to be run by CRON
 
         var execDirPath = '/Users/gmalu/Documents/Project/SelfServiceHiveDashboard/backendScripts/',
             execFileName = './HiveLauncher.sh',
             normalizePath = "../"
     
-        args = jobID + " " + normalizePath  + queryFile  + " " + normalizePath + dir
+        args = jobID + " " + normalizePath  + queryFile  + " " + normalizePath + jobDir
 
 
         var options = {
@@ -296,54 +254,70 @@ exports.submitNewScheduledJob = function(req, res) {
             if (code == 0) {
                 detailLogger.info('JobID - %s  CRON Job Scheduled successfully: %s',jobID, JSON.stringify({ crontabJobCmd: crontabJobCmd}));
                 highLevelLogger.info('JobID - %s  CRON Job Scheduled successfully: %s',jobID, JSON.stringify({ crontabJobCmd: crontabJobCmd}));
-                //res.send({"JobID": jobID});
-                updateJobIDinDB();        
+                createDBRecord();        
             } else {
-                return res.send({JobID : null, err : err})
-                removeJobIDFromDB(); 
+                res.send({JobID : null, err : err})
+                removeJobIDdirectory();
             }
 
         });
 
     }
 
-    // Remove the Job from Database
-    removeJobIDFromDB = function() {
 
-        function callback(err, removedCount){
+    // Create a MongoDB record for the Scheduled Job
+    createDBRecord = function(){
+
+        var jobStatus = 'ACTIVE';
+
+        ScheduledJob.create({
+            _id             : jobID,
+            JobID           : jobID,
+            JobName         : schedJobName,
+            SQLQuery        : sqlQuery,
+            SubmittedByIP   : clientIPaddress,
+            ScheduleStatus  : jobStatus,
+            ExecutionTime   : { Hours: executionTime.hours, Minutes: executionTime.minutes} ,
+            ExecutionDays   : { SUN: executionDays.sun, MON : executionDays.mon , TUE : executionDays.tue, WED: executionDays.wed, THU: executionDays.thu, FRI: executionDays.fri, SAT: executionDays.sat },
+            NotifyFlag      : notifyEmailFlag,
+            NotifyEmail     : notifyEmailID,
+            LastRunStatus   : lastRunStatus,
+            CreatedTimeStamp: new Date(),
+            UpdatedTimeStamp: new Date()
+
+        }, function(err, scheduledJob) {
             if (err) {
-                detailLogger.error('JobID - %s Error removing the Job record from Database: %s' ,jobID, JSON.stringify({ error: err}));
+                detailLogger.error('JobID - %s Error creating new record: %s' ,jobID, JSON.stringify({ error: err}));
+                res.status(500);
+                res.send({JobID : null, err : err});
+                removeJobIDdirectory();
             } else {
-                detailLogger.debug('JobID - %s Job record removed from Database : %s', jobID , JSON.stringify({ removedCount: removedCount}) );
+                detailLogger.debug('JobID - %s  New Job details inserted into database : %s', jobID , JSON.stringify({ scheduledJob: scheduledJob}) );
+                return res.send({"JobID" : jobID });
+               
             }
-        }
 
-        // Remove the Job from Database
-        ScheduledJob.remove({ _id: jobID }, callback);
+        });
+
     }
 
-    // Update the Job in Database
-        updateJobIDinDB = function() {
-        
-
-        var query = { _id: jobID };
-        var updateFields = { ScheduleStatus: 'ACTIVE' }
-    
-        function callback (err) {
-          if (err) {
-                detailLogger.error('JobID - %s Error removing the Job record in Database: %s' ,jobID, JSON.stringify({ error: err}));
-                return res.send({JobID : null, err : err})
-            }
-            else {
-               detailLogger.info('JobID - %s Activated the Scheduled Job record in Database' ,jobID);
-               return res.send({"JobID": jobID});
-            }
-        }
-
-        ScheduledJob.update(query, updateFields , callback)
-
-
+    // Remove the JobID Directory Created -- Called as part of Rollback / failure
+    removeJobIDdirectory = function() {
+        fs.removeSync(jobDir);
+        detailLogger.debug('JobID - %s  Directory deleted: %s', jobID , JSON.stringify({ jobDir: jobDir}) );
     }
+
+    // Initiate the Schedule Job process
+    createJobDirectory();
 
 };
 
+// Delete Scheduled Job and data 
+exports.removeScheuledJob = function(req, res) {
+
+}
+
+// Cancel Scheduled Job
+exports.cancelScheuledJob = function(req, res) {
+    
+}
