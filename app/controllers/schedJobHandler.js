@@ -287,6 +287,17 @@ exports.submitNewScheduledJob = function(req, res) {
     createDBRecord = function(){
 
         var jobStatus = 'ACTIVE';
+        hoursStr = executionTime.hours;
+        minStr = executionTime.minutes;
+
+        console.log(hoursStr)
+        console.log(minStr)
+
+        if (hoursStr.length != 2)
+            hoursStr = "0" + hoursStr;
+
+        if (minStr.length != 2)
+            minStr = "0" + minStr;
 
         ScheduledJob.create({
             _id             : jobID,
@@ -295,7 +306,7 @@ exports.submitNewScheduledJob = function(req, res) {
             SQLQuery        : sqlQuery,
             SubmittedByIP   : clientIPaddress,
             ScheduleStatus  : jobStatus,
-            ExecutionTime   : { Hours: executionTime.hours, Minutes: executionTime.minutes} ,
+            ExecutionTime   : { Hours: hoursStr, Minutes: minStr } ,
             ExecutionDays   : { SUN: executionDays.sun, MON : executionDays.mon , TUE : executionDays.tue, WED: executionDays.wed, THU: executionDays.thu, FRI: executionDays.fri, SAT: executionDays.sat },
             NotifyFlag      : notifyEmailFlag,
             NotifyEmail     : notifyEmailID,

@@ -66,6 +66,7 @@ angular.module('dashboardApp')
 
         $scope.schedJob.jobSchedTime.hours = $scope.schedJob.jobSchedTime.completeTime.getHours();
         $scope.schedJob.jobSchedTime.minutes = $scope.schedJob.jobSchedTime.completeTime.getMinutes();
+
         console.log($scope.schedJob.jobSchedTime.hours + ":" + $scope.schedJob.jobSchedTime.minutes);
 
         console.log("SubmitJob Clicked");
@@ -94,7 +95,7 @@ angular.module('dashboardApp')
         $scope.schedJob = angular.copy($scope.schedJob);
       };
 
-    $scope.schedReset();
+    
 
 
     $scope.populateScheduledJobsTable = function() {
@@ -114,12 +115,21 @@ angular.module('dashboardApp')
             });
     }
 
-    $scope.initializeScheduleNewJob();
 
+    $scope.activateNewScheduleJobTab = function(){
+        $scope.initializeScheduleNewJob();
+        $scope.schedReset();
+        $('#createSchedJobStatusTab').removeClass('active');
+        $('#createSchedJobTab').addClass('active');
+    }
+
+
+    $scope.activateNewScheduleJobTab();
+ 
     // delete these lines... only for testing
     // $('#createSchedJobTab').removeClass('active');
     // $('#createSchedJobStatusTab').addClass('active');
-    // $scope.scheduleJob();
+    //$scope.scheduleJob();
 
     $scope.isShowPopup = function(text, limit){
         if (text.length > limit)
@@ -139,6 +149,8 @@ angular.module('dashboardApp')
         )
 
     }
+
+
 
 
 });

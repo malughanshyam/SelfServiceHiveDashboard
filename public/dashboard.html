@@ -491,14 +491,14 @@
 
 
                 <!-- Tabs Titles under Scheduler Category Begins -->
-                <ul class="nav nav-tabs nav-justified" id="schedJobTabs">
-                    <li id="navSchedJobList"> <a data-toggle="tab" href="#schedJobListTab" ng-click="populateScheduledJobsTable()"><h4><i class="fa fa-1x fa-history"></i>  Scheduled Jobs</h4></a>
+                <ul class="nav nav-tabs" id="schedJobTabs">
+                    <!-- <li id="navSchedJobList"> <a data-toggle="tab" href="#schedJobListTab" ng-click="populateScheduledJobsTable()"><h4><i class="fa fa-1x fa-history"></i>  Scheduled Jobs</h4></a> -->
                     </li>
 
                     <li id="navSchedJobNew"> <a data-toggle="tab" href="#newSchedJobTab" ng-click="initializeScheduleNewJob()"><h4><i class="fa fa-1x fa-edit"></i>  Schedule New Job</h4></a>
                     </li>
 
-                    <li id="navSchedJobMonitor"> <a data-toggle="tab" href="#newSchedJobMonitorTab" ng-click="populateScheduledJobsTable()"><h4><i class="fa fa-1x fa-align-left"></i>  Scheduled Jobs - Monitor</h4></a>
+                    <li id="navSchedJobList"> <a data-toggle="tab" href="#schedJobListTab" ng-click="populateScheduledJobsTable()"><h4><i class="fa fa-1x fa-history"></i>  Scheduled Jobs</h4></a>
                     </li>
                 </ul>
                 <!-- Tabs Titles under Scheduler Category Begins -->
@@ -507,7 +507,7 @@
                 <div class="tab-content">
 
                     <!-- Scheduled Jobs Tab Content Begins-->
-                    <div id="schedJobListTab" class="tab-pane fade in ">
+                    <!-- <div id="schedJobListTab" class="tab-pane fade in ">
                         <h3>Scheduled Jobs
                        
                         <button type="button" ng-click="populateSchedJobList()" class="btn btn-sm btn-success pull-right">
@@ -517,7 +517,7 @@
                         </h3>
 
 
-                    </div>
+                    </div> -->
                     <!-- Scheduled Jobs Tab Content Ends-->
 
 
@@ -627,6 +627,13 @@
                             <div id="createSchedJobStatusTab" class="tab-pane fade in">
                                 <div id="createSchedJobStatusPlaceholderDiv">
                                 </div>
+
+                                 <div align="center">
+                                    <button id='activateNewScheduleJobTabBtn' type="button" ng-click="activateNewScheduleJobTab()" href="createSchedJobTab"  class="btn btn-success">
+                                        <i class="fa fa-plus"></i> Schedule New Job
+                                    </button>
+                                <div>
+
                             </div>
                             <!-- Job Status Tab Content Ends-->
                         </div>
@@ -635,7 +642,7 @@
                     <!-- New Scheduled Job Tab Content Ends-->
 
                     <!-- Scheduled Jobs Tab Content Begins-->
-                    <div id="newSchedJobMonitorTab" class="tab-pane fade in ">
+                    <div id="schedJobListTab" class="tab-pane fade in ">
                         <h3>Scheduled Jobs - Monitor
                        
                          <button type="button" ng-click="populateScheduledJobsTable()" class="btn btn-sm btn-success pull-right">
@@ -684,15 +691,15 @@
 
                                     <th st-sort="ExecutionTime">
                                         <a data-toggle="tooltip" title="Click to sort by ExecutionTime"><small>Sch.Time (24H)</small></a></th>
-                                    <th st-sort="ScheduleStatus">
-                                        <a data-toggle="tooltip" title="Click to sort by ScheduleStatus"></a></th>
+                                    
                                     
                                     <!-- <th st-sort="Status">
                                         <a data-toggle="tooltip" title="Click to sort by NotifyEmail">NotifyEmail</a></th> -->
-                                    <th st-sort="LastRunStatus">
-                                        <a data-toggle="tooltip" title="Click to sort by LastRunStatus">LastRunStatus</a></th>                          
+                                    <th st-sort="LastRunStatus" class="text-center">
+                                        <a data-toggle="tooltip" title="Click to sort by LastRunStatus">Last Run Status</a></th>                          
                                     <th st-sort="UpdatedTimeStamp" st-sort-default="reverse">
-                                        <a data-toggle="tooltip" title="Click to sort by TimeStamp">UpdatedTimeStamp</a></th>
+                                        <a data-toggle="tooltip" title="Click to sort by TimeStamp">Latest Timestamp</a></th>
+                                    <th> </th>
                                     <th> </th>
                                     <th> </th>
                                 </tr>
@@ -723,12 +730,7 @@
                                     
 
                                     <td>{{row.ExecutionTime.Hours}}:{{row.ExecutionTime.Minutes}}</td>
-                                    <td> 
-                                        <a tooltip="No Alerts" ><i class="fa fa-bell-slash" ng-hide={{row.NotifyFlag}} ></i></a>
-                                        <a tooltip="Alert: {{row.NotifyEmail}}"><i class="fa fa-bell" ng-show={{row.NotifyFlag}} popover="Alert: {{row.NotifyEmail}}" popover-trigger="click"></i></a>
-                                        <a tooltip="Job has been Deleted"><i class="fa fa-trash" ng-show={{row.ScheduleStatus=="DELETED"}}></i></a>
-                    
-                                    </td>
+                                    
                                     
                                     <!-- <td><small>{{row.LastRunStatus}}</small></td> -->
 
@@ -740,6 +742,13 @@
                                     </td>
                                     
                                     <td><small>{{ parseIsoDatetime(row.UpdatedTimeStamp) }}</small></td>
+
+                                    <td> 
+                                        <a tooltip="No Alerts" ><i class="fa fa-bell-slash" ng-hide={{row.NotifyFlag}} ></i></a>
+                                        <a tooltip="Alert: {{row.NotifyEmail}}"><i class="fa fa-bell" ng-show={{row.NotifyFlag}} popover="Alert: {{row.NotifyEmail}}" popover-trigger="click"></i></a>
+                                        <a tooltip="Job has been Deleted"><i class="fa fa-trash" ng-show={{row.ScheduleStatus=="DELETED"}}></i></a>
+                    
+                                    </td>
                                     
                                     <td>
                                         <button type="button" ng-click="viewResults(row)" class="btn btn-success btn-xs" ng-show="row.Status == 'JOB_SUCCESSFUL'">

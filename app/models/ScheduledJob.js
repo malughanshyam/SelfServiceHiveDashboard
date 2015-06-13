@@ -5,7 +5,7 @@ var schema = mongoose.Schema({
     JobID      	 	: String,
     JobName     	: String,
     SQLQuery    	: String,
-    ExecutionTime	: { Hours: Number, Minutes: Number}, 
+    ExecutionTime	: { Hours: String, Minutes: String}, 
     ExecutionDays	: { SUN: Boolean, MON : Boolean , TUE : Boolean, WED: Boolean, THU: Boolean, FRI: Boolean, SAT: Boolean },
     NotifyFlag 		: Boolean,
     NotifyEmail 	: String,
