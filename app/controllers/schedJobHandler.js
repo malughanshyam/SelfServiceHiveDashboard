@@ -67,7 +67,7 @@ exports.submitNewScheduledJob = function(req, res) {
     }
 
     var clientIPaddress = req.ip || req.header('x-forwarded-for') || req.connection.remoteAddress;
-    var jobStatus = 'JOB_NOT_STARTED'
+    var jobStatus = 'INACTIVE'
     var executionTime = req.body.jobSchedTime;
     var executionDays = req.body.days;
     var notifyEmailFlag = req.body.notifyEmailFlag;
@@ -93,7 +93,7 @@ exports.submitNewScheduledJob = function(req, res) {
         JobName: schedJobName,
         SQLQuery: sqlQuery,
         SubmittedByIP: clientIPaddress,
-        Status: jobStatus,
+        ScheduleStatus: jobStatus,
 		ExecutionTime	: { Hours: executionTime.hours, Minutes: executionTime.minutes} ,
 		ExecutionDays	: { SUN: executionDays.sun, MON : executionDays.mon , TUE : executionDays.tue, WED: executionDays.wed, THU: executionDays.thu, FRI: executionDays.fri, SAT: executionDays.sat },
 		NotifyFlag 		: notifyEmailFlag,
@@ -292,17 +292,56 @@ exports.submitNewScheduledJob = function(req, res) {
 
         // Check the exit code of the command 
         insertCronJobCmdExec.on('exit', function (code) {
-                detailLogger.debug('insertCronJobCmdExec Child process exited with exit code '+code);   
+            detailLogger.debug('insertCronJobCmdExec Child process exited with exit code '+code);   
             if (code == 0) {
                 detailLogger.info('JobID - %s  CRON Job Scheduled successfully: %s',jobID, JSON.stringify({ crontabJobCmd: crontabJobCmd}));
                 highLevelLogger.info('JobID - %s  CRON Job Scheduled successfully: %s',jobID, JSON.stringify({ crontabJobCmd: crontabJobCmd}));
-                res.send({"JobID": jobID});
-                removeJobIDFromDB();         
+                //res.send({"JobID": jobID});
+                updateJobIDinDB();        
             } else {
                 return res.send({JobID : null, err : err})
-                updateJobIDinDB();
+                removeJobIDFromDB(); 
             }
+
         });
+
+    }
+
+    // Remove the Job from Database
+    removeJobIDFromDB = function() {
+
+        function callback(err, removedCount){
+            if (err) {
+                detailLogger.error('JobID - %s Error removing the Job record from Database: %s' ,jobID, JSON.stringify({ error: err}));
+            } else {
+                detailLogger.debug('JobID - %s Job record removed from Database : %s', jobID , JSON.stringify({ removedCount: removedCount}) );
+            }
+        }
+
+        // Remove the Job from Database
+        ScheduledJob.remove({ _id: jobID }, callback);
+    }
+
+    // Update the Job in Database
+        updateJobIDinDB = function() {
+        
+
+        var query = { _id: jobID };
+        var updateFields = { ScheduleStatus: 'ACTIVE' }
+    
+        function callback (err) {
+          if (err) {
+                detailLogger.error('JobID - %s Error removing the Job record in Database: %s' ,jobID, JSON.stringify({ error: err}));
+                return res.send({JobID : null, err : err})
+            }
+            else {
+               detailLogger.info('JobID - %s Activated the Scheduled Job record in Database' ,jobID);
+               return res.send({"JobID": jobID});
+            }
+        }
+
+        ScheduledJob.update(query, updateFields , callback)
+
 
     }
 

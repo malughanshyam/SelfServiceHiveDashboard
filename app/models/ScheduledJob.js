@@ -8,8 +8,9 @@ var schema = mongoose.Schema({
     ExecutionTime	: { Hours: Number, Minutes: Number}, 
     ExecutionDays	: { SUN: Boolean, MON : Boolean , TUE : Boolean, WED: Boolean, THU: Boolean, FRI: Boolean, SAT: Boolean },
     NotifyFlag 		: Boolean,
-    NotifyEmail 	: [String],
+    NotifyEmail 	: String,
     SubmittedByIP 	: String,
+    ScheduleStatus  : String,
     LastRunStatus 	: String,
     CreatedTimeStamp: { type: Date, default:Date.now },
     UpdatedTimeStamp: { type: Date, default:Date.now }

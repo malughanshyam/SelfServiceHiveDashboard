@@ -59,9 +59,6 @@ angular.module('dashboardApp')
 
     $scope.scheduleJob = function() {
 
-        $scope.schedJob.schedJobName = "";
-        $scope.schedJob.schedQuery = "";
-        
         $scope.schedJob.jobSchedTime.hours = $scope.schedJob.jobSchedTime.completeTime.getHours();
         $scope.schedJob.jobSchedTime.minutes = $scope.schedJob.jobSchedTime.completeTime.getMinutes();
         console.log($scope.schedJob.jobSchedTime.hours + ":" + $scope.schedJob.jobSchedTime.minutes);
@@ -70,21 +67,15 @@ angular.module('dashboardApp')
 
         $http.post('/submitSchedJob', $scope.schedJob)
             .success(function(data) {
+                console.log("Job Scheduled Successfully");
                 $scope.schedJob.jobID = data.JobID;
                 console.log("schedJob.jobID: "+ $scope.schedJob.jobID);
-                console.log();
-//                $scope.activateScheduleJobStatusTab()
 
             })
             .error(function(err) {
-                console.log("Failed")
+                console.log("Job Scheduling Failed")
                 console.log(err)
-                $scope.formData.jobID = err.JobID;
-                $scope.submittedJobStatus = 'FAILED';
-                //$scope.activateScheduleJobStatusTab()
             });
-
-        //$scope.showCreateNewJobBtn = true
 
 
     }
