@@ -15,30 +15,37 @@ angular.module('dashboardApp')
     var newAdHocTabClone = $("#newAdHocTab").clone();
 
     $scope.initializeNewJobTab = function() {
+        console.log("cclkj")
         // Variables to store the data for Bar and Line charts to prevent recomputing the already populated charts
         $scope.barChartComputedData;
         $scope.lineChartComputedData;
 
-        // disable Status tab
+/*        // disable Status tab
         $("#navLinkStatus").addClass('disabled');
         $("#navLinkStatus").find('a').removeAttr("data-toggle");
 
         // disable Result tab
         $("#navLinkResult").addClass('disabled');
         $("#navLinkResult").find('a').removeAttr("data-toggle");
-
+*/
         // Cosmetic settings for the Steps - Flow
+        $("#flowStepCreate").removeClass('complete');
+        $("#flowStepCreate").addClass('disabled');
         $("#flowStepCreate").find('i').css({
             "opacity": "1"
         });
+
+        $("#flowStepStatus").removeClass('complete');        
+        $("#flowStepStatus").addClass('disabled');        
         $("#flowStepStatus").find('i').css({
             "opacity": "0.3"
         });
-        $("#flowStepStatus").addClass('disabled');
+
+        $("#flowStepResult").removeClass('complete');        
+        $("#flowStepResult").addClass('disabled');
         $("#flowStepResult").find('i').css({
             "opacity": "0.3"
         });
-        $("#flowStepResult").addClass('disabled');
 
         // Clear the Status Checker if present
         clearInterval($scope.refreshInterval)
@@ -59,6 +66,14 @@ angular.module('dashboardApp')
         $compile($('#modelViewResults'))($scope);
 
         console.log("AdHoc Tab Initialized")
+
+
+/*        $("#jobStatusTab").removeClass('active');
+        $("#jobResultTab").removeClass('active');
+        $("#newJobTab").addClass('active');
+        $('#newAdHocTab').addClass('active');   
+        activateTab("#newJobTab");
+*/
 
     }
 
@@ -266,6 +281,7 @@ angular.module('dashboardApp')
                 console.log(err)
 
             });
+        
     }
 
     // Model - View Job Log

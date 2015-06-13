@@ -197,7 +197,8 @@ exports.getStatus = function(req,res){
 		  	if (err) {
 		  		detailLogger.error('JobID - %s Error fetching Job Status %s' ,jobID, JSON.stringify({ clientIPaddress: clientIPaddress, error: err, statusFile: jobStatusFile}));
 		  		highLevelLogger.error('JobID - %s Error fetching Job Status %s' ,jobID, JSON.stringify({ clientIPaddress: clientIPaddress, error: err, statusFile: jobStatusFile}));
-		    	return res.send(err);
+		    	res.status(500);
+                return res.send(err);
 		  	} else{
 			  	detailLogger.debug('JobID - %s Checked Job Status: %s',jobID, data.trim());
 			  	highLevelLogger.debug('JobID - %s Checked Job Status: %s',jobID, data.trim());        
@@ -245,7 +246,8 @@ exports.getJobLog = function(req,res){
 		  	if (err) {
 		  		detailLogger.error('JobID - %s Error fetching Job Log %s' ,jobID, JSON.stringify({ clientIPaddress: clientIPaddress, error: err, jobLogFile: jobLogFile}));
 		  		highLevelLogger.error('JobID - %s Error fetching Job Log %s' ,jobID, JSON.stringify({ clientIPaddress: clientIPaddress, error: err, jobLogFile: jobLogFile}));
-		    	return res.send(err);
+		    	res.status(500);
+                return res.send(err);
 		  	} else {
 				detailLogger.debug('JobID - %s User retrieved Job Log File: %s',jobID, JSON.stringify({ jobLogFile: jobLogFile}));
 			  	highLevelLogger.debug('JobID - %s User retrieved Job Log File: %s',jobID, JSON.stringify({ jobLogFile: jobLogFile}));        
@@ -332,7 +334,8 @@ exports.getJobResult = function(req,res){
 				detailLogger.error('JobID - %s Error fetching Job Result: %s' ,jobID, JSON.stringify({ clientIPaddress: clientIPaddress, error: err, jobResultFile: jobResultFile}));
 		  		highLevelLogger.error('JobID - %s Error fetching Job Result %s' ,jobID, JSON.stringify({ clientIPaddress: clientIPaddress, error: err, jobResultFile: jobResultFile}));
 		    	console.log(err);
-		    	return res.send(err);
+		    	res.status(500);
+                return res.send(err);
 		  	} else {
 			  	detailLogger.debug('JobID - %s User retrieved Job Result File: %s',jobID, JSON.stringify({ clientIPaddress: clientIPaddress, jobResultFile: jobResultFile}));
 				highLevelLogger.debug('JobID - %s User retrieved Job Result File: %s',jobID, JSON.stringify({ clientIPaddress: clientIPaddress, jobResultFile: jobResultFile}));				
@@ -341,6 +344,7 @@ exports.getJobResult = function(req,res){
     	});
 	} else{
 		detailLogger.error('JobID - NOT_SPECIFIED  Error fetching Job Log %s' , JSON.stringify({ error: 'JobID not specified'}));
+        res.status(500);
         return res.json(({status: '500 Server error', error: 'JobID not specified'}))
     }
 };

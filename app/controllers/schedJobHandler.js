@@ -274,6 +274,7 @@ exports.submitNewScheduledJob = function(req, res) {
                 highLevelLogger.info('JobID - %s  CRON Job Scheduled Successfully: %s',jobID, JSON.stringify({ crontabJobCmd: crontabInsertCmd}));
                 createDBRecord();        
             } else {
+                res.status(500);
                 res.send({JobID : null, err : err})
                 removeJobIDdirectory();
             }
@@ -287,11 +288,14 @@ exports.submitNewScheduledJob = function(req, res) {
     createDBRecord = function(){
 
         var jobStatus = 'ACTIVE';
-        hoursStr = executionTime.hours;
-        minStr = executionTime.minutes;
+        hoursStr = executionTime.hours + "";
+        minStr = executionTime.minutes + "";
 
         console.log(hoursStr)
+        console.log(hoursStr.length)
+        console.log()
         console.log(minStr)
+        console.log(minStr.length)
 
         if (hoursStr.length != 2)
             hoursStr = "0" + hoursStr;
@@ -344,9 +348,15 @@ exports.submitNewScheduledJob = function(req, res) {
 
 // Delete Scheduled Job and data 
 exports.removeScheuledJob = function(req, res) {
-    var clientIPaddress = req.ip || req.header('x-forwarded-for') || req.connection.remoteAddress;
+    var clientIPaddress = req.ip || req.header('x-forwarded-for') || req.connection.remoteAddress;    
     var jobID = req.params.JobID
-    
+    console.log("JobID received for deletion: " + jobID);
+    if (jobID == null || jobID == 'undefined'){
+        detailLogger.error('JobID - %s Error Deleting Scheduled Job %s' ,jobID, JSON.stringify({ clientIPaddress: clientIPaddress, error: 'JobID not specified'}));
+        res.status(500);
+        return res.json(({status: '500 Server error', error: 'JobID not specified'}))
+    }
+
 
     detailLogger.debug('JobID - %s  Removing Crontab Job : %s' ,jobID, JSON.stringify({ clientIPaddress: clientIPaddress, jobID: jobID }));       
 
@@ -383,6 +393,7 @@ exports.removeScheuledJob = function(req, res) {
             highLevelLogger.info('JobID - %s  CRON Job Removed Successfully: %s',jobID, JSON.stringify({ crontabRemoveCmd: crontabRemoveCmd}));
             updateStatusInDB();        
         } else {
+            res.status(500);
             res.send({status: "failed", err : err})
         }
 
@@ -399,6 +410,7 @@ exports.removeScheuledJob = function(req, res) {
        function callback (err) {
          if (err) {
                detailLogger.error('JobID - %s Error updating the Job status to Deleted in Database: %s' ,jobID, JSON.stringify({ error: err}));
+               res.status(500);
                return res.send({status: "failed", err : err})
            }
            else {

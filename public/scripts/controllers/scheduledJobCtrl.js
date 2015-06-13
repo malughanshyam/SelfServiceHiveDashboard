@@ -123,6 +123,33 @@ angular.module('dashboardApp')
         $('#createSchedJobTab').addClass('active');
     }
 
+    $scope.deleteSchedJob = function(row){
+        
+        var removeScheduledJobURL = '/removeSchedJob/' + row.JobID
+
+        bootbox.confirm("Are you sure you want to delete the Job - "+row.JobName+" ?", function(userResponse) {
+            if (userResponse==true){
+                $http.put(removeScheduledJobURL)
+                    .success(function(data) {
+                        console.log("Job Deleted");
+                        $scope.populateScheduledJobsTable();
+                    })
+                    .error(function(err) {
+                        // $scope.submittedJobStatus='FAILED'
+                        console.log("Job Deletion Failed");
+                        console.log(err);
+
+                });
+
+            }
+
+
+
+        }); 
+
+        
+    }
+
 
     $scope.activateNewScheduleJobTab();
  

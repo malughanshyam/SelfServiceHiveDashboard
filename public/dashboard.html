@@ -80,7 +80,7 @@
                     <li id="navRecentAdHoc"> <a data-toggle="tab" href="#recentAdHocTab" ng-click="populateRecentAdHocJobTable()"><h4><i class="fa fa-1x fa-history"></i>  Recent Jobs</h4></a>
                     </li>
 
-                    <li id="navNewAdHoc"> <a data-toggle="tab" href="#newAdHocTab" ng-click="initializeNewJobTab()"><h4><i class="fa fa-1x fa-edit"></i>  New Job</h4></a>
+                    <li id="navNewAdHoc"> <a data-toggle="tab" href="#newAdHocTab" ng-click="resetNewJobTab()"><h4><i class="fa fa-1x fa-edit"></i>  New Job</h4></a>
                     </li>
                 </ul>
                 <!-- Tabs Titles under AdHoc Category Begins -->
@@ -99,18 +99,18 @@
                         </h3>
 
 
-                        <table id="recentAdHocJobTable" st-table="displayedCollection" st-safe-src="recentAdHocJobs" class="table table-striped table-responsive table-hover">
+                        <table id="recentAdHocJobTable" st-table="displayedCollection" st-safe-src="recentAdHocJobs" class="table table-responsive table-hover ">
                             <thead>
                                 <tr>
                                     <!-- <th st-sort="JobID">JobID</th> -->
                                     <th st-sort="JobName" style="white-space: nowrap">
-                                        <a data-toggle="tooltip" title="Click to sort by Job Name">Job Name</a></th>
+                                        <a tooltip="Click to sort by Job Name">Job Name</a></th>
                                     <th st-sort="SQLQuery">
-                                        <a data-toggle="tooltip" title="Click to sort by Hive Query">Hive Query</a></th>
-                                    <th st-sort="Status">
-                                        <a data-toggle="tooltip" title="Click to sort by Status">Status</a></th>
+                                        <a tooltip="Click to sort by Hive Query">Hive Query</a></th>
+                                    <th st-sort="Status" align="center">
+                                        <a tooltip="Click to sort by Status">Status</a></th>
                                     <th st-sort="UpdatedTimeStamp" st-sort-default="reverse">
-                                        <a data-toggle="tooltip" title="Click to sort by TimeStamp">UpdatedTimeStamp</a></th>
+                                        <a tooltip="Click to sort by TimeStamp">UpdatedTimeStamp</a></th>
                                     <th> </th>
                                     <th> </th>
                                 </tr>
@@ -130,7 +130,7 @@
                                     <td>{{row.JobName}}</td>
                                     <td><small>{{row.SQLQuery.substring(0, 30)}}</small><small ng-show="isShowPopup(row.SQLQuery,30)" popover="{{row.SQLQuery}}" popover-trigger="click"> ...<i class="fa fa-1x fa-eye"></i></small></td>
                                     <!-- <td>{{row.Status}}</td> -->
-                                    <td>
+                                    <td  align="center">
                                         <i tooltip="JOB_SUCCESSFUL" id="statusSuccess" class="fa fa-check-square" ng-show={{row.Status=='JOB_SUCCESSFUL'}}></i>
                                         <i tooltip="JOB_FAILED" id="statusFail" class="fa fa-exclamation-triangle" ng-show={{row.Status=='JOB_FAILED'}}></i>
                                         <i tooltip="JOB_IN_PROGRESS" id="statusRunning" class="fa fa-dashboard" ng-show={{row.Status=='JOB_IN_PROGRESS'}}></i>
@@ -492,154 +492,17 @@
 
                 <!-- Tabs Titles under Scheduler Category Begins -->
                 <ul class="nav nav-tabs" id="schedJobTabs">
-                    <!-- <li id="navSchedJobList"> <a data-toggle="tab" href="#schedJobListTab" ng-click="populateScheduledJobsTable()"><h4><i class="fa fa-1x fa-history"></i>  Scheduled Jobs</h4></a> -->
-                    </li>
-
-                    <li id="navSchedJobNew"> <a data-toggle="tab" href="#newSchedJobTab" ng-click="initializeScheduleNewJob()"><h4><i class="fa fa-1x fa-edit"></i>  Schedule New Job</h4></a>
-                    </li>
 
                     <li id="navSchedJobList"> <a data-toggle="tab" href="#schedJobListTab" ng-click="populateScheduledJobsTable()"><h4><i class="fa fa-1x fa-history"></i>  Scheduled Jobs</h4></a>
+                    </li>
+
+                    <li id="navSchedJobNew"> <a data-toggle="tab" href="#newSchedJobTab" ng-click="activateNewScheduleJobTab()"><h4><i class="fa fa-1x fa-edit"></i>  Schedule New Job</h4></a>
                     </li>
                 </ul>
                 <!-- Tabs Titles under Scheduler Category Begins -->
 
                 <!-- Tabs Content under Scheduled Category Begins-->
                 <div class="tab-content">
-
-                    <!-- Scheduled Jobs Tab Content Begins-->
-                    <!-- <div id="schedJobListTab" class="tab-pane fade in ">
-                        <h3>Scheduled Jobs
-                       
-                        <button type="button" ng-click="populateSchedJobList()" class="btn btn-sm btn-success pull-right">
-                            <i class="fa fa-refresh">
-                            </i> Refresh
-                        </button>
-                        </h3>
-
-
-                    </div> -->
-                    <!-- Scheduled Jobs Tab Content Ends-->
-
-
-
-                    <!-- New Scheduled Job Tab Content Begins-->
-                    <div id="newSchedJobTab" class="tab-pane fade in ">
-
-
-
-                        <!-- Tab Titles under Create New Job -->
-                        <ul class="nav nav-tabs nav-justified" id="" ng-hide="true">
-                            <li id="navLinkCreateSchedJobTab"> <a data-toggle="tab" href="#createSchedJobTab">Create</a>
-                            </li>
-                            <li id="navLinkCreateSchedJobStatusTab"> <a data-toggle="tab" href="#createSchedJobStatusTab">Status</a>
-                            </li>
-                        </ul>
-
-                        <!-- Tab Content under Create New Job begins-->
-                        <div class="tab-content">
-
-                            <!-- Submit Job Tab Content Begins  -->
-                            <div id="createSchedJobTab" class="tab-pane fade in active">
-                                <form class="form-horizontal" ng-submit="scheduleJob()">
-
-                                    <div class="form-group">
-                                        <label for="schedJobName" class="col-sm-2 control-label">Job Name</label>
-                                        <div class="col-sm-10 col-lg-6">
-                                            <input type="text" class="form-control" id="schedJobName" placeholder="Job Name" ng-model="schedJob.schedJobName" required>
-                                        </div>
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="schedhiveQuery" class="col-sm-2 control-label">Hive Query</label>
-                                        <div class="col-sm-10 col-lg-6">
-                                            <textarea class="form-control" id="schedhiveQuery" ng-model="schedJob.schedQuery" rows="3" placeholder="Enter your query here..." required></textarea>
-                                        </div>
-                                    </div>
-
-
-
-                                    <div class="form-group">
-                                        <label for="runDayChkBoxDiv" class="col-sm-2 control-label">Execute On</label>
-                                        <div id="runDayChkBoxDiv" class="col-sm-10">
-                                            <div class="btn-group">
-                                                <label class="btn btn-default" ng-model="schedJob.days.sun" btn-checkbox>SUN</label>
-                                                <label class="btn btn-default" ng-model="schedJob.days.mon" btn-checkbox>MON</label>
-                                                <label class="btn btn-default" ng-model="schedJob.days.tue" btn-checkbox>TUE</label>
-                                                <label class="btn btn-default" ng-model="schedJob.days.wed" btn-checkbox>WED</label>
-                                                <label class="btn btn-default" ng-model="schedJob.days.thu" btn-checkbox>THU</label>
-                                                <label class="btn btn-default" ng-model="schedJob.days.fri" btn-checkbox>FRI</label>
-                                                <label class="btn btn-default" ng-model="schedJob.days.sat" btn-checkbox>SAT</label>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="form-group">
-                                        <label for="jobSchedTimePicker" class="col-sm-2 control-label">Trigger Time</label>
-                                        <div class="col-sm-10">
-                                            <div>
-                                                <timepicker ng-model="schedJob.jobSchedTime.completeTime" id="jobSchedTimePicker" ng-change="jobSchedTimePickerValidate()" hour-step="1" minute-step="15" show-meridian="false" required></timepicker>
-                                            </div>
-                                            <span ng-show="invalidTimeAlert"> 
-                                                    <div class="alert alert-warning alert-dismissible" role="alert">
-                                                      <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                                                      <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
-                                                      <span class="sr-only">Error:</span>
-                                                      <strong>Invalid time!</strong> Resetting to default.
-                                                    </div>
-                                                 </span>
-                                        </div>
-                                    </div>
-
-                                    <div class="form-group">
-                                        <label for="notifyChkBox" class="col-sm-2 control-label">Notify by Email</label>
-                                        <div class="col-sm-10">
-                                            <div class="btn-group" id="notifyChkBox">
-                                                <label class="btn btn-default" ng-model="schedJob.notifyEmailFlag" btn-radio="'false'" ng-click="schedJob.notifyEmailID=''">No</label>
-                                                <label class="btn btn-default" ng-model="schedJob.notifyEmailFlag" btn-radio="'true'">Yes</label>
-                                            </div>
-                                        </div>
-                                    </div>
-
-
-                                    <div class="form-group" ng-show="schedJob.notifyEmailFlag=='true'">
-                                        <label for="notifyEmailInputID" class="col-sm-2 control-label">Email</label>
-                                        <div class="col-sm-10 col-lg-6">
-                                            <div class="input-group">
-                                                <div class="input-group-addon">@</div>
-                                                <input type="email" class="form-control" id="notifyEmailInputID" placeholder="email@domain.com" ng-model="schedJob.notifyEmailID">
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="form-group">
-                                        <div class="col-sm-offset-2 col-sm-10">
-                                            <button type="submit" class="btn btn-primary">Schedule Job</button>
-                                            <button ng-click="schedReset()" class="btn btn-default">Clear</button>
-                                        </div>
-                                    </div>
-                                </form>
-
-                                <pre> {{schedJob}} </pre>
-                            </div>
-                            <!-- Submit Job Tab Content Ends  -->
-
-
-                            <!-- Job Status Tab Content Begins-->
-                            <div id="createSchedJobStatusTab" class="tab-pane fade in">
-                                <div id="createSchedJobStatusPlaceholderDiv">
-                                </div>
-
-                                 <div align="center">
-                                    <button id='activateNewScheduleJobTabBtn' type="button" ng-click="activateNewScheduleJobTab()" href="createSchedJobTab"  class="btn btn-success">
-                                        <i class="fa fa-plus"></i> Schedule New Job
-                                    </button>
-                                <div>
-
-                            </div>
-                            <!-- Job Status Tab Content Ends-->
-                        </div>
-                        <!-- Tab Conent under Create New Job ends-->
-                    </div>
-                    <!-- New Scheduled Job Tab Content Ends-->
 
                     <!-- Scheduled Jobs Tab Content Begins-->
                     <div id="schedJobListTab" class="tab-pane fade in ">
@@ -652,7 +515,7 @@
                         </h3>
 
 
-                        <table id="scheduledJobsTableId" st-table="displayedSchedJobsCollection" st-safe-src="allSchedJobs" class="table table-striped table-responsive table-hover">
+                        <table id="scheduledJobsTableId" st-table="displayedSchedJobsCollection" st-safe-src="allSchedJobs" class="table table-responsive table-hover">
                             <thead>
                                 <tr>
                                     <th></th>
@@ -696,9 +559,9 @@
                                     <!-- <th st-sort="Status">
                                         <a data-toggle="tooltip" title="Click to sort by NotifyEmail">NotifyEmail</a></th> -->
                                     <th st-sort="LastRunStatus" class="text-center">
-                                        <a data-toggle="tooltip" title="Click to sort by LastRunStatus">Last Run Status</a></th>                          
+                                        <a data-toggle="tooltip" title="Click to sort by LastRunStatus"><small>Last Run Status</small></a></th>                          
                                     <th st-sort="UpdatedTimeStamp" st-sort-default="reverse">
-                                        <a data-toggle="tooltip" title="Click to sort by TimeStamp">Latest Timestamp</a></th>
+                                        <a data-toggle="tooltip" title="Click to sort by TimeStamp"><small>Latest Timestamp</small></a></th>
                                     <th> </th>
                                     <th> </th>
                                     <th> </th>
@@ -714,7 +577,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr ng-repeat="row in displayedSchedJobsCollection">
+                                <tr ng-repeat="row in displayedSchedJobsCollection" ng-class="{'deletedJob': row.ScheduleStatus=='DELETED'}">
                                     <!-- <td>{{row.JobID}}</td> -->
                                     <td>{{row.JobName}}</td>
                                     <td><small>{{row.SQLQuery.substring(0, 30)}}</small><small ng-show="isShowPopup(row.SQLQuery,30)" popover="{{row.SQLQuery}}" popover-trigger="click"> ...<i class="fa fa-1x fa-eye"></i></small></td>
@@ -836,10 +699,129 @@
                                 </div>
                             </div>
                         </div>
-
-
                     </div>
                     <!-- Scheduled Jobs Tab Content Ends-->
+
+
+                    <!-- New Scheduled Job Tab Content Begins-->
+                    <div id="newSchedJobTab" class="tab-pane fade in ">
+
+
+
+                        <!-- Tab Titles under Create New Job -->
+                        <ul class="nav nav-tabs nav-justified" id="" ng-hide="true">
+                            <li id="navLinkCreateSchedJobTab"> <a data-toggle="tab" href="#createSchedJobTab">Create</a>
+                            </li>
+                            <li id="navLinkCreateSchedJobStatusTab"> <a data-toggle="tab" href="#createSchedJobStatusTab">Status</a>
+                            </li>
+                        </ul>
+
+                        <!-- Tab Content under Create New Job begins-->
+                        <div class="tab-content">
+
+                            <!-- Submit Job Tab Content Begins  -->
+                            <div id="createSchedJobTab" class="tab-pane fade in active">
+                                <form class="form-horizontal" ng-submit="scheduleJob()">
+
+                                    <div class="form-group">
+                                        <label for="schedJobName" class="col-sm-2 control-label">Job Name</label>
+                                        <div class="col-sm-10 col-lg-6">
+                                            <input type="text" class="form-control" id="schedJobName" placeholder="Job Name" ng-model="schedJob.schedJobName" required>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="schedhiveQuery" class="col-sm-2 control-label">Hive Query</label>
+                                        <div class="col-sm-10 col-lg-6">
+                                            <textarea class="form-control" id="schedhiveQuery" ng-model="schedJob.schedQuery" rows="3" placeholder="Enter your query here..." required></textarea>
+                                        </div>
+                                    </div>
+
+
+
+                                    <div class="form-group">
+                                        <label for="runDayChkBoxDiv" class="col-sm-2 control-label">Execute On</label>
+                                        <div id="runDayChkBoxDiv" class="col-sm-10">
+                                            <div class="btn-group">
+                                                <label class="btn btn-default" ng-model="schedJob.days.sun" btn-checkbox>SUN</label>
+                                                <label class="btn btn-default" ng-model="schedJob.days.mon" btn-checkbox>MON</label>
+                                                <label class="btn btn-default" ng-model="schedJob.days.tue" btn-checkbox>TUE</label>
+                                                <label class="btn btn-default" ng-model="schedJob.days.wed" btn-checkbox>WED</label>
+                                                <label class="btn btn-default" ng-model="schedJob.days.thu" btn-checkbox>THU</label>
+                                                <label class="btn btn-default" ng-model="schedJob.days.fri" btn-checkbox>FRI</label>
+                                                <label class="btn btn-default" ng-model="schedJob.days.sat" btn-checkbox>SAT</label>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="jobSchedTimePicker" class="col-sm-2 control-label">Trigger Time</label>
+                                        <div class="col-sm-10">
+                                            <div>
+                                                <timepicker ng-model="schedJob.jobSchedTime.completeTime" id="jobSchedTimePicker" ng-change="jobSchedTimePickerValidate()" hour-step="1" minute-step="15" show-meridian="false" required></timepicker>
+                                            </div>
+                                            <span ng-show="invalidTimeAlert"> 
+                                                    <div class="alert alert-warning alert-dismissible" role="alert">
+                                                      <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                                      <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                                                      <span class="sr-only">Error:</span>
+                                                      <strong>Invalid time!</strong> Resetting to default.
+                                                    </div>
+                                                 </span>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="notifyChkBox" class="col-sm-2 control-label">Notify by Email</label>
+                                        <div class="col-sm-10">
+                                            <div class="btn-group" id="notifyChkBox">
+                                                <label class="btn btn-default" ng-model="schedJob.notifyEmailFlag" btn-radio="'false'" ng-click="schedJob.notifyEmailID=''">No</label>
+                                                <label class="btn btn-default" ng-model="schedJob.notifyEmailFlag" btn-radio="'true'">Yes</label>
+                                            </div>
+                                        </div>
+                                    </div>
+
+
+                                    <div class="form-group" ng-show="schedJob.notifyEmailFlag=='true'">
+                                        <label for="notifyEmailInputID" class="col-sm-2 control-label">Email</label>
+                                        <div class="col-sm-10 col-lg-6">
+                                            <div class="input-group">
+                                                <div class="input-group-addon">@</div>
+                                                <input type="email" class="form-control" id="notifyEmailInputID" placeholder="email@domain.com" ng-model="schedJob.notifyEmailID">
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <div class="col-sm-offset-2 col-sm-10">
+                                            <button type="submit" class="btn btn-primary">Schedule Job</button>
+                                            <button ng-click="schedReset()" class="btn btn-default">Clear</button>
+                                        </div>
+                                    </div>
+                                </form>
+
+                                <pre> {{schedJob}} </pre>
+                            </div>
+                            <!-- Submit Job Tab Content Ends  -->
+
+
+                            <!-- Job Status Tab Content Begins-->
+                            <div id="createSchedJobStatusTab" class="tab-pane fade in">
+                                <div id="createSchedJobStatusPlaceholderDiv">
+                                </div>
+
+                                 <div align="center">
+                                    <button id='activateNewScheduleJobTabBtn' type="button" ng-click="activateNewScheduleJobTab()" href="createSchedJobTab"  class="btn btn-success">
+                                        <i class="fa fa-plus"></i> Schedule New Job
+                                    </button>
+                                <div>
+
+                            </div>
+                            <!-- Job Status Tab Content Ends-->
+                        </div>
+                        <!-- Tab Conent under Create New Job ends-->
+                    </div>
+                    <!-- New Scheduled Job Tab Content Ends-->
+
 
                 </div>
                 <!-- Tabs Content under Adhoc Category Ends-->
@@ -904,6 +886,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/0.13.0/ui-bootstrap-tpls.min.js"></script>
 
     <script src="scripts/vendor/smart-table.min.js"></script>
+    <script src="scripts/vendor/bootbox.min.js"></script>
+
     
     <script src="scripts/vendor/html2canvas.js"></script>
     <script src="scripts/vendor/canvas-toBlob.js"></script>

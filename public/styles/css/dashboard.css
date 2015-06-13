@@ -219,6 +219,7 @@ pre {
 }
 
 
+
 #recentAdHocJobTable #statusSuccess, #scheduledJobsTableId #statusSuccess {
     color: #00CC33 ;
 }
@@ -234,3 +235,8 @@ pre {
     color:#f0ad4e;
 }
 
+/* Font color of Deleted Scheduled Jobs*/
+#scheduledJobsTableId  > tbody > .deletedJob , #scheduledJobsTableId  > tbody > .deletedJob  .fa  {
+    color:#808080; 
+     
+}
