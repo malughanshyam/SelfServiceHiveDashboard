@@ -214,4 +214,23 @@ pre {
     color: #FF0000 ;
 }
 
+#scheduledJobsTableId .fa-check-square {
+    color: #00CC33 ;
+}
+
+
+#recentAdHocJobTable #statusSuccess, #scheduledJobsTableId #statusSuccess {
+    color: #00CC33 ;
+}
+
+#recentAdHocJobTable #statusFail, #scheduledJobsTableId #statusFail {
+    color: #FF0000 ;
+}
+
+#recentAdHocJobTable #statusRunning, #scheduledJobsTableId #statusRunning {
+    color:#5bc0de;
+}
+#recentAdHocJobTable #statusNotStarted, #scheduledJobsTableId #statusNotStarted {
+    color:#f0ad4e;
+}
 

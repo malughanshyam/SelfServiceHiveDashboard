@@ -253,7 +253,7 @@ angular.module('dashboardApp')
     $scope.populateRecentAdHocJobTable = function() {
         var getRecentAdHocJobs = '/adHocJob'
 
-        $http.get(getRecentAdHocJobs, $scope.formData)
+        $http.get(getRecentAdHocJobs)
             .success(function(data) {
                 $scope.recentAdHocJobs = '';
                 $scope.displayedCollection = '';
@@ -693,6 +693,24 @@ angular.module('dashboardApp')
 
     }
 
+    $scope.isShowPopup = function(text, limit){
+        if (text.length > limit)
+            return true;
+        return false;
+    }
+
+    $scope.parseIsoDatetime = function(dtstr){
+    
+        MM = {Jan:"January", Feb:"February", Mar:"March", Apr:"April", May:"May", Jun:"June", Jul:"July", Aug:"August", Sep:"September", Oct:"October", Nov:"November", Dec:"December"}
+
+        return String(new Date(dtstr)).replace(
+            /\w{3} (\w{3}) (\d{2}) (\d{4}) (\d{2}):(\d{2}):[^(]+\(([A-Z]{3})\)/,
+            function($0,$1,$2,$3,$4,$5,$6){
+                return MM[$1]+" "+$2+", "+$3+" - "+$4%12+":"+$5+(+$4>12?" PM":" AM")+" "+$6 
+            }
+        )
+
+    }
+
 
 });
-

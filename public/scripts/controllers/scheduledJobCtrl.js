@@ -96,11 +96,49 @@ angular.module('dashboardApp')
 
     $scope.schedReset();
 
+
+    $scope.populateScheduledJobsTable = function() {
+        var getScheduledJobs = '/schedJob'
+
+        $http.get(getScheduledJobs)
+            .success(function(data) {
+                $scope.displayedSchedJobsCollection = '';
+                $scope.allSchedJobs = data;
+                $scope.displayedSchedJobsCollection = [].concat($scope.allSchedJobs);
+            })
+            .error(function(err) {
+                // $scope.submittedJobStatus='FAILED'
+                $scope.jobLog = 'Fetching RecentAdHocJobs Failed :' + err;
+                console.log(err)
+
+            });
+    }
+
     $scope.initializeScheduleNewJob();
 
     // delete these lines... only for testing
     // $('#createSchedJobTab').removeClass('active');
     // $('#createSchedJobStatusTab').addClass('active');
     // $scope.scheduleJob();
+
+    $scope.isShowPopup = function(text, limit){
+        if (text.length > limit)
+            return true;
+        return false;
+    }
+
+    $scope.parseIsoDatetime = function(dtstr){
+    
+        MM = {Jan:"January", Feb:"February", Mar:"March", Apr:"April", May:"May", Jun:"June", Jul:"July", Aug:"August", Sep:"September", Oct:"October", Nov:"November", Dec:"December"}
+
+        return String(new Date(dtstr)).replace(
+            /\w{3} (\w{3}) (\d{2}) (\d{4}) (\d{2}):(\d{2}):[^(]+\(([A-Z]{3})\)/,
+            function($0,$1,$2,$3,$4,$5,$6){
+                return MM[$1]+" "+$2+", "+$3+" - "+$4%12+":"+$5+(+$4>12?" PM":" AM")+" "+$6 
+            }
+        )
+
+    }
+
 
 });
