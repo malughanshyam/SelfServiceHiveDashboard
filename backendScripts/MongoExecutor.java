@@ -24,7 +24,7 @@ public class MongoExecutor {
 
 		// Update the Status and UpdatedTimeStamp fields of JobID document
 		Document query = new Document("_id", jobId);
-		Document update =new Document("$set", new Document("Status", status))
+		Document update =new Document("$set", new Document("JobRunStatus", status))
 													.append("$currentDate", new Document("UpdatedTimeStamp", true));										
 		
 		this.mongoCollection.updateOne(query,update);

@@ -11,6 +11,9 @@ var winston = require('winston');
 var highLevelLogger = winston.loggers.get('HighLevelLog');
 var detailLogger = winston.loggers.get('DetailedLog');
 
+var JOB_FAILED_STATUS_STRING = 'JOB_FAILED'
+var JOB_NOT_STARTED_STATUS_STRING = 'JOB_NOT_STARTED'
+
 // highLevelLogger.debug("Debug")
 // highLevelLogger.verbose("verbose")
 // highLevelLogger.info("info")
@@ -85,7 +88,7 @@ exports.submitNewAdHocJob = function(req, res) {
     }
 
     var clientIPaddress = req.ip || req.header('x-forwarded-for') || req.connection.remoteAddress;
-    var jobStatus = 'JOB_NOT_STARTED'
+    var jobStatus = JOB_NOT_STARTED_STATUS_STRING
 
     // Create a new Job ID 	
     var ObjectId = mongoose.Types.ObjectId;
@@ -100,12 +103,12 @@ exports.submitNewAdHocJob = function(req, res) {
 
     // Create a MongoDB record for the AdHoc Job
     AdHocJob.create({
-        _id: jobID,
-        JobID: jobID,
-        JobName: jobName,
-        SQLQuery: sqlQuery,
-        SubmittedByIP: clientIPaddress,
-        Status: jobStatus,
+        _id             : jobID,
+        JobID           : jobID,
+        JobName         : jobName,
+        SQLQuery        : sqlQuery,
+        SubmittedByIP   : clientIPaddress,
+        JobRunStatus    : jobStatus,
         CreatedTimeStamp: new Date(),
         UpdatedTimeStamp: new Date()
     }, function(err, adHocQuery) {
@@ -157,7 +160,16 @@ exports.submitNewAdHocJob = function(req, res) {
             execFileName = './HiveLauncher.sh',
             normalizePath = "../"
 
-        args = [jobID, normalizePath + queryFile, normalizePath + dir]
+        // ##  HiveLauncher Script Usage :
+        // ##      
+        // ##   Scheduled Job :-->
+        // ##   HiveLauncher.sh SCHED <JobID> <SQLQueryFile> <OutputDir> <NotifyFlag-Y/N> [NotifyEmail]
+        // ##   
+        // ##   AdHocJob Job :-->"
+        // ##   HiveLauncher.sh ADHOC <JobID> <SQLQueryFile> <OutputDir>
+        // ##
+
+        args = ["ADHOC", jobID, normalizePath + queryFile, normalizePath + dir]
 
         var options = {
             cwd: execDirPath,
@@ -169,6 +181,7 @@ exports.submitNewAdHocJob = function(req, res) {
             	detailLogger.error('JobID - %s  Execution of Hive Query failed: %s',jobID, JSON.stringify({ error: error}));
             	highLevelLogger.error('JobID - %s  Execution of Hive Query failed: %s',jobID, JSON.stringify({ error: error}));
             	highLevelLogger.info(' JobID - %s  AdHoc Job failed: %s', jobID, JSON.stringify({ clientIPaddress: clientIPaddress,  JobName : jobName, sqlQuery : sqlQuery, error: error  }));
+                updateStatusInDB(JOB_FAILED_STATUS_STRING);
                 
             } else {
             	detailLogger.debug('JobID - %s  Hive Query Script Execution Completed',jobID)
@@ -180,6 +193,26 @@ exports.submitNewAdHocJob = function(req, res) {
         detailLogger.debug('JobID - %s  Executing HiveScriptLauncher: %s',jobID, JSON.stringify({scriptName: execFileName, args : args}));
         child_process.execFile(execFileName, args, options, callback)
     }
+
+    // Update the Job in Database
+    updateStatusInDB = function(status) {
+       
+
+       var query = { _id: jobID };
+       var updateFields = { JobRunStatus: status }
+   
+       function callback (err) {
+         if (err) {
+               detailLogger.error('JobID - %s Error updating the Job status to %s in Database: %s' ,jobID, status, JSON.stringify({ error: err}));
+           }
+           else {
+              detailLogger.info('JobID - %s Updated the Scheduled Job status to %s in Database' ,jobID, status);
+           }
+       }
+
+       AdHocJob.update(query, updateFields , callback)
+
+   }
 
 };
 
@@ -217,7 +250,7 @@ exports.updateStatus = function(req,res){
     var JobID = req.params.JobID
   return AdHocJob.findById(JobID, function (err, adHocJob) {
     var oldJobStatus = adHocJob.Status;
-    adHocJob.Status = req.body.Status;
+    adHocJob.JobRunStatus = req.body.Status;
     adHocJob.UpdatedTimeStamp = new Date();    
     return adHocJob.save(function (err) {
       if (err) {

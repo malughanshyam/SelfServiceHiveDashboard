@@ -11,6 +11,9 @@ var winston = require('winston');
 var highLevelLogger = winston.loggers.get('HighLevelLog');
 var detailLogger = winston.loggers.get('DetailedLog');
 
+var JOB_FAILED_STATUS_STRING = 'JOB_FAILED'
+var JOB_NOT_STARTED_STATUS_STRING = 'JOB_NOT_STARTED'
+
 // highLevelLogger.debug("Debug")
 // highLevelLogger.verbose("verbose")
 // highLevelLogger.info("info")
@@ -86,8 +89,15 @@ exports.submitNewScheduledJob = function(req, res) {
     var executionTime = req.body.jobSchedTime;
     var executionDays = req.body.days;
     var notifyEmailFlag = req.body.notifyEmailFlag;
-    var notifyEmailID   = req.body.notifyEmailID;
-    var lastRunStatus = "JOB_NOT_STARTED"
+    var notifyEmailID   = req.body.notifyEmailID || "";
+    var jobRunStatus = JOB_NOT_STARTED_STATUS_STRING;
+
+    // Validate Notification Flag and EmailID
+    if (!notifyEmailID) {
+        notifyEmailFlag = false;
+    } else{
+        notifyEmailFlag = true;
+    }
 
     // Create a new Job ID 	
     var ObjectId = mongoose.Types.ObjectId;
@@ -199,6 +209,14 @@ exports.submitNewScheduledJob = function(req, res) {
             dayOfWeek +="6";
         } 
 
+        // ##  HiveLauncher Script Usage :
+        // ##      
+        // ##   Scheduled Job :-->
+        // ##   HiveLauncher.sh SCHED <JobID> <SQLQueryFile> <OutputDir> <NotifyFlag-Y/N> [NotifyEmail]
+        // ##   
+        // ##   AdHocJob Job :-->"
+        // ##   HiveLauncher.sh ADHOC <JobID> <SQLQueryFile> <OutputDir>
+        // ##
 
         // Prepare Command to be run by CRON
 
@@ -206,9 +224,13 @@ exports.submitNewScheduledJob = function(req, res) {
             execFileName = './HiveLauncher.sh',
             normalizePath = "../"
     
-        var args = jobID + " " + normalizePath  + queryFile  + " " + normalizePath + jobDir
+        var args = "SCHED" + " " + jobID + " " + normalizePath  + queryFile  + " " + normalizePath + jobDir 
 
-
+        if (notifyEmailFlag == true){
+            args += " " + "Y" + " " + notifyEmailID;
+        } else{
+            args += " " + "N"
+        }
 
         // Log File to store the CRON output
         var cronlogFile = " > " + normalizePath + dataDir + "cronLogs.log 2>&1"
@@ -314,7 +336,7 @@ exports.submitNewScheduledJob = function(req, res) {
             ExecutionDays   : { SUN: executionDays.sun, MON : executionDays.mon , TUE : executionDays.tue, WED: executionDays.wed, THU: executionDays.thu, FRI: executionDays.fri, SAT: executionDays.sat },
             NotifyFlag      : notifyEmailFlag,
             NotifyEmail     : notifyEmailID,
-            LastRunStatus   : lastRunStatus,
+            JobRunStatus    : jobRunStatus,
             CronTabJob      : crontabInsertCmd,
             CreatedTimeStamp: new Date(),
             UpdatedTimeStamp: new Date()
@@ -400,8 +422,8 @@ exports.removeScheuledJob = function(req, res) {
     });
 
 
-   // Update the Job in Database
-       updateStatusInDB = function() {
+    // Update the Job in Database
+    updateStatusInDB = function() {
        
 
        var query = { _id: jobID };

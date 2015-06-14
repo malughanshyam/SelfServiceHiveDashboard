@@ -6,7 +6,7 @@ var schema = mongoose.Schema({
     JobName     	: String,
     SQLQuery    	: String, 
     SubmittedByIP 	: String,
-    Status 			: String,
+    JobRunStatus 	: String,
     CreatedTimeStamp: { type: Date, default:Date.now },
     UpdatedTimeStamp: { type: Date, default:Date.now }
 });

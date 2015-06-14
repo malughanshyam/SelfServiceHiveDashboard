@@ -11,7 +11,7 @@ var schema = mongoose.Schema({
     NotifyEmail 	: String,
     SubmittedByIP 	: String,
     ScheduleStatus  : String,
-    LastRunStatus 	: String,
+    JobRunStatus 	: String,
     CronTabJob      : String,
     CreatedTimeStamp: { type: Date, default:Date.now },
     UpdatedTimeStamp: { type: Date, default:Date.now }

@@ -129,25 +129,25 @@
                                     <!-- <td>{{row.JobID}}</td> -->
                                     <td>{{row.JobName}}</td>
                                     <td><small>{{row.SQLQuery.substring(0, 30)}}</small><small ng-show="isShowPopup(row.SQLQuery,30)" popover="{{row.SQLQuery}}" popover-trigger="click"> ...<i class="fa fa-1x fa-eye"></i></small></td>
-                                    <!-- <td>{{row.Status}}</td> -->
+                                    <!-- <td>{{row.JobRunStatus}}</td> -->
                                     <td  align="center">
-                                        <i tooltip="JOB_SUCCESSFUL" id="statusSuccess" class="fa fa-check-square" ng-show={{row.Status=='JOB_SUCCESSFUL'}}></i>
-                                        <i tooltip="JOB_FAILED" id="statusFail" class="fa fa-exclamation-triangle" ng-show={{row.Status=='JOB_FAILED'}}></i>
-                                        <i tooltip="JOB_IN_PROGRESS" id="statusRunning" class="fa fa-dashboard" ng-show={{row.Status=='JOB_IN_PROGRESS'}}></i>
-                                        <i tooltip="JOB_NOT_STARTED" id="statusNotStarted" class="fa fa-history" ng-show={{row.Status=='JOB_NOT_STARTED'}}></i>
+                                        <i tooltip="JOB_SUCCESSFUL" id="statusSuccess" class="fa fa-check-square" ng-show={{row.JobRunStatus=='JOB_SUCCESSFUL'}}></i>
+                                        <i tooltip="JOB_FAILED" id="statusFail" class="fa fa-exclamation-triangle" ng-show={{row.JobRunStatus=='JOB_FAILED'}}></i>
+                                        <i tooltip="JOB_IN_PROGRESS" id="statusRunning" class="fa fa-dashboard" ng-show={{row.JobRunStatus=='JOB_IN_PROGRESS'}}></i>
+                                        <i tooltip="JOB_NOT_STARTED" id="statusNotStarted" class="fa fa-history" ng-show={{row.JobRunStatus=='JOB_NOT_STARTED'}}></i>
                                     </td>
                                     
                                     <td><small>{{ parseIsoDatetime(row.UpdatedTimeStamp) }}</small></td>
                                     <td>
-                                        <button type="button" ng-click="viewResults(row)" class="btn btn-success btn-xs" ng-show="row.Status == 'JOB_SUCCESSFUL'">
+                                        <button type="button" ng-click="viewResults(row)" class="btn btn-success btn-xs" ng-show="row.JobRunStatus == 'JOB_SUCCESSFUL'">
                                             <span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span> Results
                                         </button>
 
-                                        <button type="button" ng-click="viewLog(row)" class="btn btn-warning btn-xs" ng-show="row.Status == 'JOB_IN_PROGRESS'">
+                                        <button type="button" ng-click="viewLog(row)" class="btn btn-warning btn-xs" ng-show="row.JobRunStatus == 'JOB_IN_PROGRESS'">
                                             <span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span> View Log
                                         </button>
                                         <!-- data-toggle="modal" data-target="#modelViewLog" -->
-                                        <button type="button" ng-click="viewLog(row)" class="btn btn-danger btn-xs" ng-show="row.Status == 'JOB_FAILED'">
+                                        <button type="button" ng-click="viewLog(row)" class="btn btn-danger btn-xs" ng-show="row.JobRunStatus == 'JOB_FAILED'">
                                             <span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span> View Log
                                         </button>
                                     </td>
@@ -169,13 +169,13 @@
                                                 </li>
                                                 <li class="divider"></li>
 
-                                                <li ng-show="row.Status == 'JOB_SUCCESSFUL'">
+                                                <li ng-show="row.JobRunStatus == 'JOB_SUCCESSFUL'">
                                                     <a role="menuitem" ng-click="scheduleJob(row)">
                                                         <i class="fa fa-clock-o"></i> Schedule
                                                     </a>
                                                 </li>
 
-                                                <li class="disabled" ng-show="row.Status != 'JOB_SUCCESSFUL'">
+                                                <li class="disabled" ng-show="row.JobRunStatus != 'JOB_SUCCESSFUL'">
                                                     <a role="menuitem">
                                                         <i class="fa fa-clock-o"></i> Schedule
                                                     </a>
@@ -185,7 +185,7 @@
                                             </ul>
                                         </div>
 
-                                        <button type="button" ng-click="scheduleJob(row)" class="btn btn-warning btn-xs" id="scheduleBtn" ng-show="row.Status == 'JOB_SUCCESSFUL'">
+                                        <button type="button" ng-click="scheduleJob(row)" class="btn btn-warning btn-xs" id="scheduleBtn" ng-show="row.JobRunStatus == 'JOB_SUCCESSFUL'">
                                             <span class="glyphicon glyphicon-time" aria-hidden="true"></span> Schedule
                                         </button>
 
@@ -583,25 +583,25 @@
                                     <td><small>{{row.SQLQuery.substring(0, 30)}}</small><small ng-show="isShowPopup(row.SQLQuery,30)" popover="{{row.SQLQuery}}" popover-trigger="click"> ...<i class="fa fa-1x fa-eye"></i></small></td>
 
 
-                                    <td><small tooltip="Runs on Sunday" ><i class="fa fa-check-square" ng-show={{row.ExecutionDays.SUN==true}}></i></small></td>
-                                    <td><small tooltip="Runs on Monday"><i class="fa fa-check-square" ng-show={{row.ExecutionDays.MON==true}}></i></small></td>
-                                    <td><small tooltip="Runs on Tuesday"><i class="fa fa-check-square" ng-show={{row.ExecutionDays.TUE==true}}></i></small></td>
-                                    <td><small tooltip="Runs on Wednesday"><i class="fa fa-check-square" ng-show={{row.ExecutionDays.WED==true}}></i></small></td>
-                                    <td><small tooltip="Runs on Thursday"><i class="fa fa-check-square" ng-show={{row.ExecutionDays.THU==true}}></i></small></td>
-                                    <td><small tooltip="Runs on Friday"><i class="fa fa-check-square" ng-show={{row.ExecutionDays.FRI==true}}></i></small></td>
+                                    <td><small tooltip="Sunday" ><i class="fa fa-check-square" ng-show={{row.ExecutionDays.SUN==true}}></i></small></td>
+                                    <td><small tooltip="Monday"><i class="fa fa-check-square" ng-show={{row.ExecutionDays.MON==true}}></i></small></td>
+                                    <td><small tooltip="Tuesday"><i class="fa fa-check-square" ng-show={{row.ExecutionDays.TUE==true}}></i></small></td>
+                                    <td><small tooltip="Wednesday"><i class="fa fa-check-square" ng-show={{row.ExecutionDays.WED==true}}></i></small></td>
+                                    <td><small tooltip="Thursday"><i class="fa fa-check-square" ng-show={{row.ExecutionDays.THU==true}}></i></small></td>
+                                    <td><small tooltip="Friday"><i class="fa fa-check-square" ng-show={{row.ExecutionDays.FRI==true}}></i></small></td>
                                     <td><small tooltip="Runs on Saturday"><i class="fa fa-check-square" ng-show={{row.ExecutionDays.SAT==true}}></i></small></td>
                                     
 
                                     <td>{{row.ExecutionTime.Hours}}:{{row.ExecutionTime.Minutes}}</td>
                                     
                                     
-                                    <!-- <td><small>{{row.LastRunStatus}}</small></td> -->
+                                    <!-- <td><small>{{row.JobRunStatus}}</small></td> -->
 
                                     <td class="text-center">
-                                        <i tooltip="JOB_SUCCESSFUL" id="statusSuccess" class="fa fa-check-square" ng-show={{row.LastRunStatus=='JOB_SUCCESSFUL'}}></i>
-                                        <i tooltip="JOB_FAILED" id="statusFail" class="fa fa-exclamation-triangle" ng-show={{row.LastRunStatus=='JOB_FAILED'}}></i>
-                                        <i tooltip="JOB_IN_PROGRESS"  id="statusRunning" class="fa fa-dashboard" ng-show={{row.LastRunStatus=='JOB_IN_PROGRESS'}}></i>
-                                        <i tooltip="JOB_NOT_STARTED" id="statusNotStarted" class="fa fa-history" ng-show={{row.LastRunStatus=='JOB_NOT_STARTED'}}></i>
+                                        <i tooltip="JOB_SUCCESSFUL" id="statusSuccess" class="fa fa-check-square" ng-show={{row.JobRunStatus=='JOB_SUCCESSFUL'}}></i>
+                                        <i tooltip="JOB_FAILED" id="statusFail" class="fa fa-exclamation-triangle" ng-show={{row.JobRunStatus=='JOB_FAILED'}}></i>
+                                        <i tooltip="JOB_IN_PROGRESS"  id="statusRunning" class="fa fa-dashboard" ng-show={{row.JobRunStatus=='JOB_IN_PROGRESS'}}></i>
+                                        <i tooltip="JOB_NOT_STARTED" id="statusNotStarted" class="fa fa-history" ng-show={{row.JobRunStatus=='JOB_NOT_STARTED'}}></i>
                                     </td>
                                     
                                     <td><small>{{ parseIsoDatetime(row.UpdatedTimeStamp) }}</small></td>
@@ -614,15 +614,15 @@
                                     </td>
                                     
                                     <td>
-                                        <button type="button" ng-click="viewResults(row)" class="btn btn-success btn-xs" ng-show="row.Status == 'JOB_SUCCESSFUL'">
+                                        <button type="button" ng-click="viewResults(row)" class="btn btn-success btn-xs" ng-show="row.JobRunStatus == 'JOB_SUCCESSFUL'">
                                             <span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span> Results
                                         </button>
 
-                                        <button type="button" ng-click="viewLog(row)" class="btn btn-warning btn-xs" ng-show="row.Status == 'JOB_IN_PROGRESS'">
+                                        <button type="button" ng-click="viewLog(row)" class="btn btn-warning btn-xs" ng-show="row.JobRunStatus == 'JOB_IN_PROGRESS'">
                                             <span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span> View Log
                                         </button>
                                         <!-- data-toggle="modal" data-target="#modelViewLog" -->
-                                        <button type="button" ng-click="viewLog(row)" class="btn btn-danger btn-xs" ng-show="row.Status == 'JOB_FAILED'">
+                                        <button type="button" ng-click="viewLog(row)" class="btn btn-danger btn-xs" ng-show="row.JobRunStatus == 'JOB_FAILED'">
                                             <span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span> View Log
                                         </button>
                                     </td>
