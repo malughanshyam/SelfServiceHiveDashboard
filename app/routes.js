@@ -7,6 +7,8 @@ module.exports = function(app){
     // Import Scheduled Job Controllers / Route Handlers
     var schedJobHandler = require('./controllers/schedJobHandler');
 
+   // Import Common Job Controllers / Route Handlers
+    var commonHandler = require('./controllers/commonHandler');
 
     /******* AdHoc Routes ********/
 
@@ -26,17 +28,16 @@ module.exports = function(app){
     //app.put('/jobStatus/:JobID', adHocJobHandler.updateStatus);
 
     // Get AdHoc Job Log
-    app.get('/jobLog/:JobID', adHocJobHandler.getJobLog);
+    app.get('/adHocJobLog/:JobID', commonHandler.adHocJobLog);
 
     // Get AdHoc Job Result
     //app.get('/jobResult/:JobID',adHocJobHandler.getJobResult);
 
     // Get AdHoc Job Result File
-    app.get('/jobResultFile/:JobID', adHocJobHandler.getJobResultFile);
+    app.get('/adHocJobResultFile/:JobID', commonHandler.getAdHocJobResultFile);
 
     // Download Result File    
-    app.get('/downloadJobResultFile/:JobID', adHocJobHandler.downloadFile);
-
+    app.get('/downloadAdHocJobResultFile/:JobID', commonHandler.downloadAdHocJobResultFile);
 
 
     /******* Scheduled Job Routes ********/
@@ -53,6 +54,13 @@ module.exports = function(app){
 
     // Submit New Scheduled Job
     app.put('/removeSchedJob/:JobID', schedJobHandler.removeScheuledJob);
+
+
+    // Get Scheduled Job Result File
+    app.get('/schedJobResultFile/:JobID', commonHandler.getSchedJobResultFile);
+
+    // Download Result File    
+    app.get('/downloadSchedJobResultFile/:JobID', commonHandler.downloadSchedJobResultFile);
 
 
 

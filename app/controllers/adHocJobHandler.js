@@ -2,7 +2,7 @@
 var fs = require('fs-extra');
 var sys = require('sys')
 var child_process = require('child_process');
-var dataDir = "data/";
+var dataDir = "data/AdHocJobs/";
 var path = require('path');
 var mongoose = require('mongoose');
 
@@ -267,118 +267,5 @@ exports.updateStatus = function(req,res){
 }
 
 
-exports.getJobLog = function(req,res){
 
-    var jobID = req.params.JobID;
-    var clientIPaddress = req.ip || req.header('x-forwarded-for') || req.connection.remoteAddress;
-	if (jobID != null){
-        
-        jobLogFile = dataDir+jobID+"/log.txt";
-		console.log("Job Log File: "+jobLogFile);
-		fs.readFile(jobLogFile, 'utf8', function (err,data) {
-		  	if (err) {
-		  		detailLogger.error('JobID - %s Error fetching Job Log %s' ,jobID, JSON.stringify({ clientIPaddress: clientIPaddress, error: err, jobLogFile: jobLogFile}));
-		  		highLevelLogger.error('JobID - %s Error fetching Job Log %s' ,jobID, JSON.stringify({ clientIPaddress: clientIPaddress, error: err, jobLogFile: jobLogFile}));
-		    	res.status(500);
-                return res.send(err);
-		  	} else {
-				detailLogger.debug('JobID - %s User retrieved Job Log File: %s',jobID, JSON.stringify({ jobLogFile: jobLogFile}));
-			  	highLevelLogger.debug('JobID - %s User retrieved Job Log File: %s',jobID, JSON.stringify({ jobLogFile: jobLogFile}));        
-			  	res.send(data);		  		
-		  	}
-    	});
-	} else{
-        detailLogger.error('JobID - %s Error fetching Job Log %s' ,jobID, JSON.stringify({ error: 'JobID not specified'}));
-        return res.json(({status: '500 Server error', error: 'JobID not specified'}))
-
-    }
-
-
-};
-
-exports.getJobResultFile = function(req,res){
-
-    var jobID = req.params.JobID;
-    var clientIPaddress = req.ip || req.header('x-forwarded-for') || req.connection.remoteAddress;
-	
-    if (jobID != null){
-        		
-		var options = {
-			root: __dirname + '../../../' + dataDir+jobID,
-			dotfiles: 'deny',
-			headers: {
-				'x-timestamp': Date.now(),
-				'x-sent': true
-			}
-		};
-
-		var fileName = 'result.txt'
-		res.sendFile(fileName, options, function (err) {
-			if (err) {
-				detailLogger.error('JobID - %s Error fetching Job Result: %s' ,jobID, JSON.stringify({ clientIPaddress: clientIPaddress, error: err, fileName: fileName, path: options.root}));
-		  		highLevelLogger.error('JobID - %s Error fetching Job Result %s' ,jobID, JSON.stringify({ clientIPaddress: clientIPaddress, error: err, fileName: fileName, path: options.root}));
-		    	return res.status(err.status).end();
-			}
-			else {
-				detailLogger.debug('JobID - %s User retrieved Job Result File: %s',jobID, JSON.stringify({ clientIPaddress: clientIPaddress, fileName: fileName, path: options.root}));
-			  	highLevelLogger.debug('JobID - %s User retrieved Job Result File: %s',jobID, JSON.stringify({ clientIPaddress: clientIPaddress, fileName: fileName, path: options.root}));
-				}
-		});
-
-
-	} else{
-		detailLogger.error('JobID - NOT_SPECIFIED  Error fetching Job Log %s' , JSON.stringify({ error: 'JobID not specified'}));
-        return res.json(({status: '500 Server error', error: 'JobID not specified'}))
-    }
-
-};
-
-exports.downloadFile = function(req,res){
-    var jobID = req.params.JobID;
-    var clientIPaddress = req.ip || req.header('x-forwarded-for') || req.connection.remoteAddress;
-    
-    if (jobID != null){
-                
-        var fileName = 'result.txt'
-        var file = __dirname + '../../../' + dataDir+jobID +'/'+fileName;
-        var newFileName = 'result-'+jobID+'.txt';
-        detailLogger.debug('JobID - %s User downloaded Job Result File: %s',jobID, JSON.stringify({ clientIPaddress: clientIPaddress, fileName: file}));
-        highLevelLogger.debug('JobID - %s User downloaded Job Result File: %s',jobID, JSON.stringify({ clientIPaddress: clientIPaddress, fileName: file}));
-        res.download(path.resolve(file),newFileName); // Set disposition and send it.
-
-    } else{
-        detailLogger.error('JobID - %s Error fetching Job Result: %s' ,jobID, JSON.stringify({ clientIPaddress: clientIPaddress, error: err, fileName: fileName, path: options.root}));
-        highLevelLogger.error('JobID - %s Error fetching Job Result %s' ,jobID, JSON.stringify({ clientIPaddress: clientIPaddress, error: err, fileName: fileName, path: options.root}));
-        return res.status(err.status).end();
-    }
-   
-}
-
-exports.getJobResult = function(req,res){
-
-    var jobID = req.params.JobID;
-    var clientIPaddress = req.ip || req.header('x-forwarded-for') || req.connection.remoteAddress;
-	
-    if (jobID != null){
-        
-        jobResultFile = dataDir+jobID+"/result.txt";
-		fs.readFile(jobResultFile, 'utf8', function (err,data) {
-		  	if (err) {
-				detailLogger.error('JobID - %s Error fetching Job Result: %s' ,jobID, JSON.stringify({ clientIPaddress: clientIPaddress, error: err, jobResultFile: jobResultFile}));
-		  		highLevelLogger.error('JobID - %s Error fetching Job Result %s' ,jobID, JSON.stringify({ clientIPaddress: clientIPaddress, error: err, jobResultFile: jobResultFile}));
-		    	console.log(err);
-		    	res.status(500);
-                return res.send(err);
-		  	} else {
-			  	detailLogger.debug('JobID - %s User retrieved Job Result File: %s',jobID, JSON.stringify({ clientIPaddress: clientIPaddress, jobResultFile: jobResultFile}));
-				highLevelLogger.debug('JobID - %s User retrieved Job Result File: %s',jobID, JSON.stringify({ clientIPaddress: clientIPaddress, jobResultFile: jobResultFile}));				
-			  	res.send(data.trim());
-		  	}
-    	});
-	} else{
-		detailLogger.error('JobID - NOT_SPECIFIED  Error fetching Job Log %s' , JSON.stringify({ error: 'JobID not specified'}));
-        res.status(500);
-        return res.json(({status: '500 Server error', error: 'JobID not specified'}))
-    }
-};
 

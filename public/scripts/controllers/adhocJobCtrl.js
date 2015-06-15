@@ -1,8 +1,12 @@
 angular.module('dashboardApp')
 
-    .controller('adHocJobCtrl', function($scope, $compile, $http) {
+    .controller('adHocJobCtrl', function($scope, $compile, $http, dashboardAungularService) {
 
-    // experiment with smart table
+    // ---------------------------------
+    // Controller For Scheduled Job
+    // ---------------------------------
+
+    // Collection for Recent Jobs Table
     $scope.recentAdHocJobs = [];
     $scope.displayedCollection = [];
 
@@ -15,7 +19,6 @@ angular.module('dashboardApp')
     var newAdHocTabClone = $("#newAdHocTab").clone();
 
     $scope.initializeNewJobTab = function() {
-        console.log("cclkj")
         // Variables to store the data for Bar and Line charts to prevent recomputing the already populated charts
         $scope.barChartComputedData;
         $scope.lineChartComputedData;
@@ -285,11 +288,12 @@ angular.module('dashboardApp')
     }
 
     // Model - View Job Log
-    $scope.viewLog = function(adHocJob) {
+    $scope.viewLogModal = function(adHocJob) {
+        console.log("Clicked viewLogModal");
         $('#modelViewLog').modal('show')
 
         $("#modelViewLog").find('#JobName').text(adHocJob.JobName);
-        $("#modelViewLog").find('#JobStatus').text("(" + adHocJob.Status + ")");
+        $("#modelViewLog").find('#JobStatus').text("(" + adHocJob.JobRunStatus + ")");
 
         $scope.getJobLog(adHocJob.JobID, function() {
             console.log("In callback");
@@ -312,13 +316,15 @@ angular.module('dashboardApp')
         $("#modelViewResults").find('.modal-body').html(jobResultTabContent);
         // $("#modelViewResults").find('#JobID').text("(" + adHocJob.JobID + ")");
 
-        $("#modelViewResults").find('.modal-body').html(jobResultTabContent);
-
         // compile the element
         $compile($('#modelViewResults'))($scope);
 
         $("#modelViewResults").find('#submittedHiveQuery').text(adHocJob.SQLQuery);
         $("#modelViewResults").find('#resultPanelTitle').text(adHocJob.JobName);
+
+
+        $('#downloadBarChartBtnId').addClass('disabled');
+        $('#downloadLineChartBtnId').addClass('disabled');
 
         $scope.formData.jobID = adHocJob.JobID;
         $scope.computeJobResults(adHocJob.JobID);
@@ -341,7 +347,7 @@ angular.module('dashboardApp')
 
     $scope.getJobLog = function(jobID, callBack) {
 
-        $scope.checkLogURL = '/jobLog/' + jobID
+        $scope.checkLogURL = '/adHocJobLog/' + jobID
         $scope.jobLogRetrieved;
         $http.get($scope.checkLogURL, $scope.formData)
             .success(function(data) {
@@ -383,12 +389,12 @@ angular.module('dashboardApp')
 
     $scope.computeJobResults = function(jobID) {
 
-        $scope.checkResultURL = '/jobResultFile/' + jobID
+        $scope.checkResultURL = '/adHocJobResultFile/' + jobID
 
         $http.get($scope.checkResultURL)
             .success(function(data) {
                 $scope.jobResult = data;
-                $scope.createResultTable();
+                dashboardAungularService.createResultTable('#jobResultTable', $scope.jobResult);
             })
 
         .error(function(err) {
@@ -399,116 +405,16 @@ angular.module('dashboardApp')
     }
 
 
-    $scope.createHTMLTable = function(divId, data) {
-
-        $(function() {
-
-            $('#' + divId).CSVToTable(data, {
-
-                // class name to apply to the <table> tag
-                tableClass: "resultTable table table-hover table-condensed",
-
-                // class name to apply to the <thead> tag
-                theadClass: "",
-
-                // class name to apply to the <th> tag
-                thClass: "",
-
-                // class name to apply to the <tbody> tag
-                tbodyClass: "",
-
-                // class name to apply to the <tr> tag
-                trClass: "",
-
-                // class name to apply to the <td> tag
-                tdClass: "",
-
-                // path to an image to display while CSV/TSV data is loading
-                loadingImage: "",
-
-                // text to display while CSV/TSV is loading
-                loadingText: "Loading Results...",
-
-                // separator to use when parsing CSV/TSV data
-                separator: "\t",
-
-                startLine: 0
-
-            });
-        });
-    }
-
-    $scope.createResultTable = function() {
-        $scope.createHTMLTable('jobResultTable', $scope.jobResult);
-    }
-
-
-
-    $scope.reset = function() {
-        $scope.user = angular.copy($scope.master);
-    };
-
-    $scope.reset();
-
-
     $scope.createBarChart = function() {
-
-
-
-        // Compute the Width for the Charts
-        var chartWidth = $("#jobResultPanelBodyContent").width()
-
-        // Check against the locally stored chart data to prevent duplicate computation/drawing of the charts
-        if ($scope.barChartComputedData == $scope.jobResult) {
-            return true;
-        }
 
         $('#createBarChartBtn').button('loading');
 
-        // Parse the TSV Result file into Array of Data 
-        var x = $scope.jobResult.split('\n');
-        for (var i = 0; i < x.length; i++) {
-            y = x[i].split('\t');
-            x[i] = y;
-        }
+        // Compute the Width for the Charts
+        var chartWidth = $("#jobResultPanelBodyContent").width();
+        var chartDivID = '#chartBar';
 
-        $scope.chartData = x
+        dashboardAungularService.createBarChart($scope.jobResult, chartDivID, chartWidth); 
 
-        // $scope.chartDataHeader = x[0]
-        // $scope.chartDataSplit = x.slice(1);
-
-        // console.log("Header: ")
-        // console.log($scope.chartDataHeader)
-
-        // console.log("Data: ")
-        // console.log($scope.chartDataSplit)
-
-        // Generate Bar Chart
-        var chartBar = c3.generate({
-            bindto: '#chartBar',
-            data: {
-                x: $scope.chartData[0][0],
-                rows: $scope.chartData,
-                type: 'bar'
-            },
-            axis: {
-                x: {
-                    type: 'category',
-                    tick: {
-                        rotate: 75,
-                        multiline: false
-                    },
-                    height: 130
-                }
-            },
-            size: {
-                width: chartWidth
-            }
-
-        });
-
-        // Variable to store the data for chart to prevent duplicate computation/drawing of the charts
-        $scope.barChartComputedData = $scope.jobResult
         $('#downloadBarChartBtnId').removeClass('disabled');
         $('#createBarChartBtn').button('reset');
 
@@ -517,167 +423,26 @@ angular.module('dashboardApp')
 
     $scope.createLineChart = function() {
 
-        // Compute the Width for the Charts
-        var chartWidth = $("#jobResultPanelBodyContent").width()
-
-        // Check against the locally stored chart data to prevent duplicate computation/drawing of the charts
-        if ($scope.lineChartComputedData == $scope.jobResult) {
-            return true;
-        }
-
         $('#createLineChartBtn').button('loading');
 
-        // Parse the TSV Result file into Array of Data 
-        var x = $scope.jobResult.split('\n');
-        for (var i = 0; i < x.length; i++) {
-            y = x[i].split('\t');
-            x[i] = y;
-        }
+        // Compute the Width for the Charts
+        var chartWidth = $("#jobResultPanelBodyContent").width()
+        var chartDivID = '#chartLine';
 
-        $scope.chartData = x
+        dashboardAungularService.createLineChart($scope.jobResult, chartDivID, chartWidth); 
 
-        // $scope.chartDataHeader = x[0]
-        // $scope.chartDataSplit = x.slice(1);
-
-        // console.log("Header: ")
-        // console.log($scope.chartDataHeader)
-
-        // console.log("Data: ")
-        // console.log($scope.chartDataSplit)
-
-        // Generate Line Chart
-        var chartLine = c3.generate({
-            bindto: '#chartLine',
-            data: {
-                x: $scope.chartData[0][0],
-                rows: $scope.chartData,
-                type: 'line'
-            },
-            axis: {
-                x: {
-                    type: 'category',
-                    tick: {
-                        rotate: 75,
-                        multiline: false
-                    },
-                    height: 130
-                }
-            },
-            size: {
-                width: chartWidth
-            }
-        });
-
-        // Variable to store the data for chart to prevent duplicate computation/drawing of the charts
-        $scope.lineChartComputedData = $scope.jobResult
         $('#downloadLineChartBtnId').removeClass('disabled');
         $('#createLineChartBtn').button('reset');
 
     }
 
 
-    $scope.createCharts = function(callbackFunction) {
-
-        // Compute the Width for the Charts
-        var chartWidth = $("#jobResultTab").width()
-        console.log($("#jobResultPanelBodyContent").width());
-        console.log($('#jobResultTab').width());
-        console.log($('#tabular').width());
-
-        // Parse the TSV Result file into Array of Data 
-        var x = $scope.jobResult.split('\n');
-        for (var i = 0; i < x.length; i++) {
-            y = x[i].split('\t');
-            x[i] = y;
-        }
-
-        $scope.chartData = x
-
-        // $scope.chartDataHeader = x[0]
-        // $scope.chartDataSplit = x.slice(1);
-
-        // console.log("Header: ")
-        // console.log($scope.chartDataHeader)
-
-        // console.log("Data: ")
-        // console.log($scope.chartDataSplit)
-
-        // Generate Bar Chart
-        var chartBar = c3.generate({
-            bindto: '#chartBar',
-            data: {
-                x: $scope.chartData[0][0],
-                rows: $scope.chartData,
-                type: 'bar'
-            },
-            axis: {
-                x: {
-                    type: 'category',
-                    tick: {
-                        rotate: 75,
-                        multiline: false
-                    },
-                    height: 130
-                }
-            },
-            size: {
-                width: chartWidth
-            }
-
-
-
-        });
-
-        // Generate Line Chart
-        var chartBar = c3.generate({
-            bindto: '#chartLine',
-            data: {
-                x: $scope.chartData[0][0],
-                rows: $scope.chartData,
-                type: 'line'
-            },
-            axis: {
-                x: {
-                    type: 'category',
-                    tick: {
-                        rotate: 75,
-                        multiline: false
-                    },
-                    height: 130
-                }
-            },
-            size: {
-                width: chartWidth
-            }
-
-
-        });
-        callbackFunction();
-
-    }
-
 
     $scope.saveDivAsPicture = function() {
-        console.log("clicked me")
-        $scope.saveAsPicture($("#resultPanel"))
+        dashboardAungularService.saveAsPicture($("#resultPanel"))
     }
 
-    $scope.saveAsPicture = function(element) {
 
-        html2canvas(element, {
-            allowTaint: true,
-            useCORS: true,
-            onrendered: function(canvas) {
-                document.body.appendChild(canvas);
-                canvas.toBlob(function(blob) {
-                    //document.body.appendChild(canvas);
-                    saveAs(blob, "dashboard.png");
-                });
-
-            }
-        });
-
-    }
 
     $scope.editAndResubmitJob = function(adHocJob) {
         $('#recentAdHocTab').removeClass('active');
@@ -702,31 +467,29 @@ angular.module('dashboardApp')
 
     $scope.downloadJobResultFile = function() {
 
-        $scope.downloadJobResultURL = '/downloadJobResultFile/' + $scope.formData.jobID
-
-        window.open($scope.downloadJobResultURL);
+        $scope.downloadAdHocJobResultFile = '/downloadAdHocJobResultFile/' + $scope.formData.jobID
+        window.open($scope.downloadAdHocJobResultFile);
         console.log("Downloaded Result File for JobID: " + $scope.formData.jobID)
 
     }
 
-    $scope.isShowPopup = function(text, limit){
+    $scope.showPopupFlag = function(text, limit){
         if (text.length > limit)
             return true;
         return false;
     }
 
-    $scope.parseIsoDatetime = function(dtstr){
-    
-        MM = {Jan:"January", Feb:"February", Mar:"March", Apr:"April", May:"May", Jun:"June", Jul:"July", Aug:"August", Sep:"September", Oct:"October", Nov:"November", Dec:"December"}
-
-        return String(new Date(dtstr)).replace(
-            /\w{3} (\w{3}) (\d{2}) (\d{4}) (\d{2}):(\d{2}):[^(]+\(([A-Z]{3})\)/,
-            function($0,$1,$2,$3,$4,$5,$6){
-                return MM[$1]+" "+$2+", "+$3+" - "+$4%12+":"+$5+(+$4>12?" PM":" AM")+" "+$6 
-            }
-        )
-
+    $scope.parseIsoDatetime = function(dateStr){
+        return dashboardAungularService.parseIsoDatetime(dateStr); 
     }
+
+
+    $scope.reset = function() {
+        $scope.user = angular.copy($scope.master);
+    };
+
+    $scope.reset();
+
 
 
 });

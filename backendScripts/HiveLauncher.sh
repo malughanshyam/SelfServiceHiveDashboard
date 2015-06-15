@@ -34,7 +34,7 @@ updateStatusLogFileOnFailure () {
     logFile=$3
     additionallogMsg=$4
     echo "JOB_FAILED" > $outputDataDir/$statusFile
-    echo "Hive Launcher Script Failed! $4 " > $outputDataDir/$logFile
+    echo "Hive Launcher Script Failed! $additionallogMsg " > $outputDataDir/$logFile
 }
 
 # Validations of Arguments

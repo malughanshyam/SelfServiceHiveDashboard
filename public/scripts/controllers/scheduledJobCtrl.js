@@ -1,16 +1,23 @@
 angular.module('dashboardApp')
 
-    .controller('scheduledJobCtrl', function($scope, $http) {
+    .controller('scheduledJobCtrl', function($scope, $compile, $http, dashboardAungularService) {
 
 
     // ---------------------------------
-    // Scheduled Job Section
+    // Controller For Scheduled Job
     // ---------------------------------
 
+
+    // Collection for Recent Jobs Table
+    $scope.displayedSchedJobsCollection = [];
+    $scope.allSchedJobs = [];
 
     // Initialize Schedule New Job
     $scope.initializeScheduleNewJob = function() {
         $scope.schedJob = {};
+
+        $scope.barChartComputedData;
+        $scope.lineChartComputedData;
 
         $scope.schedJob.schedJobName = "";
         $scope.schedJob.schedQuery = "";
@@ -103,7 +110,6 @@ angular.module('dashboardApp')
 
         $http.get(getScheduledJobs)
             .success(function(data) {
-                $scope.displayedSchedJobsCollection = '';
                 $scope.allSchedJobs = data;
                 $scope.displayedSchedJobsCollection = [].concat($scope.allSchedJobs);
             })
@@ -115,6 +121,83 @@ angular.module('dashboardApp')
             });
     }
 
+    $scope.viewResults = function(schedJob) {
+
+        $scope.initializeScheduleNewJob();
+
+        $('#modelViewResultsSched').modal('show')
+
+        jobResultTabContent = $("#jobResultTab").html();
+
+        $("#modelViewResultsSched").find('#JobName').text(schedJob.JobName);
+        $("#modelViewResultsSched").find('.modal-body').html(jobResultTabContent);
+        // $("#modelViewResults").find('#JobID').text("(" + adHocJob.JobID + ")");
+
+        // compile the element
+        $compile($('#modelViewResultsSched'))($scope);
+
+        $("#modelViewResultsSched").find('#submittedHiveQuery').text(schedJob.SQLQuery);
+        $("#modelViewResultsSched").find('#resultPanelTitle').text(schedJob.JobName);
+
+        $scope.schedJob.jobID = schedJob.JobID
+        $scope.computeJobResults(schedJob.JobID);
+
+        $('#modelViewResults').on('hidden.bs.modal', function() {
+            $scope.barChartComputedData = null;
+            $scope.lineChartComputedData = null;
+        })
+
+    }
+
+
+    $scope.computeJobResults = function(jobID) {
+
+        $scope.checkResultURL = '/schedJobResultFile/' + jobID
+
+        $http.get($scope.checkResultURL)
+            .success(function(data) {
+                $scope.schedJob.jobResult = data;
+                dashboardAungularService.createResultTable('#jobResultTable', $scope.jobResult);
+            })
+
+        .error(function(err) {
+            // $scope.submittedJobStatus='FAILED'
+            $scope.jobResult = 'Fetching Result Failed :' + err;
+            console.log(err)
+        });
+    }
+
+
+    $scope.createBarChart = function() {
+
+        $('#createBarChartBtn').button('loading');
+
+        // Compute the Width for the Charts
+        var chartWidth = $("#jobResultPanelBodyContent").width();
+        var chartDivID = '#chartBar';
+
+        dashboardAungularService.createBarChart($scope.jobResult, chartDivID, chartWidth); 
+
+        $('#downloadBarChartBtnId').removeClass('disabled');
+        $('#createBarChartBtn').button('reset');
+
+    }
+
+
+    $scope.createLineChart = function() {
+
+        $('#createLineChartBtn').button('loading');
+
+        // Compute the Width for the Charts
+        var chartWidth = $("#jobResultPanelBodyContent").width()
+        var chartDivID = '#chartLine';
+
+        dashboardAungularService.createLineChart($scope.jobResult, chartDivID, chartWidth); 
+
+        $('#downloadLineChartBtnId').removeClass('disabled');
+        $('#createLineChartBtn').button('reset');
+
+    }
 
     $scope.activateNewScheduleJobTab = function(){
         $scope.initializeScheduleNewJob();
@@ -150,13 +233,9 @@ angular.module('dashboardApp')
         
     }
 
-
-    $scope.activateNewScheduleJobTab();
- 
-    // delete these lines... only for testing
-    // $('#createSchedJobTab').removeClass('active');
-    // $('#createSchedJobStatusTab').addClass('active');
-    //$scope.scheduleJob();
+    $scope.saveDivAsPicture = function() {
+        dashboardAungularService.saveAsPicture($("#resultPanel"))
+    }
 
     $scope.isShowPopup = function(text, limit){
         if (text.length > limit)
@@ -164,20 +243,16 @@ angular.module('dashboardApp')
         return false;
     }
 
-    $scope.parseIsoDatetime = function(dtstr){
-    
-        MM = {Jan:"January", Feb:"February", Mar:"March", Apr:"April", May:"May", Jun:"June", Jul:"July", Aug:"August", Sep:"September", Oct:"October", Nov:"November", Dec:"December"}
-
-        return String(new Date(dtstr)).replace(
-            /\w{3} (\w{3}) (\d{2}) (\d{4}) (\d{2}):(\d{2}):[^(]+\(([A-Z]{3})\)/,
-            function($0,$1,$2,$3,$4,$5,$6){
-                return MM[$1]+" "+$2+", "+$3+" - "+$4%12+":"+$5+(+$4>12?" PM":" AM")+" "+$6 
-            }
-        )
-
+    $scope.parseIsoDatetime = function(dateStr){
+        return dashboardAungularService.parseIsoDatetime(dateStr); 
     }
 
-
+    $scope.activateNewScheduleJobTab();
+ 
+    // delete these lines... only for testing
+    // $('#createSchedJobTab').removeClass('active');
+    // $('#createSchedJobStatusTab').addClass('active');
+    //$scope.scheduleJob();
 
 
 });

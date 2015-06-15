@@ -143,13 +143,11 @@
                                             <span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span> Results
                                         </button>
 
-                                        <button type="button" ng-click="viewLog(row)" class="btn btn-warning btn-xs" ng-show="row.JobRunStatus == 'JOB_IN_PROGRESS'">
+                                        <button type="button" ng-click="viewLogModal(row)" ng-class="{'btn-danger': row.JobRunStatus == 'JOB_FAILED' , 'btn-warning': row.JobRunStatus == 'JOB_IN_PROGRESS'}" class="btn  btn-xs" ng-show="row.JobRunStatus == 'JOB_FAILED'">
                                             <span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span> View Log
                                         </button>
-                                        <!-- data-toggle="modal" data-target="#modelViewLog" -->
-                                        <button type="button" ng-click="viewLog(row)" class="btn btn-danger btn-xs" ng-show="row.JobRunStatus == 'JOB_FAILED'">
-                                            <span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span> View Log
-                                        </button>
+
+
                                     </td>
 
                                     <td>
@@ -496,7 +494,7 @@
                     <li id="navSchedJobList"> <a data-toggle="tab" href="#schedJobListTab" ng-click="populateScheduledJobsTable()"><h4><i class="fa fa-1x fa-history"></i>  Scheduled Jobs</h4></a>
                     </li>
 
-                    <li id="navSchedJobNew"> <a data-toggle="tab" href="#newSchedJobTab" ng-click="activateNewScheduleJobTab()"><h4><i class="fa fa-1x fa-edit"></i>  Schedule New Job</h4></a>
+                    <li id="navSchedJobNew"> <a data-toggle="tab" href="#newSchedJobTab" ng-click="activateNewScheduleJobTab()"><h4><i class="fa fa-1x fa-edit"></i>  New Job</h4></a>
                     </li>
                 </ul>
                 <!-- Tabs Titles under Scheduler Category Begins -->
@@ -649,7 +647,7 @@
 
 
                         <!-- View Job Log Modal -->
-                        <div class="modal fade" id="modelViewLog" tabindex="-1" role="dialog" aria-labelledby="View Log" aria-hidden="true">
+                        <div class="modal fade" id="modelViewLogSched" tabindex="-1" role="dialog" aria-labelledby="View Log" aria-hidden="true">
                             <div class="modal-dialog modal-lg" id="modelDialogViewLog">
                                 <div class="modal-content">
                                     <div class="modal-header">
@@ -676,7 +674,7 @@
 
 
                         <!-- View Job Results Modal -->
-                        <div class="modal fade" id="modelViewResults" tabindex="-1" role="dialog" aria-labelledby="View Results" aria-hidden="true">
+                        <div class="modal fade" id="modelViewResultsSched" tabindex="-1" role="dialog" aria-labelledby="View Results" aria-hidden="true">
                             <div class="modal-dialog modal-lg" id="modelDialogViewResult">
                                 <div class="modal-content">
                                     <div class="modal-header">
@@ -894,6 +892,7 @@
     <script src="scripts/vendor/FileSaver.min.js"></script>
 
     <script src="scripts/app.js"></script>
+    <script src="scripts/services/dashboardAungularService.js"></script>
     <script src="scripts/controllers/adhocJobCtrl.js"></script>
     <script src="scripts/controllers/scheduledJobCtrl.js"></script>
 

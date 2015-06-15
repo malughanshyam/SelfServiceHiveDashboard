@@ -2,7 +2,7 @@
 var fs = require('fs-extra');
 var sys = require('sys')
 var child_process = require('child_process');
-var dataDir = "data/scheduledJobs/";
+var dataDir = "data/ScheduledJobs/";
 var path = require('path');
 var mongoose = require('mongoose');
 
@@ -452,3 +452,5 @@ exports.removeScheuledJob = function(req, res) {
 exports.cancelScheuledJob = function(req, res) {
     
 }
+
+
