@@ -477,12 +477,12 @@ angular.module('dashboardApp')
         }, 1000);
     }
 
-    $scope.downloadJobResultFile = function() {
+    $scope.downloadAdHocJobResultFile = function() {
 
-        $scope.downloadAdHocJobResultFile = '/downloadAdHocJobResultFile/' + $scope.formData.jobID
-        window.open($scope.downloadAdHocJobResultFile);
-        console.log("Downloaded Result File for JobID: " + $scope.formData.jobID)
-
+        var downloadAdHocJobResultFile = '/downloadAdHocJobResultFile/' + $scope.formData.jobID;
+        //window.open(downloadAdHocJobResultFile);
+        dashboardAungularService.downloadFile(downloadAdHocJobResultFile);
+        console.log("Downloaded Result File for JobID: " + $scope.formData.jobID);
     }
 
     $scope.showPopupFlag = function(text, limit){

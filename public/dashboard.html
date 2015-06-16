@@ -31,7 +31,7 @@
 
 
     <!-- Load c3.css -->
-    <link rel="stylesheet" href="styles/css/c3.min.css" >
+    <link rel="stylesheet" href="styles/css/c3.min.css">
 
     <!-- Load d3.js and c3.js -->
     <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min.js" charset="utf-8"></script> -->
@@ -130,13 +130,13 @@
                                     <td>{{row.JobName}}</td>
                                     <td><small>{{row.SQLQuery.substring(0, 30)}}</small><small ng-show="isShowPopup(row.SQLQuery,30)" popover="{{row.SQLQuery}}" popover-trigger="click"> ...<i class="fa fa-1x fa-eye"></i></small></td>
                                     <!-- <td>{{row.JobRunStatus}}</td> -->
-                                    <td  align="center">
-                                        <i tooltip="JOB_SUCCESSFUL" id="statusSuccess" class="fa fa-check-square" ng-show={{row.JobRunStatus=='JOB_SUCCESSFUL'}}></i>
-                                        <i tooltip="JOB_FAILED" id="statusFail" class="fa fa-exclamation-triangle" ng-show={{row.JobRunStatus=='JOB_FAILED'}}></i>
-                                        <i tooltip="JOB_IN_PROGRESS" id="statusRunning" class="fa fa-dashboard" ng-show={{row.JobRunStatus=='JOB_IN_PROGRESS'}}></i>
-                                        <i tooltip="JOB_NOT_STARTED" id="statusNotStarted" class="fa fa-history" ng-show={{row.JobRunStatus=='JOB_NOT_STARTED'}}></i>
+                                    <td align="center">
+                                        <i tooltip="JOB_SUCCESSFUL" id="statusSuccess" class="fa fa-check-square" ng-show="row.JobRunStatus=='JOB_SUCCESSFUL'"></i>
+                                        <i tooltip="JOB_FAILED" id="statusFail" class="fa fa-exclamation-triangle" ng-show="row.JobRunStatus=='JOB_FAILED'"></i>
+                                        <i tooltip="JOB_IN_PROGRESS" id="statusRunning" class="fa fa-dashboard" ng-show="row.JobRunStatus=='JOB_IN_PROGRESS'"></i>
+                                        <i tooltip="JOB_NOT_STARTED" id="statusNotStarted" class="fa fa-history" ng-show="row.JobRunStatus=='JOB_NOT_STARTED'"></i>
                                     </td>
-                                    
+
                                     <td><small>{{ parseIsoDatetime(row.UpdatedTimeStamp) }}</small></td>
                                     <td>
                                         <button type="button" ng-click="viewAdHocJobResultsModal(row)" class="btn btn-success btn-xs" ng-show="row.JobRunStatus == 'JOB_SUCCESSFUL'">
@@ -437,7 +437,7 @@
                                         <div class="btn-group" role="group" aria-label="...">
                                             <button type="button" class="btn btn-default btn-xs" data-toggle="tab" href="#tabular" data-tooltip="Show Raw Data"> Tabular</button>
 
-                                            <button type="button" class="btn btn-success btn-xs" ng-click="downloadJobResultFile(formData.jobID)" id="downloadTSVBtnId" data-tooltip="Save As TSV"><span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span></button>
+                                            <button type="button" class="btn btn-success btn-xs" ng-click="downloadAdHocJobResultFile(formData.jobID)" id="downloadTSVBtnId" data-tooltip="Save As TSV"><span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span></button>
                                         </div>
                                     </li>
                                 </ul>
@@ -552,12 +552,12 @@
 
                                     <th st-sort="ExecutionTime">
                                         <a data-toggle="tooltip" title="Click to sort by ExecutionTime"><small>Sch.Time (24H)</small></a></th>
-                                    
-                                    
+
+
                                     <!-- <th st-sort="Status">
                                         <a data-toggle="tooltip" title="Click to sort by NotifyEmail">NotifyEmail</a></th> -->
                                     <th st-sort="LastRunStatus" class="text-center">
-                                        <a data-toggle="tooltip" title="Click to sort by LastRunStatus"><small>Last Run Status</small></a></th>                          
+                                        <a data-toggle="tooltip" title="Click to sort by LastRunStatus"><small>Last Run Status</small></a></th>
                                     <th st-sort="UpdatedTimeStamp" st-sort-default="reverse">
                                         <a data-toggle="tooltip" title="Click to sort by TimeStamp"><small>Latest Timestamp</small></a></th>
                                     <th> </th>
@@ -581,43 +581,43 @@
                                     <td><small>{{row.SQLQuery.substring(0, 30)}}</small><small ng-show="isShowPopup(row.SQLQuery,30)" popover="{{row.SQLQuery}}" popover-trigger="click"> ...<i class="fa fa-1x fa-eye"></i></small></td>
 
 
-                                    <td><small tooltip="Sunday" ><i class="fa fa-check-square" ng-show={{row.ExecutionDays.SUN==true}}></i></small></td>
-                                    <td><small tooltip="Monday"><i class="fa fa-check-square" ng-show={{row.ExecutionDays.MON==true}}></i></small></td>
-                                    <td><small tooltip="Tuesday"><i class="fa fa-check-square" ng-show={{row.ExecutionDays.TUE==true}}></i></small></td>
-                                    <td><small tooltip="Wednesday"><i class="fa fa-check-square" ng-show={{row.ExecutionDays.WED==true}}></i></small></td>
-                                    <td><small tooltip="Thursday"><i class="fa fa-check-square" ng-show={{row.ExecutionDays.THU==true}}></i></small></td>
-                                    <td><small tooltip="Friday"><i class="fa fa-check-square" ng-show={{row.ExecutionDays.FRI==true}}></i></small></td>
-                                    <td><small tooltip="Runs on Saturday"><i class="fa fa-check-square" ng-show={{row.ExecutionDays.SAT==true}}></i></small></td>
-                                    
+                                    <td><small tooltip="Sunday"><i class="fa fa-check-square" ng-show="row.ExecutionDays.SUN==true"></i></small></td>
+                                    <td><small tooltip="Monday"><i class="fa fa-check-square" ng-show="row.ExecutionDays.MON==true"></i></small></td>
+                                    <td><small tooltip="Tuesday"><i class="fa fa-check-square" ng-show="row.ExecutionDays.TUE==true"></i></small></td>
+                                    <td><small tooltip="Wednesday"><i class="fa fa-check-square" ng-show="row.ExecutionDays.WED==true"></i></small></td>
+                                    <td><small tooltip="Thursday"><i class="fa fa-check-square" ng-show="row.ExecutionDays.THU==true"></i></small></td>
+                                    <td><small tooltip="Friday"><i class="fa fa-check-square" ng-show="row.ExecutionDays.FRI==true"></i></small></td>
+                                    <td><small tooltip="Runs on Saturday"><i class="fa fa-check-square" ng-show="row.ExecutionDays.SAT==true"></i></small></td>
+
 
                                     <td>{{row.ExecutionTime.Hours}}:{{row.ExecutionTime.Minutes}}</td>
-                                    
-                                    
+
+
                                     <!-- <td><small>{{row.JobRunStatus}}</small></td> -->
 
                                     <td class="text-center">
-                                        <i tooltip="JOB_SUCCESSFUL" id="statusSuccess" class="fa fa-check-square" ng-show={{row.JobRunStatus=='JOB_SUCCESSFUL'}}></i>
-                                        <i tooltip="JOB_FAILED" id="statusFail" class="fa fa-exclamation-triangle" ng-show={{row.JobRunStatus=='JOB_FAILED'}}></i>
-                                        <i tooltip="JOB_IN_PROGRESS"  id="statusRunning" class="fa fa-dashboard" ng-show={{row.JobRunStatus=='JOB_IN_PROGRESS'}}></i>
-                                        <i tooltip="JOB_NOT_STARTED" id="statusNotStarted" class="fa fa-history" ng-show={{row.JobRunStatus=='JOB_NOT_STARTED'}}></i>
+                                        <i tooltip="JOB_SUCCESSFUL" id="statusSuccess" class="fa fa-check-square" ng-show="row.JobRunStatus=='JOB_SUCCESSFUL'"></i>
+                                        <i tooltip="JOB_FAILED" id="statusFail" class="fa fa-exclamation-triangle" ng-show="row.JobRunStatus=='JOB_FAILED'"></i>
+                                        <i tooltip="JOB_IN_PROGRESS" id="statusRunning" class="fa fa-dashboard" ng-show="row.JobRunStatus=='JOB_IN_PROGRESS'"></i>
+                                        <i tooltip="JOB_NOT_STARTED" id="statusNotStarted" class="fa fa-history" ng-show="row.JobRunStatus=='JOB_NOT_STARTED'"></i>
                                     </td>
-                                    
+
                                     <td><small>{{ parseIsoDatetime(row.UpdatedTimeStamp) }}</small></td>
 
-                                    <td> 
-                                        <a tooltip="No Alerts" ><i class="fa fa-bell-slash" ng-hide={{row.NotifyFlag}} ></i></a>
+                                    <td>
+                                        <a tooltip="No Alerts"><i class="fa fa-bell-slash" ng-hide={{row.NotifyFlag}} ></i></a>
                                         <a tooltip="Alert: {{row.NotifyEmail}}"><i class="fa fa-bell" ng-show={{row.NotifyFlag}} popover="Alert: {{row.NotifyEmail}}" popover-trigger="click"></i></a>
                                         <a tooltip="Job has been Deleted"><i class="fa fa-trash" ng-show={{row.ScheduleStatus=="DELETED"}}></i></a>
-                    
+
                                     </td>
-                                    
+
                                     <td>
                                         <button type="button" ng-click="viewSchedJobResultsModal(row)" class="btn btn-success btn-xs" ng-show="row.JobRunStatus == 'JOB_SUCCESSFUL'">
                                             <span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span> Results
                                         </button>
 
 
-                                         <button type="button" ng-click="viewSchedJobLogModal(row)" ng-class="{'btn-danger': row.JobRunStatus == 'JOB_FAILED' , 'btn-warning': row.JobRunStatus == 'JOB_IN_PROGRESS'}" class="btn  btn-xs" ng-show="row.JobRunStatus == 'JOB_FAILED'">
+                                        <button type="button" ng-click="viewSchedJobLogModal(row)" ng-class="{'btn-danger': row.JobRunStatus == 'JOB_FAILED' , 'btn-warning': row.JobRunStatus == 'JOB_IN_PROGRESS'}" class="btn  btn-xs" ng-show="row.JobRunStatus == 'JOB_FAILED'">
                                             <span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span> View Log
                                         </button>
 
@@ -676,11 +676,10 @@
                                     <div class="modal-header">
                                         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                                         <h4 class="modal-title" id="myModalLabel">  
-                                    <span id="JobName">JobName</span>
-                                    <!-- <small id="JobID">JobID</small> -->
-                                    <small>Results</small>
-                                </h4>
-
+                                            <span id="JobName">JobName</span>
+                                            <!-- <small id="JobID">JobID</small> -->
+                                            <small>Results</small>
+                                        </h4>
                                     </div>
 
                                     <div class="modal-body">
@@ -694,7 +693,7 @@
 
 
                                         <!-- Results Display Type Tab Begins -->
-                                        <ul class="nav nav-pills right-to-left" id="schedResultTypeTabs" >
+                                        <ul class="nav nav-pills right-to-left" id="schedResultTypeTabs">
 
                                             <li id="navChart1">
                                                 <div class="btn-group" role="group" aria-label="...">
@@ -718,9 +717,12 @@
                                                 <div class="btn-group" role="group" aria-label="...">
                                                     <button type="button" class="btn btn-default btn-xs" data-toggle="tab" href="#sJobTabularTab" data-tooltip="Show Raw Data"> Tabular</button>
 
-                                                    <button type="button" class="btn btn-success btn-xs" ng-click="downloadJobResultFile(formData.jobID)" id="downloadTSVBtnId" data-tooltip="Save As TSV"><span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span></button>
+                                                    <button type="button" class="btn btn-success btn-xs" ng-click="downloadSchedJobResultFile()" id="downloadTSVBtnId" data-tooltip="Save As TSV"><span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span>
+                                                    </button>
+
+
                                                 </div>
-                                            </li>
+                                            </li>                        
                                         </ul>
                                         <!-- Results Display Type Tab Ends -->
 
@@ -749,14 +751,21 @@
                                     </div>
 
                                     <div class="modal-footer">
+
+                                        <!-- test -->
+
+                                            <button type="button" ng-click="testme()" class="btn btn-sm btn-success">
+                            </i> Test
+                        </button> 
+
+<!-- test -->
+
                                         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
-
-                        
                     </div>
 
                     <!-- New Scheduled Job Tab Content Begins-->
@@ -818,83 +827,83 @@
                                             <span ng-show="invalidTimeAlert"> 
                                                     <div class="alert alert-warning alert-dismissible" role="alert">
                                                       <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                                                      <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
-                                                      <span class="sr-only">Error:</span>
-                                                      <strong>Invalid time!</strong> Resetting to default.
-                                                    </div>
-                                                 </span>
+                                            <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                                            <span class="sr-only">Error:</span>
+                                            <strong>Invalid time!</strong> Resetting to default.
                                         </div>
+                                        </span>
                                     </div>
-
-                                    <div class="form-group">
-                                        <label for="notifyChkBox" class="col-sm-2 control-label">Notify by Email</label>
-                                        <div class="col-sm-10">
-                                            <div class="btn-group" id="notifyChkBox">
-                                                <label class="btn btn-default" ng-model="schedJob.notifyEmailFlag" btn-radio="'false'" ng-click="schedJob.notifyEmailID=''">No</label>
-                                                <label class="btn btn-default" ng-model="schedJob.notifyEmailFlag" btn-radio="'true'">Yes</label>
-                                            </div>
-                                        </div>
-                                    </div>
-
-
-                                    <div class="form-group" ng-show="schedJob.notifyEmailFlag=='true'">
-                                        <label for="notifyEmailInputID" class="col-sm-2 control-label">Email</label>
-                                        <div class="col-sm-10 col-lg-6">
-                                            <div class="input-group">
-                                                <div class="input-group-addon">@</div>
-                                                <input type="email" class="form-control" id="notifyEmailInputID" placeholder="email@domain.com" ng-model="schedJob.notifyEmailID">
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="form-group">
-                                        <div class="col-sm-offset-2 col-sm-10">
-                                            <button type="submit" class="btn btn-primary">Schedule Job</button>
-                                            <button ng-click="schedReset()" class="btn btn-default">Clear</button>
-                                        </div>
-                                    </div>
-                                </form>
-
-                                <pre> {{schedJob}} </pre>
                             </div>
-                            <!-- Submit Job Tab Content Ends  -->
 
-
-                            <!-- Job Status Tab Content Begins-->
-                            <div id="createSchedJobStatusTab" class="tab-pane fade in">
-                                <div id="createSchedJobStatusPlaceholderDiv">
+                            <div class="form-group">
+                                <label for="notifyChkBox" class="col-sm-2 control-label">Notify by Email</label>
+                                <div class="col-sm-10">
+                                    <div class="btn-group" id="notifyChkBox">
+                                        <label class="btn btn-default" ng-model="schedJob.notifyEmailFlag" btn-radio="'false'" ng-click="schedJob.notifyEmailID=''">No</label>
+                                        <label class="btn btn-default" ng-model="schedJob.notifyEmailFlag" btn-radio="'true'">Yes</label>
+                                    </div>
                                 </div>
+                            </div>
 
-                                 <div align="center">
-                                    <button id='activateNewScheduleJobTabBtn' type="button" ng-click="activateNewScheduleJobTab()" href="createSchedJobTab"  class="btn btn-success">
-                                        <i class="fa fa-plus"></i> Schedule New Job
-                                    </button>
+
+                            <div class="form-group" ng-show="schedJob.notifyEmailFlag=='true'">
+                                <label for="notifyEmailInputID" class="col-sm-2 control-label">Email</label>
+                                <div class="col-sm-10 col-lg-6">
+                                    <div class="input-group">
+                                        <div class="input-group-addon">@</div>
+                                        <input type="email" class="form-control" id="notifyEmailInputID" placeholder="email@domain.com" ng-model="schedJob.notifyEmailID">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <div class="col-sm-offset-2 col-sm-10">
+                                    <button type="submit" class="btn btn-primary">Schedule Job</button>
+                                    <button ng-click="schedReset()" class="btn btn-default">Clear</button>
+                                </div>
+                            </div>
+                            </form>
+
+                            <pre> {{schedJob}} </pre>
+                        </div>
+                        <!-- Submit Job Tab Content Ends  -->
+
+
+                        <!-- Job Status Tab Content Begins-->
+                        <div id="createSchedJobStatusTab" class="tab-pane fade in">
+                            <div id="createSchedJobStatusPlaceholderDiv">
+                            </div>
+
+                            <div align="center">
+                                <button id='activateNewScheduleJobTabBtn' type="button" ng-click="activateNewScheduleJobTab()" href="createSchedJobTab" class="btn btn-success">
+                                    <i class="fa fa-plus"></i> Schedule New Job
+                                </button>
                                 <div>
 
+                                </div>
+                                <!-- Job Status Tab Content Ends-->
                             </div>
-                            <!-- Job Status Tab Content Ends-->
+                            <!-- Tab Conent under Create New Job ends-->
                         </div>
-                        <!-- Tab Conent under Create New Job ends-->
+                        <!-- New Scheduled Job Tab Content Ends-->
+
                     </div>
-                    <!-- New Scheduled Job Tab Content Ends-->
+                    <!-- Tabs Content under Scheduled Job Category Ends-->
+
+
+
+
 
                 </div>
-                <!-- Tabs Content under Scheduled Job Category Ends-->
-
-
-
-
+                <!-- Scheduler Tab Ends-->
 
             </div>
-            <!-- Scheduler Tab Ends-->
 
         </div>
-
-    </div>
-    <!-- /container -->
+        <!-- /container -->
 
 
-    <!-- <footer>
+        <!-- <footer>
         <div class="navbar navbar-inverse navbar-fixed-bottom">
             <div class="container">
                 <div class="navbar-collapse collapse" id="footer-body">
@@ -923,35 +932,35 @@
 
 
 
-    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-    <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script> -->
-    <script src="scripts/vendor/jquery.min.js"></script>
+        <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+        <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script> -->
+        <script src="scripts/vendor/jquery.min.js"></script>
 
-    <!-- Include all compiled plugins (below), or include individual files as needed -->
-    <script src="scripts/vendor/bootstrap.min.js"></script>
-    <script src="scripts/vendor/jquery.csvToTable.js"></script>
-    <!--
+        <!-- Include all compiled plugins (below), or include individual files as needed -->
+        <script src="scripts/vendor/bootstrap.min.js"></script>
+        <script src="scripts/vendor/jquery.csvToTable.js"></script>
+        <!--
     <script src="http://code.angularjs.org/1.2.3/angular-animate.js"></script>
     
     <script src="js/ui-bootstrap-tpls-0.13.0.min.js"></script>    
     <script src="js/ui-bootstrap-0.13.0.min.js"></script>
 -->
-    <script src="https://gitcdn.github.io/bootstrap-toggle/2.2.0/js/bootstrap-toggle.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/0.13.0/ui-bootstrap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/0.13.0/ui-bootstrap-tpls.min.js"></script>
+        <script src="https://gitcdn.github.io/bootstrap-toggle/2.2.0/js/bootstrap-toggle.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/0.13.0/ui-bootstrap.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/0.13.0/ui-bootstrap-tpls.min.js"></script>
 
-    <script src="scripts/vendor/smart-table.min.js"></script>
-    <script src="scripts/vendor/bootbox.min.js"></script>
+        <script src="scripts/vendor/smart-table.min.js"></script>
+        <script src="scripts/vendor/bootbox.min.js"></script>
 
-    
-    <script src="scripts/vendor/html2canvas.js"></script>
-    <script src="scripts/vendor/canvas-toBlob.js"></script>
-    <script src="scripts/vendor/FileSaver.min.js"></script>
 
-    <script src="scripts/app.js"></script>
-    <script src="scripts/services/dashboardAungularService.js"></script>
-    <script src="scripts/controllers/adhocJobCtrl.js"></script>
-    <script src="scripts/controllers/scheduledJobCtrl.js"></script>
+        <script src="scripts/vendor/html2canvas.js"></script>
+        <script src="scripts/vendor/canvas-toBlob.js"></script>
+        <script src="scripts/vendor/FileSaver.min.js"></script>
+
+        <script src="scripts/app.js"></script>
+        <script src="scripts/services/dashboardAungularService.js"></script>
+        <script src="scripts/controllers/adhocJobCtrl.js"></script>
+        <script src="scripts/controllers/scheduledJobCtrl.js"></script>
 
 
 

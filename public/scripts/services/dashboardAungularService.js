@@ -43,7 +43,7 @@ angular.module('dashboardApp')
   var createBarChart = function(chartData, chartDivID, chartWidth) {
 
     
-      
+
       // Parse the TSV Result file into Array of Data 
       var x = chartData.split('\n');
       for (var i = 0; i < x.length; i++) {
@@ -165,7 +165,9 @@ angular.module('dashboardApp')
 
   }
 
-
+  var downloadFile = function(url) {
+    window.open(url);
+  }
 
   return {
     createResultTable : createResultTable,
@@ -173,6 +175,7 @@ angular.module('dashboardApp')
     createLineChart   : createLineChart,
     saveAsPicture     : saveAsPicture,
     parseIsoDatetime  : parseIsoDatetime,
+    downloadFile      : downloadFile
   };
 
 });

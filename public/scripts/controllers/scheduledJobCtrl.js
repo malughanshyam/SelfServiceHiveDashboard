@@ -169,8 +169,6 @@ angular.module('dashboardApp')
         // $("#modelViewResults").find('#JobID').text("(" + adHocJob.JobID + ")");
 
 
-
-
         // compile the element
         $compile($('#modalViewSchedResults'))($scope);
 
@@ -183,6 +181,7 @@ angular.module('dashboardApp')
         $('#modalViewSchedResults').on('hidden.bs.modal', function() {
             $scope.barChartComputedData = null;
             $scope.lineChartComputedData = null;
+            $(this).data('bs.modal', null);
         })
 
     }
@@ -307,12 +306,25 @@ angular.module('dashboardApp')
         return dashboardAungularService.parseIsoDatetime(dateStr); 
     }
 
+
+    $scope.downloadSchedJobResultFile = function() {
+
+        var downloadSchedJobResultFile = '/downloadSchedJobResultFile/' + $scope.schedJob.jobID;
+       // window.open(downloadSchedJobResultFile);
+        //dashboardAungularService.downloadFile(downloadSchedJobResultFile);
+        console.log("Downloaded Result File for JobID: " + $scope.schedJob.jobID);
+        return true;
+    }
+
     $scope.activateNewScheduleJobTab();
  
     // delete these lines... only for testing
     // $('#createSchedJobTab').removeClass('active');
     // $('#createSchedJobStatusTab').addClass('active');
     //$scope.scheduleJob();
-
+    
+    $scope.testme = function(){
+        console.log("Testtttt");
+    }
 
 });

@@ -59,10 +59,10 @@ exports.getAllSchedJobs = function(req, res){
 exports.getScheduledJobByJobID = function (req, res) {
     var jobID = req.params.JobID;
     var clientIPaddress = req.ip || req.header('x-forwarded-for') || req.connection.remoteAddress;
-    return ScheduledJob.findById(jobID, function (err, adHocJob) {
+    return ScheduledJob.findById(jobID, function (err, schedJob) {
     if (!err) {
         detailLogger.debug(' JobID - %s information retrieved by: %s', jobID, JSON.stringify({ clientIPaddress: clientIPaddress }));
-        return res.send(adHocJob);
+        return res.send(schedJob);
     } else {
         detailLogger.debug(' JobID - %s information retrieval failed by: %s', jobID, JSON.stringify({ clientIPaddress: clientIPaddress, error: err  }));
         res.status(500)
