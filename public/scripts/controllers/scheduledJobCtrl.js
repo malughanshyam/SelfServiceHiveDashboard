@@ -104,29 +104,6 @@ angular.module('dashboardApp')
 
     
 
-    $scope.viewSchedLogModal = function(schedJobDetails) {
-        $scope.getJobLog(schedJobDetails.JobID, function() {
-            dashboardAungularService.viewJobLog(schedJobDetails, $scope.jobLogRetrieved);
-        });
-    }
-
-    $scope.getJobLog = function(jobID, callBack) {
-        $scope.checkLogURL = '/schedJobLog/' + jobID
-        $scope.jobLogRetrieved;
-        $http.get($scope.checkLogURL, $scope.formData)
-            .success(function(data) {
-                $scope.jobLogRetrieved = data;
-                console.log("Successfully retrieved JobLog");
-                callBack();
-
-            })
-            .error(function(err) {
-                $scope.jobLogRetrieved = "Fetching Log Failed" + err
-                console.log("Fetching Log Failed");
-                callBack();
-            });
-    }
-
 
     $scope.populateScheduledJobsTable = function() {
         var getScheduledJobs = '/schedJob'
