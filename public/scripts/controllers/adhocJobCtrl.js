@@ -66,7 +66,7 @@ angular.module('dashboardApp')
         $scope.showCreateNewJobBtn = false
 
         // compile the element
-        $compile($('#modelViewResults'))($scope);
+        $compile($('#modalViewResults'))($scope);
 
         console.log("AdHoc Tab Initialized")
 
@@ -288,21 +288,16 @@ angular.module('dashboardApp')
     }
 
     // Model - View Job Log
-    $scope.viewLogModal = function(adHocJob) {
-        console.log("Clicked viewLogModal");
-        $('#modelViewLog').modal('show')
-
-        $("#modelViewLog").find('#JobName').text(adHocJob.JobName);
-        $("#modelViewLog").find('#JobStatus').text("(" + adHocJob.JobRunStatus + ")");
+    $scope.viewAdHocLogModal = function(adHocJob) {
 
         $scope.getJobLog(adHocJob.JobID, function() {
             console.log("In callback");
             $scope.jobLogSelected = $scope.jobLogRetrieved;
-            $("#modelViewLog").find('#jobLogPre').text($scope.jobLogRetrieved);
-
-        })
+            dashboardAungularService.viewJobLog(adHocJob, $scope.jobLogRetrieved);
+        });
 
     }
+
 
     $scope.viewResults = function(adHocJob) {
 

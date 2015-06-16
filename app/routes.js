@@ -56,6 +56,10 @@ module.exports = function(app){
     app.put('/removeSchedJob/:JobID', schedJobHandler.removeScheuledJob);
 
 
+    // Get Scheduled Job Log
+    app.get('/schedJobLog/:JobID', commonHandler.schedJobLog);
+
+
     // Get Scheduled Job Result File
     app.get('/schedJobResultFile/:JobID', commonHandler.getSchedJobResultFile);
 

@@ -162,7 +162,7 @@ angular.module('dashboardApp')
             allowTaint: true,
             useCORS: true,
             onrendered: function(canvas) {
-                document.body.appendChild(canvas);
+                //document.body.appendChild(canvas);
                 canvas.toBlob(function(blob) {
                     //document.body.appendChild(canvas);
                     saveAs(blob, "dashboard.png");
@@ -186,6 +186,14 @@ angular.module('dashboardApp')
 
     }
 
+
+     var viewJobLog = function(jobDetails, logData){
+      $('#commonModalViewLog').modal('show')
+      $("#commonModalViewLog").find('#JobName').text(jobDetails.JobName);
+      $("#commonModalViewLog").find('#JobStatus').text("(" + jobDetails.JobRunStatus + ")");
+      $("#commonModalViewLog").find('#jobLogPre').text(logData);
+    }
+
 /*  var productList = [];
 
   var addProduct = function(newObj) {
@@ -203,7 +211,9 @@ angular.module('dashboardApp')
     createBarChart    : createBarChart,
     createLineChart   : createLineChart,
     saveAsPicture     : saveAsPicture,
-    parseIsoDatetime  : parseIsoDatetime
+    parseIsoDatetime  : parseIsoDatetime,
+    viewJobLog        : viewJobLog
+
   };
 
 });

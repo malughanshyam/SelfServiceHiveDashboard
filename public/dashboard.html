@@ -143,7 +143,7 @@
                                             <span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span> Results
                                         </button>
 
-                                        <button type="button" ng-click="viewLogModal(row)" ng-class="{'btn-danger': row.JobRunStatus == 'JOB_FAILED' , 'btn-warning': row.JobRunStatus == 'JOB_IN_PROGRESS'}" class="btn  btn-xs" ng-show="row.JobRunStatus == 'JOB_FAILED'">
+                                        <button type="button" ng-click="viewAdHocLogModal(row)" ng-class="{'btn-danger': row.JobRunStatus == 'JOB_FAILED' , 'btn-warning': row.JobRunStatus == 'JOB_IN_PROGRESS'}" class="btn  btn-xs" ng-show="row.JobRunStatus == 'JOB_FAILED'">
                                             <span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span> View Log
                                         </button>
 
@@ -202,7 +202,7 @@
 
 
                         <!-- View Job Log Modal -->
-                        <div class="modal fade" id="modelViewLog" tabindex="-1" role="dialog" aria-labelledby="View Log" aria-hidden="true">
+ <!--                        <div class="modal fade" id="modelViewLog" tabindex="-1" role="dialog" aria-labelledby="View Log" aria-hidden="true">
                             <div class="modal-dialog modal-lg" id="modelDialogViewLog">
                                 <div class="modal-content">
                                     <div class="modal-header">
@@ -215,7 +215,6 @@
 
                                     </div>
                                     <div class="modal-body">
-                                        <!-- Job Log -->
                                         <div id="jobLogDiv">
                                             <pre class="pre-scrollable" id="jobLogPre"><samp>{{jobLogSelected}}</samp></pre>
                                         </div>
@@ -225,12 +224,12 @@
                                     </div>
                                 </div>
                             </div>
-                        </div>
+                        </div> -->
 
 
                         <!-- View Job Results Modal -->
-                        <div class="modal fade" id="modelViewResults" tabindex="-1" role="dialog" aria-labelledby="View Results" aria-hidden="true">
-                            <div class="modal-dialog modal-lg" id="modelDialogViewResult">
+                        <div class="modal fade" id="modalViewResults" tabindex="-1" role="dialog" aria-labelledby="View Results" aria-hidden="true">
+                            <div class="modal-dialog modal-lg" id="modalDialogViewResult">
                                 <div class="modal-content">
                                     <div class="modal-header">
                                         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
@@ -616,13 +615,12 @@
                                             <span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span> Results
                                         </button>
 
-                                        <button type="button" ng-click="viewLog(row)" class="btn btn-warning btn-xs" ng-show="row.JobRunStatus == 'JOB_IN_PROGRESS'">
+                                        <button type="button" ng-click="viewSchedLogModal(row)" ng-class="{'btn-danger': row.JobRunStatus == 'JOB_FAILED' , 'btn-warning': row.JobRunStatus == 'JOB_IN_PROGRESS'}" class="btn  btn-xs" ng-show="row.JobRunStatus == 'JOB_FAILED'">
                                             <span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span> View Log
                                         </button>
-                                        <!-- data-toggle="modal" data-target="#modelViewLog" -->
-                                        <button type="button" ng-click="viewLog(row)" class="btn btn-danger btn-xs" ng-show="row.JobRunStatus == 'JOB_FAILED'">
-                                            <span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span> View Log
-                                        </button>
+
+                                         
+
                                     </td>
 
                                     <td>
@@ -822,7 +820,7 @@
 
 
                 </div>
-                <!-- Tabs Content under Adhoc Category Ends-->
+                <!-- Tabs Content under Scheduled Category Ends-->
 
 
 
@@ -836,6 +834,31 @@
     </div>
     <!-- /container -->
 
+<!-- View Job Log Modal -->
+    <div class="modal fade" id="commonModalViewLog" tabindex="-1" role="dialog" aria-labelledby="View Log" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel">  Log - 
+                <span id="JobName">JobName</span>
+                <small id="JobStatus">JobStatus</small>
+                
+            </h4>
+
+                </div>
+                <div class="modal-body">
+                    <!-- Job Log -->
+                    <div id="jobLogDiv">
+                        <pre class="pre-scrollable" id="jobLogPre"><samp>{{jobLogSelected}}</samp></pre>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- <footer>
         <div class="navbar navbar-inverse navbar-fixed-bottom">
