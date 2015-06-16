@@ -158,9 +158,74 @@ angular.module('dashboardApp')
 
 
 
-    $scope.viewSchedJobResultsModal = function(schedJob) {
+   /* $scope.viewSchedJobResultsModal = function(schedJob) {
 
         $scope.initializeScheduleNewJob();
+
+        $('#modelViewSchedResultsDiv').html(' <div class="modal fade" id="modalViewSchedResults" tabindex="-1" role="dialog" aria-labelledby="View Results" aria-hidden="true">' +
+                             '<div class="modal-dialog modal-lg" id="modalDialogViewResult">' +
+                                '<div class="modal-content">' +
+                                    '<div class="modal-header">' +
+                                        '<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>' +
+                                        '<h4 class="modal-title" id="myModalLabel">  ' +
+                                            '<span id="JobName">JobName</span>' +
+                                            '<!-- <small id="JobID">JobID</small> -->'+
+                                            '<small>Results</small>'+
+                                        '</h4>'+
+                                    '</div>'+
+                                    '<div class="modal-body">'+
+                                        '<br> <div><dl><dt>Submitted Hive Query</dt><dd><pre class="pre-scrollable"><samp id="submittedHiveQuery"> </samp></pre></dd></dl></div>'+
+                                        '<!-- Results Display Type Tab Begins -->'+
+                                        '<ul class="nav nav-pills right-to-left" id="schedResultTypeTabs">'+
+                                            '<li id="navChart1">'+
+                                                '<div class="btn-group" role="group" aria-label="...">'+
+                                                    '<button type="button" id="createLineChartBtn" class="btn btn-default btn-xs" data-toggle="tab" href="#sJobchart2Tab" ng-click="createLineChart()" data-tooltip="Plot Line Chart" data-loading-text="Loading..." autocomplete="off"> Line Chart</button>'+
+                                                    '<button type="button" class="btn btn-success btn-xs disabled" ng-click="saveDivAsPicture()" id="downloadLineChartBtnId" data-tooltip="Save As Image"><span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span></button>'+
+                                                '</div></li>'+
+                                            '<li id="navChart2">'+
+                                                '<div class="btn-group" role="group" aria-label="...">'+
+                                                    '<button type="button" id="createBarChartBtn" class="btn btn-default btn-xs" data-toggle="tab" href="#sJobchart1Tab" ng-click="createBarChart()" data-tooltip="Plot Bar Chart" data-loading-text="Loading..." autocomplete="off"> Bar Chart</button>'+
+                                                    '<button type="button" class="btn btn-success btn-xs disabled" ng-click="saveDivAsPicture()" id="downloadBarChartBtnId" data-tooltip="Save As Image"><span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span></button>'+
+                                                '</div>'+
+                                            '</li>'+
+                                            '<li class="active" id="navTabular">'+
+                                                '<div class="btn-group" role="group" aria-label="...">'+
+                                                    '<button type="button" class="btn btn-default btn-xs" data-toggle="tab" href="#sJobTabularTab" data-tooltip="Show Raw Data"> Tabular</button>'+
+                                                    '<button type="button" class="btn btn-success btn-xs" ng-click="downloadSchedJobResultFile()" id="downloadTSVBtnId" data-tooltip="Save As TSV"><span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span>'+
+                                                    '</button>'+
+                                                '</div></li></ul>'+
+                                        '<!-- Results Display Type Tab Ends -->'+
+                                        '<br>'+
+                                        '<!-- Panel for Display Results Begins-->'+
+                                        '<div class="panel panel-info" id="resultPanel">'+
+                                            '<div class="panel-heading">'+
+                                                '<h3 class="panel-title" id="resultPanelTitle"><!-- {{formData.jobID}} --> {{formData.jobName}}</h3>'+
+                                            '</div>'+
+                                            '<div class="panel-body">'+
+                                                '<div class="tab-content" id="jobResultPanelBodyContent">'+
+                                                    '<div id="sJobTabularTab" class="tab-pane fade in active">'+
+                                                        '<div id="sJobTabular"> </div>'+
+                                                    '</div>'+
+                                                    '<div id="sJobchart1Tab" class="tab-pane fade in ">'+
+                                                        '<div id="sJobchart1" class="chartResult"> </div>'+
+                                                    '</div>'+
+                                                    '<div id="sJobchart2Tab" class="tab-pane fade in ">'+
+                                                        '<div id="sJobchart2" class="chartResult"> </div>'+
+                                                    '</div>'+
+                                                '</div>'+
+                                            '</div>'+
+                                        '</div>'+
+                                        '<!-- Panel for Display Results Ends-->'+
+                                    '</div>'+
+                                    '<div class="modal-footer">'+
+                                        '<!-- test -->'+
+                                        '<button type="button" ng-click="testme()" class="btn btn-sm btn-success"> Test </button>'+
+                                        '<!-- test -->'+
+                                        '<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>'+
+                                    '</div>'+
+                                '</div>'+
+                            '</div>'+
+                        '</div>')
 
         $('#modalViewSchedResults').modal('show')
 
@@ -185,6 +250,38 @@ angular.module('dashboardApp')
         })
 
     }
+*/
+
+
+
+    $scope.viewSchedJobResultsModal = function(schedJob) {
+
+        $scope.initializeScheduleNewJob();
+
+        $('#modalViewSchedResults').modal('show')
+
+        $("#modalViewSchedResults").find('#JobName').text(schedJob.JobName);
+        // $("#modelViewResults").find('#JobID').text("(" + adHocJob.JobID + ")");
+
+        // compile the element
+        //$compile($('#modalViewSchedResults'))($scope);
+
+        $("#modalViewSchedResults").find('#submittedHiveQuery').text(schedJob.SQLQuery);
+        $("#modalViewSchedResults").find('#resultPanelTitle').text(schedJob.JobName);
+
+        $scope.schedJob.jobID = schedJob.JobID
+        $scope.computeJobResults(schedJob.JobID);
+
+        $('#modalViewSchedResults').on('hidden.bs.modal', function() {
+            $scope.barChartComputedData = null;
+            $scope.lineChartComputedData = null;
+            //$(this).data('bs.modal', null);
+            $('#modalViewSchedResults').unbind();
+        })
+
+    }
+
+
 
 
     $scope.computeJobResults = function(jobID) {
@@ -207,15 +304,9 @@ angular.module('dashboardApp')
 
 
     $scope.createBarChart = function() {
-        //debugger;
 
-        console.log("Creating bar")
         // Check against the locally stored chart data to prevent duplicate computation/drawing of the charts
         if ($scope.barChartComputedData == $scope.jobResult) {
-            
-            console.log("equal");
-            console.log($scope.jobResult)
-            console.log($scope.barChartComputedData)
             return true;
         } 
 
@@ -223,16 +314,16 @@ angular.module('dashboardApp')
 
         // Compute the Width for the Charts
         var chartWidth = $("#jobResultPanelBodyContent").width();
-        //var chartDivID = $('#modalViewSchedResults').find('#sJobchart1');
         var chartDivID = '#sJobchart1'
 
         console.log("calling dashboard service")
-        console.log($scope.jobResult);
-        console.log(chartDivID)
         dashboardAungularService.createBarChart($scope.jobResult, chartDivID, chartWidth); 
 
         $('#downloadBarChartBtnId').removeClass('disabled');
         $('#createBarChartBtn').button('reset');
+
+        // Store Locally to avoid Recomputing the same chart
+        $scope.barChartComputedData = $scope.jobResult
 
     }
 
@@ -248,13 +339,15 @@ angular.module('dashboardApp')
 
         // Compute the Width for the Charts
         var chartWidth = $("#jobResultPanelBodyContent").width();
-        // var chartDivID = $('#modalViewSchedResults').find('#sJobchart2');
         var chartDivID = '#sJobchart2'
 
         dashboardAungularService.createLineChart($scope.jobResult, chartDivID, chartWidth); 
 
         $('#downloadLineChartBtnId').removeClass('disabled');
         $('#createLineChartBtn').button('reset');
+
+        // Store Locally to avoid Recomputing the same chart
+        $scope.lineChartComputedData = $scope.jobResult
 
     }
 
@@ -296,7 +389,7 @@ angular.module('dashboardApp')
         dashboardAungularService.saveAsPicture($("#resultPanel"))
     }
 
-    $scope.isShowPopup = function(text, limit){
+    $scope.showPopupFlag = function(text, limit){
         if (text.length > limit)
             return true;
         return false;
@@ -311,7 +404,7 @@ angular.module('dashboardApp')
 
         var downloadSchedJobResultFile = '/downloadSchedJobResultFile/' + $scope.schedJob.jobID;
        // window.open(downloadSchedJobResultFile);
-        //dashboardAungularService.downloadFile(downloadSchedJobResultFile);
+        dashboardAungularService.downloadFile(downloadSchedJobResultFile);
         console.log("Downloaded Result File for JobID: " + $scope.schedJob.jobID);
         return true;
     }
@@ -323,8 +416,5 @@ angular.module('dashboardApp')
     // $('#createSchedJobStatusTab').addClass('active');
     //$scope.scheduleJob();
     
-    $scope.testme = function(){
-        console.log("Testtttt");
-    }
 
 });

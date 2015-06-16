@@ -128,7 +128,7 @@
                                 <tr ng-repeat="row in displayedCollection">
                                     <!-- <td>{{row.JobID}}</td> -->
                                     <td>{{row.JobName}}</td>
-                                    <td><small>{{row.SQLQuery.substring(0, 30)}}</small><small ng-show="isShowPopup(row.SQLQuery,30)" popover="{{row.SQLQuery}}" popover-trigger="click"> ...<i class="fa fa-1x fa-eye"></i></small></td>
+                                    <td><small>{{row.SQLQuery.substring(0, 60)}}</small><a><small ng-show="showPopupFlag(row.SQLQuery,60)" popover="{{row.SQLQuery}}" popover-trigger="click"> ...<i class="fa fa-1x fa-eye"></i></small></a></td>
                                     <!-- <td>{{row.JobRunStatus}}</td> -->
                                     <td align="center">
                                         <i tooltip="JOB_SUCCESSFUL" id="statusSuccess" class="fa fa-check-square" ng-show="row.JobRunStatus=='JOB_SUCCESSFUL'"></i>
@@ -578,7 +578,7 @@
                                 <tr ng-repeat="row in displayedSchedJobsCollection" ng-class="{'deletedJob': row.ScheduleStatus=='DELETED'}">
                                     <!-- <td>{{row.JobID}}</td> -->
                                     <td>{{row.JobName}}</td>
-                                    <td><small>{{row.SQLQuery.substring(0, 30)}}</small><small ng-show="isShowPopup(row.SQLQuery,30)" popover="{{row.SQLQuery}}" popover-trigger="click"> ...<i class="fa fa-1x fa-eye"></i></small></td>
+                                    <td><small>{{row.SQLQuery.substring(0, 30)}}</small><a><small ng-show="showPopupFlag(row.SQLQuery,30)" popover="{{row.SQLQuery}}" popover-trigger="click"> ...<i class="fa fa-1x fa-eye"></i></small></a></td>
 
 
                                     <td><small tooltip="Sunday"><i class="fa fa-check-square" ng-show="row.ExecutionDays.SUN==true"></i></small></td>
@@ -751,15 +751,6 @@
                                     </div>
 
                                     <div class="modal-footer">
-
-                                        <!-- test -->
-
-                                            <button type="button" ng-click="testme()" class="btn btn-sm btn-success">
-                            </i> Test
-                        </button> 
-
-<!-- test -->
-
                                         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                                     </div>
                                 </div>

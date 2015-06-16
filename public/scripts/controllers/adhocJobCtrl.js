@@ -408,7 +408,7 @@ angular.module('dashboardApp')
 
 
     $scope.createBarChart = function() {
-
+        console.log("creating bar")
         // Check against the locally stored chart data to prevent duplicate computation/drawing of the charts
         if ($scope.barChartComputedData == $scope.jobResult) {
             return true;
@@ -424,6 +424,10 @@ angular.module('dashboardApp')
 
         $('#downloadBarChartBtnId').removeClass('disabled');
         $('#createBarChartBtn').button('reset');
+
+        // Store Locally to avoid Recomputing the same chart
+        $scope.barChartComputedData = $scope.jobResult
+
 
     }
 
@@ -445,6 +449,10 @@ angular.module('dashboardApp')
 
         $('#downloadLineChartBtnId').removeClass('disabled');
         $('#createLineChartBtn').button('reset');
+
+        // Store Locally to avoid Recomputing the same chart
+        $scope.lineChartComputedData = $scope.jobResult
+
 
     }
 
@@ -490,7 +498,7 @@ angular.module('dashboardApp')
             return true;
         return false;
     }
-
+    
     $scope.parseIsoDatetime = function(dateStr){
         return dashboardAungularService.parseIsoDatetime(dateStr); 
     }
@@ -501,7 +509,6 @@ angular.module('dashboardApp')
     };
 
     $scope.reset();
-
 
 
 });
