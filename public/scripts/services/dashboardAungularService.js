@@ -43,148 +43,202 @@ angular.module('dashboardApp')
         });
     }
 
+  var createBarChart = function(chartData, chartDivID, chartWidth) {
 
+      // Check against the locally stored chart data to prevent duplicate computation/drawing of the charts
+      if (barChartComputedData == chartData) {
+          return true;
+      }
 
+      // Parse the TSV Result file into Array of Data 
+      var x = chartData.split('\n');
+      for (var i = 0; i < x.length; i++) {
+          y = x[i].split('\t');
+          x[i] = y;
+      }
 
+      chartSplitData = x
 
-    var createBarChart = function(chartData, chartDivID, chartWidth) {
+      // $scope.chartDataHeader = x[0]
+      // $scope.chartDataSplit = x.slice(1);
+
+      // console.log("Header: ")
+      // console.log($scope.chartDataHeader)
+
+      // console.log("Data: ")
+      // console.log($scope.chartDataSplit)
+
+      // Generate Bar Chart
+      var chartBar = c3.generate({
+          bindto: chartDivID,
+          data: {
+              x: chartSplitData[0][0],
+              rows: chartSplitData,
+              type: 'bar'
+          },
+          axis: {
+              x: {
+                  type: 'category',
+                  tick: {
+                      rotate: 75,
+                      multiline: false
+                  },
+                  height: 130
+              }
+          },
+          size: {
+              width: chartWidth
+          }
+
+      });
+
+      // Variable to store the data for chart to prevent duplicate computation/drawing of the charts
+      barChartComputedData = chartData
+
+  }
+
+  var createLineChart = function(chartData, chartDivID, chartWidth) {
 
         // Check against the locally stored chart data to prevent duplicate computation/drawing of the charts
-        if (barChartComputedData == chartData) {
-            return true;
-        }
-
-        // Parse the TSV Result file into Array of Data 
-        var x = chartData.split('\n');
-        for (var i = 0; i < x.length; i++) {
-            y = x[i].split('\t');
-            x[i] = y;
-        }
-
-        chartSplitData = x
-
-        // $scope.chartDataHeader = x[0]
-        // $scope.chartDataSplit = x.slice(1);
-
-        // console.log("Header: ")
-        // console.log($scope.chartDataHeader)
-
-        // console.log("Data: ")
-        // console.log($scope.chartDataSplit)
-
-        // Generate Bar Chart
-        var chartBar = c3.generate({
-            bindto: chartDivID,
-            data: {
-                x: chartSplitData[0][0],
-                rows: chartSplitData,
-                type: 'bar'
-            },
-            axis: {
-                x: {
-                    type: 'category',
-                    tick: {
-                        rotate: 75,
-                        multiline: false
-                    },
-                    height: 130
-                }
-            },
-            size: {
-                width: chartWidth
-            }
-
-        });
-
-        // Variable to store the data for chart to prevent duplicate computation/drawing of the charts
-        barChartComputedData = chartData
-
-    }
+      if (lineChartComputedData == chartData) {
+          return true;
+      }
 
 
-    var createLineChart = function(chartData, chartDivID, chartWidth) {
+      // Parse the TSV Result file into Array of Data 
+      var x = chartData.split('\n');
+      for (var i = 0; i < x.length; i++) {
+          y = x[i].split('\t');
+          x[i] = y;
+      }
+
+      var chartSplitData = x
+
+      // $scope.chartDataHeader = x[0]
+      // $scope.chartDataSplit = x.slice(1);
+
+      // console.log("Header: ")
+      // console.log($scope.chartDataHeader)
+
+      // console.log("Data: ")
+      // console.log($scope.chartDataSplit)
+
+      // Generate Line Chart
+      var chartLine = c3.generate({
+          bindto: chartDivID,
+          data: {
+              x: chartSplitData[0][0],
+              rows: chartSplitData,
+              type: 'line'
+          },
+          axis: {
+              x: {
+                  type: 'category',
+                  tick: {
+                      rotate: 75,
+                      multiline: false
+                  },
+                  height: 130
+              }
+          },
+          size: {
+              width: chartWidth
+          }
+      });
+
+      // Variable to store the data for chart to prevent duplicate computation/drawing of the charts
+      lineChartComputedData = chartData
+  }
+
+
+  var saveAsPicture = function(element) {
+
+      html2canvas(element, {
+          allowTaint: true,
+          useCORS: true,
+          onrendered: function(canvas) {
+              //document.body.appendChild(canvas);
+              canvas.toBlob(function(blob) {
+                  //document.body.appendChild(canvas);
+                  saveAs(blob, "dashboard.png");
+              });
+
+          }
+      });
+
+  }
+
+  var parseIsoDatetime = function(dtstr){
   
-          // Check against the locally stored chart data to prevent duplicate computation/drawing of the charts
-        if (lineChartComputedData == chartData) {
-            return true;
-        }
+      MM = {Jan:"January", Feb:"February", Mar:"March", Apr:"April", May:"May", Jun:"June", Jul:"July", Aug:"August", Sep:"September", Oct:"October", Nov:"November", Dec:"December"}
+
+      return String(new Date(dtstr)).replace(
+          /\w{3} (\w{3}) (\d{2}) (\d{4}) (\d{2}):(\d{2}):[^(]+\(([A-Z]{3})\)/,
+          function($0,$1,$2,$3,$4,$5,$6){
+              return MM[$1]+" "+$2+", "+$3+" - "+$4%12+":"+$5+(+$4>12?" PM":" AM")+" "+$6 
+          }
+      )
+
+  }
 
 
-        // Parse the TSV Result file into Array of Data 
-        var x = chartData.split('\n');
-        for (var i = 0; i < x.length; i++) {
-            y = x[i].split('\t');
-            x[i] = y;
-        }
+  var populateResultsModal = function(jobDetails) {
 
-        var chartSplitData = x
+//      $('#commonModalViewResults').modal('show')
 
-        // $scope.chartDataHeader = x[0]
-        // $scope.chartDataSplit = x.slice(1);
+      jobResultTabContent = $("#jobResultTab").html();
 
-        // console.log("Header: ")
-        // console.log($scope.chartDataHeader)
+      $("#commonModalViewResults").find('#JobName').text(jobDetails.JobName);
+      $("#commonModalViewResults").find('.modal-body').html(jobResultTabContent);
+      // $("#modalViewResults").find('#JobID').text("(" + adHocJob.JobID + ")");
 
-        // console.log("Data: ")
-        // console.log($scope.chartDataSplit)
-
-        // Generate Line Chart
-        var chartLine = c3.generate({
-            bindto: chartDivID,
-            data: {
-                x: chartSplitData[0][0],
-                rows: chartSplitData,
-                type: 'line'
-            },
-            axis: {
-                x: {
-                    type: 'category',
-                    tick: {
-                        rotate: 75,
-                        multiline: false
-                    },
-                    height: 130
-                }
-            },
-            size: {
-                width: chartWidth
-            }
-        });
-
-        // Variable to store the data for chart to prevent duplicate computation/drawing of the charts
-        lineChartComputedData = chartData
-    }
+      $("#commonModalViewResults").find('#submittedHiveQuery').text(jobDetails.SQLQuery);
+      $("#commonModalViewResults").find('#resultPanelTitle').text(jobDetails.JobName);
 
 
-    var saveAsPicture = function(element) {
+      $('#downloadBarChartBtnId').addClass('disabled');
+      $('#downloadLineChartBtnId').addClass('disabled');
 
-        html2canvas(element, {
-            allowTaint: true,
-            useCORS: true,
-            onrendered: function(canvas) {
-                document.body.appendChild(canvas);
-                canvas.toBlob(function(blob) {
-                    //document.body.appendChild(canvas);
-                    saveAs(blob, "dashboard.png");
-                });
+      $('#commonModalViewResults').on('hidden.bs.modal', function() {
+          barChartComputedData = null;
+          lineChartComputedData = null;
+      });
 
-            }
-        });
+  }
 
-    }
+  var viewJobLog = function(jobDetails, logData){
 
-    var parseIsoDatetime = function(dtstr){
-    
-        MM = {Jan:"January", Feb:"February", Mar:"March", Apr:"April", May:"May", Jun:"June", Jul:"July", Aug:"August", Sep:"September", Oct:"October", Nov:"November", Dec:"December"}
+    $('#commonModalViewLog').modal('show')
+    $("#commonModalViewLog").find('#JobName').text(jobDetails.JobName);
+    $("#commonModalViewLog").find('#JobStatus').text("(" + jobDetails.JobRunStatus + ")");
+    $("#commonModalViewLog").find('#jobLogPre').text(logData);
+  }
 
-        return String(new Date(dtstr)).replace(
-            /\w{3} (\w{3}) (\d{2}) (\d{4}) (\d{2}):(\d{2}):[^(]+\(([A-Z]{3})\)/,
-            function($0,$1,$2,$3,$4,$5,$6){
-                return MM[$1]+" "+$2+", "+$3+" - "+$4%12+":"+$5+(+$4>12?" PM":" AM")+" "+$6 
-            }
-        )
+/*  var populateResultsModal = function(jobDetails) {
 
-    }
+      $('#modalViewResults').modal('show')
+
+      jobResultTabContent = $("#jobResultTab").html();
+
+      $("#modalViewResults").find('#JobName').text(jobDetails.JobName);
+      $("#modalViewResults").find('.modal-body').html(jobResultTabContent);
+      // $("#modalViewResults").find('#JobID').text("(" + adHocJob.JobID + ")");
+
+      $("#modalViewResults").find('#submittedHiveQuery').text(jobDetails.SQLQuery);
+      $("#modalViewResults").find('#resultPanelTitle').text(jobDetails.JobName);
+
+
+      $('#downloadBarChartBtnId').addClass('disabled');
+      $('#downloadLineChartBtnId').addClass('disabled');
+
+      $('#modalViewResults').on('hidden.bs.modal', function() {
+          barChartComputedData = null;
+          lineChartComputedData = null;
+      })
+
+  }*/
+
+
 
 /*  var productList = [];
 
@@ -203,7 +257,9 @@ angular.module('dashboardApp')
     createBarChart    : createBarChart,
     createLineChart   : createLineChart,
     saveAsPicture     : saveAsPicture,
-    parseIsoDatetime  : parseIsoDatetime
+    parseIsoDatetime  : parseIsoDatetime,
+    populateResultsModal : populateResultsModal,
+    viewJobLog        : viewJobLog
   };
 
 });

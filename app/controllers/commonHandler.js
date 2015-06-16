@@ -168,3 +168,8 @@ exports.adHocJobLog = function(req,res){
  return getJobLog(req,res,adHocJobDataDir);
 }
 
+exports.schedJobLog = function(req,res){
+ return getJobLog(req,res,schedJobDataDir);
+}
+
+

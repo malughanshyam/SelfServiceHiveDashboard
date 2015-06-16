@@ -121,43 +121,58 @@ angular.module('dashboardApp')
             });
     }
 
-    $scope.viewResults = function(schedJob) {
 
+    // Model - View Job Log
+    $scope.viewSchedLogModal = function(schedJobDetails) {
+        $scope.getJobLog(schedJobDetails.JobID, function() {
+            dashboardAungularService.viewJobLog(schedJobDetails, $scope.jobLogRetrieved);
+        });
+    }
+
+    $scope.getJobLog = function(jobID, callBack) {
+
+        $scope.checkLogURL = '/schedJobLog/' + jobID
+        $scope.jobLogRetrieved;
+        $http.get($scope.checkLogURL, $scope.formData)
+            .success(function(data) {
+                $scope.jobLogRetrieved = data;
+                console.log("Successfully retrieved JobLog");
+                callBack();
+
+            })
+            .error(function(err) {
+                $scope.jobLogRetrieved = "Fetching Log Failed" + err
+                console.log("Fetching Log Failed");
+                callBack();
+            });
+
+
+    }
+
+
+    $scope.viewSchedResultsModal = function(schedJobRow) {
+
+        $('#commonModalViewResults').modal('show');
         $scope.initializeScheduleNewJob();
-
-        $('#modelViewResultsSched').modal('show')
-
-        jobResultTabContent = $("#jobResultTab").html();
-
-        $("#modelViewResultsSched").find('#JobName').text(schedJob.JobName);
-        $("#modelViewResultsSched").find('.modal-body').html(jobResultTabContent);
-        // $("#modelViewResults").find('#JobID').text("(" + adHocJob.JobID + ")");
-
+     
+        dashboardAungularService.populateResultsModal(schedJobRow);
+        
         // compile the element
-        $compile($('#modelViewResultsSched'))($scope);
+        $compile($('#commonModalViewResults'))($scope);
 
-        $("#modelViewResultsSched").find('#submittedHiveQuery').text(schedJob.SQLQuery);
-        $("#modelViewResultsSched").find('#resultPanelTitle').text(schedJob.JobName);
-
-        $scope.schedJob.jobID = schedJob.JobID
-        $scope.computeJobResults(schedJob.JobID);
-
-        $('#modelViewResults').on('hidden.bs.modal', function() {
-            $scope.barChartComputedData = null;
-            $scope.lineChartComputedData = null;
-        })
-
+        $scope.schedJob.jobID = schedJobRow.JobID
+        $scope.computeJobResults(schedJobRow.JobID);
     }
 
 
     $scope.computeJobResults = function(jobID) {
 
-        $scope.checkResultURL = '/schedJobResultFile/' + jobID
-
+        $scope.checkResultURL = '/schedJobResultFile/' + jobID;
+        var resultTableDivId = $("#commonModalViewResults").find('#jobResultTable');
         $http.get($scope.checkResultURL)
             .success(function(data) {
-                $scope.schedJob.jobResult = data;
-                dashboardAungularService.createResultTable('#jobResultTable', $scope.jobResult);
+                $scope.jobResult = data;
+                dashboardAungularService.createResultTable(resultTableDivId, $scope.jobResult);
             })
 
         .error(function(err) {
