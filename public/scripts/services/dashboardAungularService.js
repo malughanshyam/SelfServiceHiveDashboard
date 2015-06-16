@@ -187,35 +187,12 @@ angular.module('dashboardApp')
     }
 
 
-    var viewJobLog = function(jobDetails, logData){
+     var viewJobLog = function(jobDetails, logData){
       $('#commonModalViewLog').modal('show')
       $("#commonModalViewLog").find('#JobName').text(jobDetails.JobName);
       $("#commonModalViewLog").find('#JobStatus').text("(" + jobDetails.JobRunStatus + ")");
       $("#commonModalViewLog").find('#jobLogPre').text(logData);
     }
-
-    var populateResultsModal = function(jobDetails) {
-      $('#commonModalViewResults').modal('show'); 
- 
-      var jobResultTabContent = $("#jobResultTab").html();
-
-      $("#commonModalViewResults").find('#JobName').text(jobDetails.JobName);
-      $("#commonModalViewResults").find('.modal-body').html(jobResultTabContent);
-      // $("#modalViewResults").find('#JobID').text("(" + adHocJob.JobID + ")");
-
-      $("#commonModalViewResults").find('#submittedHiveQuery').text(jobDetails.SQLQuery);
-      $("#commonModalViewResults").find('#resultPanelTitle').text(jobDetails.JobName);
-
-
-      $('#downloadBarChartBtnId').addClass('disabled');
-      $('#downloadLineChartBtnId').addClass('disabled');
-
-      $('#commonModalViewResults').on('hidden.bs.modal', function() {
-          barChartComputedData = null;
-          lineChartComputedData = null;
-      });
-    }
-
 
 /*  var productList = [];
 
@@ -235,8 +212,7 @@ angular.module('dashboardApp')
     createLineChart   : createLineChart,
     saveAsPicture     : saveAsPicture,
     parseIsoDatetime  : parseIsoDatetime,
-    viewJobLog        : viewJobLog,
-    populateResultsModal : populateResultsModal,
+    viewJobLog        : viewJobLog
 
   };
 

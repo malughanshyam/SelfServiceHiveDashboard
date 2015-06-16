@@ -298,23 +298,8 @@ angular.module('dashboardApp')
 
     }
 
-    $scope.viewAdHocResultsModal = function(adHocJob) {  
-        $scope.initializeNewJobTab();
-        
-        dashboardAungularService.populateResultsModal(adHocJob);
-    
-        // compile the element
-        $compile($('#commonModalViewResults'))($scope);
 
-        $scope.formData.jobID = adHocJob.JobID;
-
-        var resultTableDivId = $('#commonModalViewResults').find('#jobResultTable');
-        $scope.computeJobResults(adHocJob.JobID, resultTableDivId);
-    
-    }
-
-
-/*    $scope.viewResults = function(adHocJob) {
+    $scope.viewResults = function(adHocJob) {
 
         $scope.initializeNewJobTab();
 
@@ -322,15 +307,15 @@ angular.module('dashboardApp')
 
         jobResultTabContent = $("#jobResultTab").html();
 
-        $("#modalViewResults").find('#JobName').text(adHocJob.JobName);
-        $("#modalViewResults").find('.modal-body').html(jobResultTabContent);
+        $("#modelViewResults").find('#JobName').text(adHocJob.JobName);
+        $("#modelViewResults").find('.modal-body').html(jobResultTabContent);
         // $("#modelViewResults").find('#JobID').text("(" + adHocJob.JobID + ")");
 
         // compile the element
         $compile($('#modelViewResults'))($scope);
 
-        $("#modalViewResults").find('#submittedHiveQuery').text(adHocJob.SQLQuery);
-        $("#modalViewResults").find('#resultPanelTitle').text(adHocJob.JobName);
+        $("#modelViewResults").find('#submittedHiveQuery').text(adHocJob.SQLQuery);
+        $("#modelViewResults").find('#resultPanelTitle').text(adHocJob.JobName);
 
 
         $('#downloadBarChartBtnId').addClass('disabled');
@@ -344,7 +329,7 @@ angular.module('dashboardApp')
             $scope.lineChartComputedData = null;
         })
 
-    }*/
+    }
 
     $scope.viewCurrentJobLog = function() {
         $scope.showJobLog = true
@@ -392,20 +377,19 @@ angular.module('dashboardApp')
         $("#navLinkStatus").addClass('disabled');
         $("#navLinkStatus").find('a').removeAttr("data-toggle");
 
-        var resultTableDivId = $('#jobResultPanelBodyContent').find('#jobResultTable');
         $scope.computeJobResults($scope.formData.jobID)
         $("#flowStepResult").removeClass('disabled');
         $("#flowStepResult").addClass('complete');
     }
 
-    $scope.computeJobResults = function(jobID, resultTableDivId) {
+    $scope.computeJobResults = function(jobID) {
 
         $scope.checkResultURL = '/adHocJobResultFile/' + jobID
-        
+
         $http.get($scope.checkResultURL)
             .success(function(data) {
                 $scope.jobResult = data;
-                dashboardAungularService.createResultTable(resultTableDivId, $scope.jobResult);
+                dashboardAungularService.createResultTable('#jobResultTable', $scope.jobResult);
             })
 
         .error(function(err) {
@@ -422,8 +406,8 @@ angular.module('dashboardApp')
 
         // Compute the Width for the Charts
         var chartWidth = $("#jobResultPanelBodyContent").width();
-        var chartDivID = $('#jobResultPanelBodyContent').find('#chartBar');
-        
+        var chartDivID = '#chartBar';
+
         dashboardAungularService.createBarChart($scope.jobResult, chartDivID, chartWidth); 
 
         $('#downloadBarChartBtnId').removeClass('disabled');
