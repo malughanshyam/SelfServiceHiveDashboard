@@ -96,13 +96,13 @@ angular.module('dashboardApp')
     }
 
 
-      $scope.schedReset = function() {
+    $scope.schedReset = function() {
         $scope.schedJob = {};
         $scope.initializeScheduleNewJob();
         $scope.schedJob = angular.copy($scope.schedJob);
-      };
+    };
 
-    
+
 
 
     $scope.populateScheduledJobsTable = function() {
@@ -121,28 +121,66 @@ angular.module('dashboardApp')
             });
     }
 
-    $scope.viewResults = function(schedJob) {
+    $scope.viewSchedJobLogModal = function(schedJob) {
+        console.log("Clicked viewLogModal");
+        $('#modalViewSchedLog').modal('show')
+
+        $("#modalViewSchedLog").find('#JobName').text(schedJob.JobName);
+        $("#modalViewSchedLog").find('#JobStatus').text("(" + schedJob.JobRunStatus + ")");
+
+        $scope.getJobLog(schedJob.JobID, function() {
+            console.log("In callback");
+            $scope.jobLogSelected = $scope.jobLogRetrieved;
+            $("#modalViewSchedLog").find('#jobLogPre').text($scope.jobLogRetrieved);
+
+        })
+    }
+
+    $scope.getJobLog = function(jobID, callBack) {
+
+        $scope.checkLogURL = '/schedJobLog/' + jobID
+        $scope.jobLogRetrieved;
+        $http.get($scope.checkLogURL, $scope.formData)
+        .success(function(data) {
+            $scope.jobLogRetrieved = data;
+            console.log("Successfully retrieved JobLog");
+            callBack();
+
+        })
+        .error(function(err) {
+            $scope.jobLogRetrieved = "Fetching Log Failed" + err
+            console.log("Fetching Log Failed");
+            callBack();
+        });
+
+
+    }
+
+
+
+    $scope.viewSchedJobResultsModal = function(schedJob) {
 
         $scope.initializeScheduleNewJob();
 
-        $('#modelViewResultsSched').modal('show')
+        $('#modalViewSchedResults').modal('show')
 
-        jobResultTabContent = $("#jobResultTab").html();
 
-        $("#modelViewResultsSched").find('#JobName').text(schedJob.JobName);
-        $("#modelViewResultsSched").find('.modal-body').html(jobResultTabContent);
+        $("#modalViewSchedResults").find('#JobName').text(schedJob.JobName);
         // $("#modelViewResults").find('#JobID').text("(" + adHocJob.JobID + ")");
 
-        // compile the element
-        $compile($('#modelViewResultsSched'))($scope);
 
-        $("#modelViewResultsSched").find('#submittedHiveQuery').text(schedJob.SQLQuery);
-        $("#modelViewResultsSched").find('#resultPanelTitle').text(schedJob.JobName);
+
+
+        // compile the element
+        $compile($('#modalViewSchedResults'))($scope);
+
+        $("#modalViewSchedResults").find('#submittedHiveQuery').text(schedJob.SQLQuery);
+        $("#modalViewSchedResults").find('#resultPanelTitle').text(schedJob.JobName);
 
         $scope.schedJob.jobID = schedJob.JobID
         $scope.computeJobResults(schedJob.JobID);
 
-        $('#modelViewResults').on('hidden.bs.modal', function() {
+        $('#modalViewSchedResults').on('hidden.bs.modal', function() {
             $scope.barChartComputedData = null;
             $scope.lineChartComputedData = null;
         })
@@ -153,11 +191,12 @@ angular.module('dashboardApp')
     $scope.computeJobResults = function(jobID) {
 
         $scope.checkResultURL = '/schedJobResultFile/' + jobID
+        var jobResultTableDivId = $('#modalViewSchedResults').find('#sJobTabular');
 
         $http.get($scope.checkResultURL)
             .success(function(data) {
-                $scope.schedJob.jobResult = data;
-                dashboardAungularService.createResultTable('#jobResultTable', $scope.jobResult);
+                $scope.jobResult = data;
+                dashboardAungularService.createResultTable(jobResultTableDivId, data);
             })
 
         .error(function(err) {
@@ -169,13 +208,28 @@ angular.module('dashboardApp')
 
 
     $scope.createBarChart = function() {
+        //debugger;
+
+        console.log("Creating bar")
+        // Check against the locally stored chart data to prevent duplicate computation/drawing of the charts
+        if ($scope.barChartComputedData == $scope.jobResult) {
+            
+            console.log("equal");
+            console.log($scope.jobResult)
+            console.log($scope.barChartComputedData)
+            return true;
+        } 
 
         $('#createBarChartBtn').button('loading');
 
         // Compute the Width for the Charts
         var chartWidth = $("#jobResultPanelBodyContent").width();
-        var chartDivID = '#chartBar';
+        //var chartDivID = $('#modalViewSchedResults').find('#sJobchart1');
+        var chartDivID = '#sJobchart1'
 
+        console.log("calling dashboard service")
+        console.log($scope.jobResult);
+        console.log(chartDivID)
         dashboardAungularService.createBarChart($scope.jobResult, chartDivID, chartWidth); 
 
         $('#downloadBarChartBtnId').removeClass('disabled');
@@ -186,11 +240,17 @@ angular.module('dashboardApp')
 
     $scope.createLineChart = function() {
 
+        // Check against the locally stored chart data to prevent duplicate computation/drawing of the charts
+        if ($scope.lineChartComputedData == $scope.jobResult) {
+            return true;
+        } 
+
         $('#createLineChartBtn').button('loading');
 
         // Compute the Width for the Charts
-        var chartWidth = $("#jobResultPanelBodyContent").width()
-        var chartDivID = '#chartLine';
+        var chartWidth = $("#jobResultPanelBodyContent").width();
+        // var chartDivID = $('#modalViewSchedResults').find('#sJobchart2');
+        var chartDivID = '#sJobchart2'
 
         dashboardAungularService.createLineChart($scope.jobResult, chartDivID, chartWidth); 
 

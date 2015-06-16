@@ -1,9 +1,6 @@
 angular.module('dashboardApp')
   .service('dashboardAungularService', function() {
   
-  var barChartComputedData;
-  var lineChartComputedData;
-
   var createResultTable = function(resultTableDivID, data) {
 
         $(function() {
@@ -45,11 +42,8 @@ angular.module('dashboardApp')
 
   var createBarChart = function(chartData, chartDivID, chartWidth) {
 
-      /*// Check against the locally stored chart data to prevent duplicate computation/drawing of the charts
-      if (barChartComputedData == chartData) {
-          return true;
-      }*/
-
+    
+      
       // Parse the TSV Result file into Array of Data 
       var x = chartData.split('\n');
       for (var i = 0; i < x.length; i++) {
@@ -92,17 +86,9 @@ angular.module('dashboardApp')
 
       });
 
-      // Variable to store the data for chart to prevent duplicate computation/drawing of the charts
-      barChartComputedData = chartData
-
   }
 
   var createLineChart = function(chartData, chartDivID, chartWidth) {
-
-      /*  // Check against the locally stored chart data to prevent duplicate computation/drawing of the charts
-      if (lineChartComputedData == chartData) {
-          return true;
-      }*/
 
 
       // Parse the TSV Result file into Array of Data 
@@ -146,8 +132,6 @@ angular.module('dashboardApp')
           }
       });
 
-      // Variable to store the data for chart to prevent duplicate computation/drawing of the charts
-      lineChartComputedData = chartData
   }
 
 

@@ -156,7 +156,7 @@ pre {
   fieldset { display: table-cell; }
 }
 
-#adHocResultTypeTabs li {
+#adHocResultTypeTabs li, #schedResultTypeTabs li {
     padding-left: 1em;
 }
 
