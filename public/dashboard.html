@@ -139,11 +139,11 @@
                                     
                                     <td><small>{{ parseIsoDatetime(row.UpdatedTimeStamp) }}</small></td>
                                     <td>
-                                        <button type="button" ng-click="viewResults(row)" class="btn btn-success btn-xs" ng-show="row.JobRunStatus == 'JOB_SUCCESSFUL'">
+                                        <button type="button" ng-click="viewAdHocJobResultsModal(row)" class="btn btn-success btn-xs" ng-show="row.JobRunStatus == 'JOB_SUCCESSFUL'">
                                             <span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span> Results
                                         </button>
 
-                                        <button type="button" ng-click="viewLogModal(row)" ng-class="{'btn-danger': row.JobRunStatus == 'JOB_FAILED' , 'btn-warning': row.JobRunStatus == 'JOB_IN_PROGRESS'}" class="btn  btn-xs" ng-show="row.JobRunStatus == 'JOB_FAILED'">
+                                        <button type="button" ng-click="viewAdHocJobLogModal(row)" ng-class="{'btn-danger': row.JobRunStatus == 'JOB_FAILED' , 'btn-warning': row.JobRunStatus == 'JOB_IN_PROGRESS'}" class="btn  btn-xs" ng-show="row.JobRunStatus == 'JOB_FAILED'">
                                             <span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span> View Log
                                         </button>
 
@@ -202,7 +202,7 @@
 
 
                         <!-- View Job Log Modal -->
-                        <div class="modal fade" id="modelViewLog" tabindex="-1" role="dialog" aria-labelledby="View Log" aria-hidden="true">
+                        <div class="modal fade" id="modalViewLog" tabindex="-1" role="dialog" aria-labelledby="View Log" aria-hidden="true">
                             <div class="modal-dialog modal-lg" id="modelDialogViewLog">
                                 <div class="modal-content">
                                     <div class="modal-header">
@@ -229,8 +229,8 @@
 
 
                         <!-- View Job Results Modal -->
-                        <div class="modal fade" id="modelViewResults" tabindex="-1" role="dialog" aria-labelledby="View Results" aria-hidden="true">
-                            <div class="modal-dialog modal-lg" id="modelDialogViewResult">
+                        <div class="modal fade" id="modalViewResults" tabindex="-1" role="dialog" aria-labelledby="View Results" aria-hidden="true">
+                            <div class="modal-dialog modal-lg" id="modalDialogViewResult">
                                 <div class="modal-content">
                                     <div class="modal-header">
                                         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>

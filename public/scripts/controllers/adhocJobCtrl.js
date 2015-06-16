@@ -20,8 +20,8 @@ angular.module('dashboardApp')
 
     $scope.initializeNewJobTab = function() {
         // Variables to store the data for Bar and Line charts to prevent recomputing the already populated charts
-        $scope.barChartComputedData;
-        $scope.lineChartComputedData;
+        $scope.barChartComputedData ='';
+        $scope.lineChartComputedData= '';
 
 /*        // disable Status tab
         $("#navLinkStatus").addClass('disabled');
@@ -304,23 +304,23 @@ angular.module('dashboardApp')
 
     }
 
-    $scope.viewResults = function(adHocJob) {
+    $scope.viewAdHocJobResultsModal = function(adHocJob) {
 
-        $scope.initializeNewJobTab();
+        $scope.resetNewJobTab();
 
-        $('#modelViewResults').modal('show')
+        $('#modalViewResults').modal('show')
 
         jobResultTabContent = $("#jobResultTab").html();
 
-        $("#modelViewResults").find('#JobName').text(adHocJob.JobName);
-        $("#modelViewResults").find('.modal-body').html(jobResultTabContent);
+        $("#modalViewResults").find('#JobName').text(adHocJob.JobName);
+        $("#modalViewResults").find('.modal-body').html(jobResultTabContent);
         // $("#modelViewResults").find('#JobID').text("(" + adHocJob.JobID + ")");
 
         // compile the element
-        $compile($('#modelViewResults'))($scope);
+        $compile($('#modalViewResults'))($scope);
 
-        $("#modelViewResults").find('#submittedHiveQuery').text(adHocJob.SQLQuery);
-        $("#modelViewResults").find('#resultPanelTitle').text(adHocJob.JobName);
+        $("#modalViewResults").find('#submittedHiveQuery').text(adHocJob.SQLQuery);
+        $("#modalViewResults").find('#resultPanelTitle').text(adHocJob.JobName);
 
 
         $('#downloadBarChartBtnId').addClass('disabled');
@@ -329,9 +329,11 @@ angular.module('dashboardApp')
         $scope.formData.jobID = adHocJob.JobID;
         $scope.computeJobResults(adHocJob.JobID);
 
-        $('#modelViewResults').on('hidden.bs.modal', function() {
+        $('#modalViewResults').on('hidden.bs.modal', function() {
             $scope.barChartComputedData = null;
             $scope.lineChartComputedData = null;
+            $("#modalViewResults").find('.modal-body').html(" ");
+            $scope.resetNewJobTab();
         })
 
     }
@@ -407,6 +409,11 @@ angular.module('dashboardApp')
 
     $scope.createBarChart = function() {
 
+        // Check against the locally stored chart data to prevent duplicate computation/drawing of the charts
+        if ($scope.barChartComputedData == $scope.jobResult) {
+            return true;
+        } 
+
         $('#createBarChartBtn').button('loading');
 
         // Compute the Width for the Charts
@@ -422,6 +429,11 @@ angular.module('dashboardApp')
 
 
     $scope.createLineChart = function() {
+
+        // Check against the locally stored chart data to prevent duplicate computation/drawing of the charts
+        if ($scope.lineChartComputedData == $scope.jobResult) {
+            return true;
+        } 
 
         $('#createLineChartBtn').button('loading');
 
