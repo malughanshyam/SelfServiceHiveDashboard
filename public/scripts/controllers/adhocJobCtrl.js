@@ -288,17 +288,17 @@ angular.module('dashboardApp')
     }
 
     // Model - View Job Log
-    $scope.viewLogModal = function(adHocJob) {
+    $scope.viewAdHocJobLogModal = function(adHocJob) {
         console.log("Clicked viewLogModal");
-        $('#modelViewLog').modal('show')
+        $('#modalViewAdHocLog').modal('show')
 
-        $("#modelViewLog").find('#JobName').text(adHocJob.JobName);
-        $("#modelViewLog").find('#JobStatus').text("(" + adHocJob.JobRunStatus + ")");
+        $("#modalViewAdHocLog").find('#JobName').text(adHocJob.JobName);
+        $("#modalViewAdHocLog").find('#JobStatus').text("(" + adHocJob.JobRunStatus + ")");
 
         $scope.getJobLog(adHocJob.JobID, function() {
             console.log("In callback");
             $scope.jobLogSelected = $scope.jobLogRetrieved;
-            $("#modelViewLog").find('#jobLogPre').text($scope.jobLogRetrieved);
+            $("#modalViewAdHocLog").find('#jobLogPre').text($scope.jobLogRetrieved);
 
         })
 
@@ -308,19 +308,19 @@ angular.module('dashboardApp')
 
         $scope.resetNewJobTab();
 
-        $('#modalViewResults').modal('show')
+        $('#modalViewAdHocResults').modal('show')
 
         jobResultTabContent = $("#jobResultTab").html();
 
-        $("#modalViewResults").find('#JobName').text(adHocJob.JobName);
-        $("#modalViewResults").find('.modal-body').html(jobResultTabContent);
+        $("#modalViewAdHocResults").find('#JobName').text(adHocJob.JobName);
+        $("#modalViewAdHocResults").find('.modal-body').html(jobResultTabContent);
         // $("#modelViewResults").find('#JobID').text("(" + adHocJob.JobID + ")");
 
         // compile the element
-        $compile($('#modalViewResults'))($scope);
+        $compile($('#modalViewAdHocResults'))($scope);
 
-        $("#modalViewResults").find('#submittedHiveQuery').text(adHocJob.SQLQuery);
-        $("#modalViewResults").find('#resultPanelTitle').text(adHocJob.JobName);
+        $("#modalViewAdHocResults").find('#submittedHiveQuery').text(adHocJob.SQLQuery);
+        $("#modalViewAdHocResults").find('#resultPanelTitle').text(adHocJob.JobName);
 
 
         $('#downloadBarChartBtnId').addClass('disabled');
@@ -329,10 +329,10 @@ angular.module('dashboardApp')
         $scope.formData.jobID = adHocJob.JobID;
         $scope.computeJobResults(adHocJob.JobID);
 
-        $('#modalViewResults').on('hidden.bs.modal', function() {
+        $('#modalViewAdHocResults').on('hidden.bs.modal', function() {
             $scope.barChartComputedData = null;
             $scope.lineChartComputedData = null;
-            $("#modalViewResults").find('.modal-body').html(" ");
+            $("#modalViewAdHocResults").find('.modal-body').html(" ");
             $scope.resetNewJobTab();
         })
 
