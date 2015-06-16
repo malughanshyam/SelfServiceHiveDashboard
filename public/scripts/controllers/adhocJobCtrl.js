@@ -66,7 +66,7 @@ angular.module('dashboardApp')
         $scope.showCreateNewJobBtn = false
 
         // compile the element
-        $compile($('#modalViewResults'))($scope);
+        $compile($('#modelViewResults'))($scope);
 
         console.log("AdHoc Tab Initialized")
 
@@ -287,14 +287,54 @@ angular.module('dashboardApp')
         
     }
 
-    // modal - View Job Log
-    $scope.viewAdHocLogModal = function(adHocJob) {
+    // Model - View Job Log
+    $scope.viewLogModal = function(adHocJob) {
+        console.log("Clicked viewLogModal");
+        $('#modelViewLog').modal('show')
+
+        $("#modelViewLog").find('#JobName').text(adHocJob.JobName);
+        $("#modelViewLog").find('#JobStatus').text("(" + adHocJob.JobRunStatus + ")");
+
         $scope.getJobLog(adHocJob.JobID, function() {
+            console.log("In callback");
             $scope.jobLogSelected = $scope.jobLogRetrieved;
-            dashboardAungularService.viewJobLog(adHocJob, $scope.jobLogRetrieved);
-        });
+            $("#modelViewLog").find('#jobLogPre').text($scope.jobLogRetrieved);
+
+        })
+
     }
 
+    $scope.viewResults = function(adHocJob) {
+
+        $scope.initializeNewJobTab();
+
+        $('#modelViewResults').modal('show')
+
+        jobResultTabContent = $("#jobResultTab").html();
+
+        $("#modelViewResults").find('#JobName').text(adHocJob.JobName);
+        $("#modelViewResults").find('.modal-body').html(jobResultTabContent);
+        // $("#modelViewResults").find('#JobID').text("(" + adHocJob.JobID + ")");
+
+        // compile the element
+        $compile($('#modelViewResults'))($scope);
+
+        $("#modelViewResults").find('#submittedHiveQuery').text(adHocJob.SQLQuery);
+        $("#modelViewResults").find('#resultPanelTitle').text(adHocJob.JobName);
+
+
+        $('#downloadBarChartBtnId').addClass('disabled');
+        $('#downloadLineChartBtnId').addClass('disabled');
+
+        $scope.formData.jobID = adHocJob.JobID;
+        $scope.computeJobResults(adHocJob.JobID);
+
+        $('#modelViewResults').on('hidden.bs.modal', function() {
+            $scope.barChartComputedData = null;
+            $scope.lineChartComputedData = null;
+        })
+
+    }
 
     $scope.viewCurrentJobLog = function() {
         $scope.showJobLog = true
@@ -305,14 +345,12 @@ angular.module('dashboardApp')
 
     }
 
-
     $scope.getJobLog = function(jobID, callBack) {
 
         $scope.checkLogURL = '/adHocJobLog/' + jobID
         $scope.jobLogRetrieved;
         $http.get($scope.checkLogURL, $scope.formData)
             .success(function(data) {
-                console.log(data)
                 $scope.jobLogRetrieved = data;
                 console.log("Successfully retrieved JobLog");
                 callBack();
@@ -327,38 +365,7 @@ angular.module('dashboardApp')
 
     }
 
-
-    $scope.viewAdHocResultsModal = function(adHocJob) {
-        $('#commonModalViewResults').modal('show');   
-        $scope.initializeNewJobTab();
-        
-        dashboardAungularService.populateResultsModal(adHocJob);
-    
-        // compile the element
-        $compile($('#commonModalViewResults'))($scope);
-
-        $scope.formData.jobID = adHocJob.JobID;
-        $scope.computeJobResults(adHocJob.JobID);
-    
-    }
-
-
-/*
-    $scope.viewAdHocResultsModal = function(adHocJob) {
-
-        $scope.initializeNewJobTab();
-
-        dashboardAungularService.populateResultsModal(adHocJob);
-        
-        // compile the element
-        $compile($('#modalViewResults'))($scope);
-
-        $scope.formData.jobID = adHocJob.JobID;
-        $scope.computeJobResults(adHocJob.JobID);
-
-    }*/
-
-    $scope.viewJobResultTab = function() {
+    $scope.viewJobResult = function() {
 
         if ($scope.submittedJobStatus != 'JOB_SUCCESSFUL') {
             return false;
@@ -382,14 +389,12 @@ angular.module('dashboardApp')
 
     $scope.computeJobResults = function(jobID) {
 
-        $scope.checkResultURL = '/adHocJobResultFile/' + jobID;
-        var resultTableDivId = $('#jobResultPanelBodyContent').find('#jobResultTable');
-        //var resultTableDivId = '#jobResultTable';
+        $scope.checkResultURL = '/adHocJobResultFile/' + jobID
 
         $http.get($scope.checkResultURL)
             .success(function(data) {
                 $scope.jobResult = data;
-                dashboardAungularService.createResultTable(resultTableDivId, $scope.jobResult);
+                dashboardAungularService.createResultTable('#jobResultTable', $scope.jobResult);
             })
 
         .error(function(err) {
@@ -401,8 +406,6 @@ angular.module('dashboardApp')
 
 
     $scope.createBarChart = function() {
-        return true;
-        console.log("creating bar")
 
         $('#createBarChartBtn').button('loading');
 
@@ -419,7 +422,7 @@ angular.module('dashboardApp')
 
 
     $scope.createLineChart = function() {
-        return true;
+
         $('#createLineChartBtn').button('loading');
 
         // Compute the Width for the Charts
