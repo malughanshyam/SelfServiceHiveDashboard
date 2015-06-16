@@ -144,43 +144,31 @@ angular.module('dashboardApp')
             });
     }
 
-    $scope.viewResults = function(schedJob) {
+    $scope.viewSchedResultsModal = function(schedJob) {
 
         $scope.initializeScheduleNewJob();
 
-        $('#modelViewResultsSched').modal('show')
-
-        jobResultTabContent = $("#jobResultTab").html();
-
-        $("#modelViewResultsSched").find('#JobName').text(schedJob.JobName);
-        $("#modelViewResultsSched").find('.modal-body').html(jobResultTabContent);
-        // $("#modelViewResults").find('#JobID').text("(" + adHocJob.JobID + ")");
+        dashboardAungularService.populateResultsModal(schedJob);
 
         // compile the element
         $compile($('#modelViewResultsSched'))($scope);
 
-        $("#modelViewResultsSched").find('#submittedHiveQuery').text(schedJob.SQLQuery);
-        $("#modelViewResultsSched").find('#resultPanelTitle').text(schedJob.JobName);
-
         $scope.schedJob.jobID = schedJob.JobID
-        $scope.computeJobResults(schedJob.JobID);
 
-        $('#modelViewResults').on('hidden.bs.modal', function() {
-            $scope.barChartComputedData = null;
-            $scope.lineChartComputedData = null;
-        })
+        var resultTableDivId = $('#commonModalViewResults').find('#jobResultTable');
+        $scope.computeJobResults(schedJob.JobID, resultTableDivId);
 
     }
 
 
-    $scope.computeJobResults = function(jobID) {
+    $scope.computeJobResults = function(jobID, resultTableDivId) {
 
         $scope.checkResultURL = '/schedJobResultFile/' + jobID
 
         $http.get($scope.checkResultURL)
             .success(function(data) {
                 $scope.schedJob.jobResult = data;
-                dashboardAungularService.createResultTable('#jobResultTable', $scope.jobResult);
+                dashboardAungularService.createResultTable(resultTableDivId, $scope.jobResult);
             })
 
         .error(function(err) {
@@ -197,8 +185,7 @@ angular.module('dashboardApp')
 
         // Compute the Width for the Charts
         var chartWidth = $("#jobResultPanelBodyContent").width();
-        var chartDivID = '#chartBar';
-
+        var chartDivID = $('#commonModalViewResults').find('#chartBar');
         dashboardAungularService.createBarChart($scope.jobResult, chartDivID, chartWidth); 
 
         $('#downloadBarChartBtnId').removeClass('disabled');

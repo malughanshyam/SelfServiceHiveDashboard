@@ -139,7 +139,7 @@
                                     
                                     <td><small>{{ parseIsoDatetime(row.UpdatedTimeStamp) }}</small></td>
                                     <td>
-                                        <button type="button" ng-click="viewResults(row)" class="btn btn-success btn-xs" ng-show="row.JobRunStatus == 'JOB_SUCCESSFUL'">
+                                        <button type="button" ng-click="viewAdHocResultsModal(row)" class="btn btn-success btn-xs" ng-show="row.JobRunStatus == 'JOB_SUCCESSFUL'">
                                             <span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span> Results
                                         </button>
 
@@ -611,7 +611,7 @@
                                     </td>
                                     
                                     <td>
-                                        <button type="button" ng-click="viewResults(row)" class="btn btn-success btn-xs" ng-show="row.JobRunStatus == 'JOB_SUCCESSFUL'">
+                                        <button type="button" ng-click="viewSchedResultsModal(row)" class="btn btn-success btn-xs" ng-show="row.JobRunStatus == 'JOB_SUCCESSFUL'">
                                             <span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span> Results
                                         </button>
 
@@ -641,62 +641,6 @@
                                 </tr>
                             </tfoot>
                         </table>
-
-
-
-                        <!-- View Job Log Modal -->
-                        <div class="modal fade" id="modelViewLogSched" tabindex="-1" role="dialog" aria-labelledby="View Log" aria-hidden="true">
-                            <div class="modal-dialog modal-lg" id="modelDialogViewLog">
-                                <div class="modal-content">
-                                    <div class="modal-header">
-                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                                        <h4 class="modal-title" id="myModalLabel">  Log - 
-                                    <span id="JobName">JobName</span>
-                                    <small id="JobStatus">JobStatus</small>
-                                    
-                                </h4>
-
-                                    </div>
-                                    <div class="modal-body">
-                                        <!-- Job Log -->
-                                        <div id="jobLogDiv">
-                                            <pre class="pre-scrollable" id="jobLogPre"><samp>{{jobLogSelected}}</samp></pre>
-                                        </div>
-                                    </div>
-                                    <div class="modal-footer">
-                                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-
-                        <!-- View Job Results Modal -->
-                        <div class="modal fade" id="modelViewResultsSched" tabindex="-1" role="dialog" aria-labelledby="View Results" aria-hidden="true">
-                            <div class="modal-dialog modal-lg" id="modelDialogViewResult">
-                                <div class="modal-content">
-                                    <div class="modal-header">
-                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                                        <h4 class="modal-title" id="myModalLabel">  
-                                    <span id="JobName">JobName</span>
-                                    <!-- <small id="JobID">JobID</small> -->
-                                    <small>Results</small>
-                                </h4>
-
-                                    </div>
-
-                                    <div class="modal-body">
-                                        <!-- Resutls placeholder -->
-                                    </div>
-
-                                    <div class="modal-footer">
-                                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- Scheduled Jobs Tab Content Ends-->
 
 
                     <!-- New Scheduled Job Tab Content Begins-->
@@ -859,6 +803,33 @@
             </div>
         </div>
     </div>
+
+
+    <!-- View Job Results Modal -->
+    <div class="modal fade" id="commonModalViewResults" tabindex="-1" role="dialog" aria-labelledby="View Results" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel">  
+                <span id="JobName">JobName</span>
+                <!-- <small id="JobID">JobID</small> -->
+                <small>Results</small>
+            </h4>
+
+                </div>
+
+                <div class="modal-body">
+                    
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
 
     <!-- <footer>
         <div class="navbar navbar-inverse navbar-fixed-bottom">
