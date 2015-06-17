@@ -101,7 +101,7 @@ var getJobLog = function(req,res, dataDir){
     var clientIPaddress = req.ip || req.header('x-forwarded-for') || req.connection.remoteAddress;
 	if (jobID != null){
         
-        jobLogFile = dataDir+jobID+"/log.txt";
+        jobLogFile = dataDir+jobID+"/log.log";
 		console.log("Job Log File: "+jobLogFile);
 		fs.readFile(jobLogFile, 'utf8', function (err,data) {
 		  	if (err) {

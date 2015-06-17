@@ -233,7 +233,7 @@ exports.submitNewScheduledJob = function(req, res) {
         }
 
         // Log File to store the CRON output
-        var cronlogFile = " > " + normalizePath + dataDir + "cronLogs.log 2>&1"
+        var cronlogFile = " >> " + normalizePath + jobDir + "/log.log 2>&1"
 
         // Finalized command to be run by CRON
         var cronCmd = "cd " + execDirPath + " && " + execFileName + " " + args + cronlogFile;

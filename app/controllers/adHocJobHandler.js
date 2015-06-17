@@ -137,20 +137,27 @@ exports.submitNewAdHocJob = function(req, res) {
         fs.ensureDir(dir, function(err) {
             if (err) {
             	detailLogger.error('JobID - %s Error creating new directory: %s', jobID,  JSON.stringify({Directory: dir, error: err}));
-                res.status(500)
-                return res.send(err)
+                res.status(500);
+                return res.send(err);
             } else {
 	            detailLogger.debug('JobID - %s  New JobID directory created: %s',jobID, JSON.stringify ({Directory: dir}));
-		        var ws = fs.createOutputStream(queryFile)
-		        ws.write(sqlQuery)
-		        detailLogger.debug('JobID - %s  Hive Query written to file: %s',jobID, JSON.stringify({ QueryFile : queryFile}));
-		        res.send({
-                    "JobID": jobID
+		        
+                fs.outputFile(queryFile, sqlQuery, function (err) {
+                    if (err){
+                        detailLogger.error('JobID - %s Error creating Query file: %s', jobID,  JSON.stringify({QueryFile: queryFile, error: err}));
+                        res.status(500);
+                        return res.send(err);
+                    } else{
+                        detailLogger.debug('JobID - %s  Hive Query written to file: %s',jobID, JSON.stringify({ QueryFile : queryFile}));
+                        res.send({
+                            "JobID": jobID
+                        }); 
+                        executeHiveScript()
+                    }
                 });
-                executeHiveScript()
 
             }
-        })
+        });
 
     }
 

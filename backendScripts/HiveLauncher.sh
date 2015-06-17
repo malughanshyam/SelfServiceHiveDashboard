@@ -78,8 +78,8 @@ notifyEmail=$7
 
 # Output File Names
 statusFile='status.txt'
-logFile='log.txt'
-
+logFile='log.log'
+debugLogFile='debug.log'
 
 if [ ! -f $sqlQueryFile ]
 then
@@ -124,8 +124,8 @@ fi
 
 
 # Setting up the Log4J Log Files
-logFilePath=$outputDir"\/log.txt"
-debugLogFilePath=$outputDir"\/debugLog.txt"
+logFilePath=$outputDir"\/"$logFile
+debugLogFilePath=$outputDir"\/"$debugLogFile
 
 sed -e "s|\${reportLogFile}|$logFilePath|g" -e "s|\${debugLogFile}|$debugLogFilePath|g" log4j_template.properties > log4j.properties
 
