@@ -273,6 +273,7 @@ angular.module('dashboardApp')
     $scope.viewAdHocJobResultsModal = function(adHocJob) {
 
         $scope.resetNewJobTab();
+        $('#newAdHocTab').removeClass('active');
 
         $('#modalViewAdHocResults').modal('show')
 
@@ -295,11 +296,12 @@ angular.module('dashboardApp')
         $scope.formData.jobID = adHocJob.JobID;
         $scope.computeJobResults(adHocJob.JobID);
 
+       
         $('#modalViewAdHocResults').on('hidden.bs.modal', function() {
             $scope.barChartComputedData = null;
             $scope.lineChartComputedData = null;
             $("#modalViewAdHocResults").find('.modal-body').html(" ");
-            $scope.resetNewJobTab();
+            
         })
 
     }

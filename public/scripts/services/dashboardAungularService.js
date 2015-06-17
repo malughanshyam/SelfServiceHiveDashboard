@@ -28,7 +28,7 @@ angular.module('dashboardApp')
                 tdClass: "",
 
                 // path to an image to display while CSV/TSV data is loading
-                loadingImage: "",
+                loadingImage: "img/loading1.gif",
 
                 // text to display while CSV/TSV is loading
                 loadingText: "Loading Results...",

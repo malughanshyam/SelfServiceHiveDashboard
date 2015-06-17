@@ -92,7 +92,7 @@
 		return this.each(function() {
 			var obj = $(this);
 			var error = '';
-			(options.loadingImage) ? loading = '<div style="text-align: center"><img id="imgLoading" class="img-responsive" alt="' + options.loadingText + '" src="' + options.loadingImage + '" /><br>' + options.loadingText + '</div>' : loading = options.loadingText;
+			(options.loadingImage) ? loading = '<div align="center" ><img id="imgLoading" class="img-responsive" alt="' + options.loadingText + '" src="' + options.loadingImage + '" /><br>' + options.loadingText + '</div>' : loading = options.loadingText;
 			obj.html(loading);
 			//$.get(csvFile, function(data) {
 			$(function() {
