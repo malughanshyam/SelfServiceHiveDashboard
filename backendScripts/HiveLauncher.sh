@@ -132,3 +132,27 @@ if [ $exitStatus -ne 0 ]; then
   additionallogMsg="Check if Hive server is up."  
   updateStatusLogFileOnFailure $outputDir $statusFile  $logFile $additionallogMsg
 fi
+
+# # Email Alert
+# if [ $notifyFlag == 'N']; then
+#   exit 0
+
+# outputDir="../data/ScheduledJobs/5580d9bffce9da2b65a7ca5f"
+# statusFile="status.txt"
+# jobName="TopTrends"
+# jobStatus=`cat $outputDir/$statusFile`
+# jobResultURL=`echo "http://localhost:8080/dashboard.html"`
+
+# mailSubject="Subject: Job - "$jobName" ["$jobStatus"] "$'\n'
+
+# mailBody=`echo -e "\nThe Job - $jobName has completed with the status\t:  "`
+# mailBody=$mailBody$jobStatus$'\n'
+# mailBody=$mailBody`echo -e "\nCheck out more details at : "`
+# mailBody=$mailBody$jobResultURL$'\n'
+
+# mailSignature=$'\n'$'\n'"--"$'\n'
+# mailSignature=$mailSignature"Self Service Hive Dashboard"$'\n'
+
+# mailComplete=$mailSubject$mailBody$mailSignature
+
+# echo "$mailComplete" | /usr/sbin/sendmail gmalu@ebay.com -f"SelfServiceHiveDashboard"
