@@ -35,12 +35,10 @@ public class HiveExecutor {
 	private Connection con;
 	private Statement stmt;
 	private String statusFilePath;
-	private String logFilePath;
 	private String outputDir ;
 	private String resultFilePath;
 	private ResultSet res;
 	private Exception occurredException;
-	private PrintWriter writerLog;
 	private MongoExecutor mongoExecutor;
 
 	public static int HIVE_ESTABLISH_CONNECTION_TIMEOUT = 10 ; //seconds
@@ -67,9 +65,7 @@ public class HiveExecutor {
 		this.queryFilePath = args[6];
 		this.resultFilePath = this.outputDir +"/result.txt";
 		this.statusFilePath = this.outputDir +"/status.txt";
-		this.logFilePath = this.outputDir +"/log.txt";
 		this.jobStatus = JobStatus.NOT_STARTED;
-		this.writerLog = new PrintWriter(new FileWriter(this.logFilePath, true)); 
 		
 		// Establish MongoDB Connection 
 		// args[7] = mongoHostAddress = "localhost"
@@ -93,14 +89,6 @@ public class HiveExecutor {
 	}
 	
 	private void printMetaData(){
-	
-		this.writerLog.println("Job ID: " + this.jobID);
-		this.writerLog.println("Job Name: " + this.jobName);
-		this.writerLog.println("outputDir: "+ this.outputDir);		
-		this.writerLog.println("queryFilePath: "+this.queryFilePath);
-		this.writerLog.println("resultFilePath: "+ this.resultFilePath);
-		this.writerLog.println("statusFilePath: "+this.statusFilePath);
-		this.writerLog.println("\n");
 		
 		debugLogger.info("Job ID: " + this.jobID);
 		debugLogger.info("Job Name: " + this.jobName);
@@ -137,6 +125,7 @@ public class HiveExecutor {
 			DriverManager.setLoginTimeout(HIVE_ESTABLISH_CONNECTION_TIMEOUT);
 			
 			debugLogger.debug("Connecting to Hive Server with parameters - URL:- '" + connectionURL + "' , hiveUser: '"+hiveUser+"'");
+			reportLogger.debug("Connecting to Hive Server with parameters - URL:- '" + connectionURL + "' , hiveUser: '"+hiveUser+"'");
 
 			this.con = DriverManager.getConnection(connectionURL, hiveUser, "");
 			// Connection con = DriverManager.getConnection("jdbc:hive2://172.16.226.129:10000/default", "hive", "");
@@ -144,6 +133,8 @@ public class HiveExecutor {
 
 		}
 		catch (Exception e) {
+			
+			
 			debugLogger.error("Exception Establishing Hive Connection : ", e);
 			reportLogger.error("Exception Establishing Hive Connection : ", e);
 			// Update the Status in MongoDB
@@ -155,6 +146,9 @@ public class HiveExecutor {
 			debugLogger.debug("Closed the MongoDB connection");
 
 			e.printStackTrace();	
+			debugLogger.error("JOB_FAILED");
+			reportLogger.error("JOB_FAILED");
+
 			System.exit(1);
 		}
 		
@@ -175,10 +169,8 @@ public class HiveExecutor {
 		try {
 			
 			debugLogger.debug("Executing Query : "+sql);
-			
-			this.writerLog.println("JobID : " + this.jobID);
-			this.writerLog.println("Running : " + sql);
-			
+			reportLogger.debug("Executing Query : "+sql);
+				
 			this.res = stmt.executeQuery(sql);
 			this.jobStatus = JobStatus.SUCCESS;
 			
@@ -187,15 +179,11 @@ public class HiveExecutor {
 			
 		
 		} catch (Exception e){
-			debugLogger.error("Exception executing Hive Query : ", e);
+			debugLogger.error("Exception executing Hive Query : ",e);
 			reportLogger.error("Exception executing Hive Query : ", e);
 			
-			this.writerLog.println("Job Failed");
-			
 			this.occurredException = e;
-			this.occurredException.printStackTrace(this.writerLog);
 			this.jobStatus = JobStatus.FAILED;
-			this.cleanUp();
 		} 
 				
 	}
@@ -210,7 +198,7 @@ public class HiveExecutor {
 
 	private void exportResult() throws SQLException, FileNotFoundException, UnsupportedEncodingException{
 		
-		debugLogger.debug("Exporting Results to File");
+		
 		
 		PrintWriter writerResult = new PrintWriter(this.resultFilePath, "UTF-8");
 		
@@ -222,6 +210,9 @@ public class HiveExecutor {
 				break;
 			
 			case SUCCESS:
+				debugLogger.debug("Exporting Results to File");
+				reportLogger.info("Exporting Results to File");
+				
 				ResultSetMetaData rsmd;
 				boolean headerPrinted = false;
 				
@@ -250,15 +241,15 @@ public class HiveExecutor {
 					}
 					writerResult.println();
 				}
+				debugLogger.debug("Export to Result File completed : "+this.resultFilePath);
+				reportLogger.info("Export to Result File completed");
 				break;
 			
 		}
 		
 		writerResult.close();
-		debugLogger.debug("Export to Result File completed : "+this.resultFilePath);
-		reportLogger.info("Export to Result File completed");
 		
-		this.writerLog.println("Output written :"+this.resultFilePath);
+		
 	}
 
 	private void copyQueryFileToOuputDir() throws IOException {
@@ -273,26 +264,17 @@ public class HiveExecutor {
 		
 		// Update the Status File
 		PrintWriter writerStatus = new PrintWriter(this.statusFilePath, "UTF-8");
-		this.writerLog.println(getJobStatusValue(this.jobStatus));
 		
 		debugLogger.debug("Updated the Status File to "+getJobStatusValue(this.jobStatus));
+		reportLogger.info("Updated the Status File to "+getJobStatusValue(this.jobStatus));
 		
 		writerStatus.print(getJobStatusValue(this.jobStatus));
-		if (this.jobStatus == JobStatus.FAILED){
-			this.occurredException.printStackTrace(this.writerLog);
-			debugLogger.debug("Job Failed! Updated the Status File with Error Details : ", this.occurredException);
-		}
 		writerStatus.close();
 		
-
 		// Update the Status in MongoDB
 		this.mongoExecutor.updateStatusDocument(this.jobID, getJobStatusValue(this.jobStatus) );
 		debugLogger.debug("Updated the Status of JobID - "+this.jobID+" to "+getJobStatusValue(this.jobStatus)+" in MongoDB");
 	
-	}
-
-	private void cleanUp(){
-		this.writerLog.close();	
 	}
 	
 	public static String getJobStatusValue(JobStatus jobStatus){	
@@ -348,7 +330,6 @@ public class HiveExecutor {
 
 		hiveExecObj.updateStatus();
 //		//hiveExecObj.copyQueryFileToOuputDir();
-		hiveExecObj.cleanUp();
 				
 	}
 

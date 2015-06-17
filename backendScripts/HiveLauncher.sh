@@ -34,7 +34,7 @@ updateStatusLogFileOnFailure () {
     logFile=$3
     additionallogMsg=$4
     echo "JOB_FAILED" > $outputDataDir/$statusFile
-    echo "Hive Launcher Script Failed! $additionallogMsg " > $outputDataDir/$logFile
+    echo "Hive Launcher Script Failed! " "$additionallogMsg" >> $outputDataDir/$logFile
 }
 
 # Validations of Arguments
@@ -84,14 +84,14 @@ logFile='log.txt'
 if [ ! -f $sqlQueryFile ]
 then
    additionallogMsg="File $sqlQueryFile doesn't exist!"
-   updateStatusLogFileOnFailure $outputDir $statusFile  $logFile $additionallogMsg
+   updateStatusLogFileOnFailure $outputDir $statusFile  $logFile "$additionallogMsg"
    exit 1
 fi
 
 if [ ! -r $sqlQueryFile ]
 then
    additionallogMsg="$sqlQueryFile is not readable"
-   updateStatusLogFileOnFailure $outputDir $statusFile  $logFile $additionallogMsg
+   updateStatusLogFileOnFailure $outputDir $statusFile  $logFile "$additionallogMsg"
    exit 1
 fi 
 
@@ -122,6 +122,13 @@ else
   mongoDashboardDBColl="ScheduledJob"
 fi
 
+
+# Setting up the Log4J Log Files
+logFilePath=$outputDir"\/log.txt"
+debugLogFilePath=$outputDir"\/debugLog.txt"
+
+sed -e "s|\${reportLogFile}|$logFilePath|g" -e "s|\${debugLogFile}|$debugLogFilePath|g" log4j_template.properties > log4j.properties
+
 #java -cp $CLASSPATH HiveExecutor $jobID $outputDataDir $hiveUser $hiveHost $dbName $inputQueryFile $mongoDBhost $mongoDBport $dashboardDB $dashboardDBCollection
 java -cp $CLASSPATH HiveExecutor $jobID $jobName $outputDir $hiveUser $hiveHost $hiveDBName $sqlQueryFile $mongoDBhost $mongoDBport $mongoDashboardDB $mongoDashboardDBColl
 
@@ -131,7 +138,7 @@ exitStatus=$?
 # If not 0, update the status file of the JobID
 if [ $exitStatus -ne 0 ]; then
   additionallogMsg="Check if Hive server is up."  
-  updateStatusLogFileOnFailure $outputDir $statusFile  $logFile $additionallogMsg
+  updateStatusLogFileOnFailure $outputDir $statusFile  $logFile "$additionallogMsg"
 fi
 
 # # Email Alert
