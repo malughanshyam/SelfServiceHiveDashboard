@@ -1,6 +1,7 @@
+// Configure Logger for the Application
 var winston = require('winston');
 
-
+// Specify Colors
 winston.addColors({
     debug: 'green',
     info:  'cyan',

@@ -1,3 +1,5 @@
+// Handler functions common for the AdHoc Jobs and Scheduled Jobs Module
+
 // Load the Modules
 var fs = require('fs-extra');
 var sys = require('sys')

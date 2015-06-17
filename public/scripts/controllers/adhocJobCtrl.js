@@ -10,6 +10,7 @@ angular.module('dashboardApp')
     $scope.recentAdHocJobs = [];
     $scope.displayedCollection = [];
 
+    // Function to Activate a Tab
     activateTab = function(tab) {
         $('.nav-tabs a[href="#' + tab + '"]').tab('show');
     };
@@ -17,19 +18,12 @@ angular.module('dashboardApp')
     // Clone the New AdHoc Tab to use when Create New Job Button is clicked.
     var newAdHocTabClone = $("#newAdHocTab").clone();
 
+    // Initialize New Job Tab
     $scope.initializeNewJobTab = function() {
         // Variables to store the data for Bar and Line charts to prevent recomputing the already populated charts
         $scope.barChartComputedData ='';
         $scope.lineChartComputedData= '';
 
-/*        // disable Status tab
-        $("#navLinkStatus").addClass('disabled');
-        $("#navLinkStatus").find('a').removeAttr("data-toggle");
-
-        // disable Result tab
-        $("#navLinkResult").addClass('disabled');
-        $("#navLinkResult").find('a').removeAttr("data-toggle");
-*/
         // Cosmetic settings for the Steps - Flow
         $("#flowStepCreate").removeClass('complete');
         $("#flowStepCreate").addClass('disabled');
@@ -62,49 +56,30 @@ angular.module('dashboardApp')
         $scope.submittedJobStatus = 'JOB_NOT_STARTED'
         $scope.showJobLog = false
         $scope.jobResult = ''
+
+        // Flag to Show Create New Job Button
         $scope.showCreateNewJobBtn = false
 
         // compile the element
         $compile($('#modelViewResults'))($scope);
 
-        console.log("AdHoc Tab Initialized")
-
-
-/*        $("#jobStatusTab").removeClass('active');
-        $("#jobResultTab").removeClass('active');
-        $("#newJobTab").addClass('active');
-        $('#newAdHocTab').addClass('active');   
-        activateTab("#newJobTab");
-*/
-
     }
 
 
+    // Function to Reset New Job Tab
     $scope.resetNewJobTab = function() {
 
         $scope.initializeNewJobTab();
-
+        
+        // Replace the New AdHoc Tab with a clone of the backup created earlier
         $("#newAdHocTab").replaceWith(newAdHocTabClone.clone());
-
         $compile($('#newAdHocTab'))($scope);
-        //activateTab("newAdHocTab");
         $('#newAdHocTab').addClass('active');
-        //$scope.flashAlertCheckRecentJobs(); -- Now, directly called from HTML on clicking New Job Button
-        console.log("AdHoc Tab Reset");
-
+        
     }
 
-    /*    $("#navLinkResult").removeClass('disabled');
-        $("#navLinkResult").find('a').attr("data-toggle", "tab");
-        $("#navLinkResult").click();
-
-        activateTab('jobResult');*/
-
-
-
+    // Submit New AdHoc Job to server
     $scope.submitJob = function() {
-
-        console.log("SubmitJob Clicked");
 
         $http.post('/submitNewAdHocJob', $scope.formData)
             .success(function(data) {
@@ -112,11 +87,8 @@ angular.module('dashboardApp')
                 console.log("FormData.jobID: ");
                 console.log($scope.formData.jobID);
                 $scope.activateCurrentJobStatusTab()
-
             })
             .error(function(err) {
-                console.log("Failed")
-                console.log(err)
                 $scope.formData.jobID = err.JobID;
                 $scope.submittedJobStatus = 'FAILED';
                 $scope.activateCurrentJobStatusTab()
@@ -126,7 +98,7 @@ angular.module('dashboardApp')
 
     }
 
-
+    // Flash an Alert Message and Reset New Job Tab
     $scope.flashAlertAndResetNewJobTab = function(){
         $scope.resetNewJobTab();
         var type = 'info';
@@ -134,12 +106,12 @@ angular.module('dashboardApp')
         dashboardAungularService.flashImpAlert(type, message, 4000);
     }
 
+    // Activate Job Status Tab for the Current Job
     $scope.activateCurrentJobStatusTab = function() {
-
-        // 1 second = 1000 milliseconds
+        // Create a Timer
         $scope.refreshInterval = setInterval(function() {
             refreshTimer()
-        }, 2000); // milliseconds
+        }, 2000); // 1 second = 1000 milliseconds
 
         function refreshTimer() {
             $scope.refreshJobStatus();
@@ -164,40 +136,20 @@ angular.module('dashboardApp')
         });
     }
 
+    // Refresh Job Status
     $scope.refreshJobStatus = function() {
 
         console.log("Refreshing Job Status");
-        $scope.checkStatusURL = '/jobStatus/' + $scope.formData.jobID
+        $scope.checkStatusURL = '/jobStatus/' + $scope.formData.jobID;
 
         $http.get($scope.checkStatusURL, $scope.formData)
             .success(function(data) {
-                var newStatus = data.trim()
-                    /* if ($scope.submittedJobStatus != newStatus){
-                         $scope.updateJobStatus($scope.formData.jobID, newStatus);
-                     }*/
-                $scope.submittedJobStatus = newStatus;
-
+                $scope.submittedJobStatus = data.trim();
             })
             .error(function(err) {
-                // $scope.submittedJobStatus='FAILED'
                 $scope.submittedJobStatus = 'FAILED';
-                $scope.output = err
-                console.log(err)
-
+                $scope.output = err;
             });
-
-        /*
-        //
-        $("#navLinkStatus").removeClass('disabled');
-        $("#navLinkStatus").find('a').attr("data-toggle", "tab");
-        $("#navLinkStatus").click();
-
-        activateTab('jobStatusTab');
-
-        // Disable Create New Job 
-        $("#navLinkNewJob").addClass('disabled');
-        $("#navLinkNewJob").find('a').removeAttr("data-toggle");*/
-
 
         if ($scope.submittedJobStatus == 'JOB_SUCCESSFUL' || $scope.submittedJobStatus == 'JOB_FAILED') {
             clearInterval($scope.refreshInterval)
@@ -209,33 +161,11 @@ angular.module('dashboardApp')
 
         }
 
-        /*// Update the JobID with the new Status
-        $scope.updateJobStatus = function(jobID, newJobStatus){
-
-            console.log("Refreshing Job Status");
-            var updateStatusURL = '/jobStatus/' + jobID
-
-            var reqBody = {
-                'Status' : newJobStatus
-            } 
-
-            $http.put(updateStatusURL, reqBody)
-                .success(function(data) {
-                    console.log("New Job Status Updated")
-                })
-                .error(function(err) {
-                    // $scope.submittedJobStatus='FAILED'
-                    console.log("New Job Status Failed")
-                    console.log(err)
-                });
-
-
-        }*/
-
     }
 
+    // Populate Recent AdHoc Jobs Table
     $scope.populateRecentAdHocJobTable = function() {
-        var getRecentAdHocJobs = '/adHocJob'
+        var getRecentAdHocJobs = '/adHocJob';
 
         $http.get(getRecentAdHocJobs)
             .success(function(data) {
@@ -245,24 +175,18 @@ angular.module('dashboardApp')
                 $scope.displayedCollection = [].concat($scope.recentAdHocJobs);
             })
             .error(function(err) {
-                // $scope.submittedJobStatus='FAILED'
                 $scope.jobLog = 'Fetching RecentAdHocJobs Failed :' + err;
-                console.log(err)
-
             });
-        
     }
 
-    // Model - View Job Log
+    // View Job Log Modal
     $scope.viewAdHocJobLogModal = function(adHocJob) {
-        console.log("Clicked viewLogModal");
-        $('#modalViewAdHocLog').modal('show')
 
+        $('#modalViewAdHocLog').modal('show');
         $("#modalViewAdHocLog").find('#JobName').text(adHocJob.JobName);
         $("#modalViewAdHocLog").find('#JobStatus').text("(" + adHocJob.JobRunStatus + ")");
 
         $scope.getJobLog(adHocJob.JobID, function() {
-            console.log("In callback");
             $scope.jobLogSelected = $scope.jobLogRetrieved;
             $("#modalViewAdHocLog").find('#jobLogPre').text($scope.jobLogRetrieved);
 
@@ -270,15 +194,14 @@ angular.module('dashboardApp')
 
     }
 
+    // View Job Results Modal
     $scope.viewAdHocJobResultsModal = function(adHocJob) {
 
         $scope.resetNewJobTab();
         $('#newAdHocTab').removeClass('active');
-
-        $('#modalViewAdHocResults').modal('show')
+        $('#modalViewAdHocResults').modal('show');
 
         jobResultTabContent = $("#jobResultTab").html();
-
         $("#modalViewAdHocResults").find('#JobName').text(adHocJob.JobName);
         $("#modalViewAdHocResults").find('.modal-body').html(jobResultTabContent);
         // $("#modelViewResults").find('#JobID').text("(" + adHocJob.JobID + ")");
@@ -289,32 +212,30 @@ angular.module('dashboardApp')
         $("#modalViewAdHocResults").find('#submittedHiveQuery').text(adHocJob.SQLQuery);
         $("#modalViewAdHocResults").find('#resultPanelTitle').text(adHocJob.JobName);
 
-
         $('#downloadBarChartBtnId').addClass('disabled');
         $('#downloadLineChartBtnId').addClass('disabled');
 
         $scope.formData.jobID = adHocJob.JobID;
         $scope.computeJobResults(adHocJob.JobID);
-
        
+        // Trigger actions on the Modal Close/Hide Event
         $('#modalViewAdHocResults').on('hidden.bs.modal', function() {
             $scope.barChartComputedData = null;
             $scope.lineChartComputedData = null;
-            $("#modalViewAdHocResults").find('.modal-body').html(" ");
-            
-        })
+            $("#modalViewAdHocResults").find('.modal-body').html(" "); 
+        });
 
     }
 
+    // View the Current Job Log
     $scope.viewCurrentJobLog = function() {
         $scope.showJobLog = true
-        console.log("View Job Log");
         $scope.getJobLog($scope.formData.jobID, function() {
             $scope.jobLog = $scope.jobLogRetrieved;
-        })
-
+        });
     }
 
+    // Get the Current Job Log
     $scope.getJobLog = function(jobID, callBack) {
 
         $scope.checkLogURL = '/adHocJobLog/' + jobID
@@ -322,21 +243,18 @@ angular.module('dashboardApp')
         $http.get($scope.checkLogURL, $scope.formData)
             .success(function(data) {
                 $scope.jobLogRetrieved = data;
-                console.log("Successfully retrieved JobLog");
                 callBack();
-
             })
             .error(function(err) {
                 $scope.jobLogRetrieved = "Fetching Log Failed" + err
-                console.log("Fetching Log Failed");
                 callBack();
             });
-
-
     }
 
+    // View Job Result
     $scope.viewJobResult = function() {
 
+        // If the Job Status is Not Successful, return
         if ($scope.submittedJobStatus != 'JOB_SUCCESSFUL') {
             return false;
         }
@@ -357,6 +275,7 @@ angular.module('dashboardApp')
         $("#flowStepResult").addClass('complete');
     }
 
+    // Compute the Job Results for the given JobID
     $scope.computeJobResults = function(jobID) {
 
         $scope.checkResultURL = '/adHocJobResultFile/' + jobID
@@ -366,17 +285,14 @@ angular.module('dashboardApp')
                 $scope.jobResult = data;
                 dashboardAungularService.createResultTable('#jobResultTable', $scope.jobResult);
             })
-
-        .error(function(err) {
-            // $scope.submittedJobStatus='FAILED'
-            $scope.jobResult = 'Fetching Result Failed :' + err;
-            console.log(err)
-        });
+            .error(function(err) {
+                $scope.jobResult = 'Fetching Result Failed :' + err;
+            });
     }
 
-
+    // Create Bar Chart
     $scope.createBarChart = function() {
-        console.log("creating bar")
+
         // Check against the locally stored chart data to prevent duplicate computation/drawing of the charts
         if ($scope.barChartComputedData == $scope.jobResult) {
             return true;
@@ -394,10 +310,11 @@ angular.module('dashboardApp')
         $('#createBarChartBtn').button('reset');
 
         // Store Locally to avoid Recomputing the same chart
-        $scope.barChartComputedData = $scope.jobResult
+        $scope.barChartComputedData = $scope.jobResult;
 
     }
 
+    // Create Line Chart
     $scope.createLineChart = function() {
 
         // Check against the locally stored chart data to prevent duplicate computation/drawing of the charts
@@ -417,14 +334,16 @@ angular.module('dashboardApp')
         $('#createLineChartBtn').button('reset');
 
         // Store Locally to avoid Recomputing the same chart
-        $scope.lineChartComputedData = $scope.jobResult
+        $scope.lineChartComputedData = $scope.jobResult;
 
     }
 
+    // Save DIV as Picture
     $scope.saveDivAsPicture = function() {
-        dashboardAungularService.saveAsPicture($("#resultPanel"))
+        dashboardAungularService.saveAsPicture($("#resultPanel"));
     }
 
+    // Edit and Resubmit the AdHoc Job
     $scope.editAndResubmitJob = function(adHocJob) {
         $('#recentAdHocTab').removeClass('active');
         $('#navRecentAdHoc').removeClass('active');
@@ -434,13 +353,13 @@ angular.module('dashboardApp')
         $scope.formData.jobName = adHocJob.JobName;
     }
 
+    // Resubmit Job
     $scope.resubmitJob = function(adHocJob) {
         $scope.resetNewJobTab();
         $scope.formData.hiveQuery = adHocJob.SQLQuery;
         $scope.formData.jobName = adHocJob.JobName;
         $scope.submitJob();
         
-        console.log("Job Resubmitted")
         var type = 'info';
         var message = "Job Resubmitted! Hit the Refresh Button to check the execution progress";
         dashboardAungularService.flashImpAlert(type, message, 8000);
@@ -450,31 +369,32 @@ angular.module('dashboardApp')
         }, 1000);
     }
 
+    // Download Result File
     $scope.downloadAdHocJobResultFile = function() {
 
         var downloadAdHocJobResultFile = '/downloadAdHocJobResultFile/' + $scope.formData.jobID;
-        //window.open(downloadAdHocJobResultFile);
-        dashboardAungularService.downloadFile(downloadAdHocJobResultFile);
-        console.log("Downloaded Result File for JobID: " + $scope.formData.jobID);
+        window.open(downloadAdHocJobResultFile);
     }
 
+    // Flag for Show Popup while displaying substring of the Query in the Recent Jobs Table 
     $scope.showPopupFlag = function(text, limit){
         if (text.length > limit)
             return true;
         return false;
     }
 
+    // Function to convert the ISO Datestring to Readable Format for displaying in the Recent Jobs Table
     $scope.parseIsoDatetime = function(dateStr){
         return dashboardAungularService.parseIsoDatetime(dateStr); 
     }
 
-
+    // Reset the Form/Job Details
     $scope.reset = function() {
         $scope.formData = {}
         $scope.user = angular.copy($scope.master);
     };
 
-
+    // Initiate Scheduling an AdHoc Job
     $scope.initiateScheduling = function(adHocJob){
         dashboardAungularService.initiateScheduling(adHocJob);
         $('#navRecentAdHoc').removeClass('active');
@@ -490,14 +410,9 @@ angular.module('dashboardApp')
         $('#createSchedJobStatusTab').removeClass('active');
         $('#createSchedJobTab').addClass('active'); 
         
-        //$('#copyDetailsFromAdHocJobBtn').trigger("click");
-
-        // $('#createSchedJobTab').find('#schedJobName').val(adHocJob.JobName);
-        // $('#createSchedJobTab').find('#schedhiveQuery').val(adHocJob.SQLQuery);
-
+        // Broadcast an event with the adHocJob details
         $rootScope.$broadcast('copyDetailsFromAdHocJob', adHocJob);
-        console.log("Send adHocJobDetails to Scheduler Tab");
-
+        
     }
 
     $scope.reset();

@@ -1,3 +1,0 @@
-select * from nyse_stocks 
-where stock_symbol = 'IBM' 
-limit 5;

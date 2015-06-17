@@ -1,6 +1,18 @@
 /**
- * @author gmalu
+ **********************************************************************************************************************************************************************
+ * @author gmalu (Ghanshyam Malu)
+ * June 17, 2015
+ * 
+ * Hive Executor Java Client without MongoDB
+ * Executes the given Hive Query File on the Hive Server and exports the results to the Output File
  *
+ * Usage : java HiveExecutor <jobID> <outputDataDir> <hiveUserName> <hiveHost> <dbName> <hiveQueryFile>
+ *
+ * ------------------------------------------------------------------------------
+ * NOTE : This program is NOT USED by the Self Service Hive Dashboard Website.   	
+ * ------------------------------------------------------------------------------
+ *
+ ********************************************************************************************************************************************************************** 
  */
 
 import java.sql.SQLException;
@@ -21,7 +33,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 
-public class HiveExecutor {
+public class HiveExecutorWithoutMongoDB {
 	private static String driverName = "org.apache.hive.jdbc.HiveDriver";
 	private String jobID;
 	private String hiveHost;
@@ -48,7 +60,7 @@ public class HiveExecutor {
  
 	private JobStatus jobStatus;
 	
-	HiveExecutor (String [] args) throws IOException{	
+	HiveExecutorWithoutMongoDB (String [] args) throws IOException{	
 		this.jobID = args[0];
 		//this.outputDir = "/Users/gmalu/Documents/Project/HiveDashboard/data/"+this.jobID;
 		//this.outputDataDir = args[1];
@@ -79,39 +91,7 @@ public class HiveExecutor {
 				
 	}
 	
-	public static void main(String[] args)  throws SQLException, IOException {
-		
-		if (args.length != 6) {
-			usage();
-		}
 
-		 
-
-		HiveExecutor hiveExecObj = new HiveExecutor(args);
-		
-		hiveExecObj.updateStatusFile();
-		
-		hiveExecObj.printMetaData();
-		
-		hiveExecObj.establishConnection();
-		String sql = hiveExecObj.readFile(hiveExecObj.queryFilePath);
-		
-		hiveExecObj.createOutputDirectory();
-		
-		hiveExecObj.jobStatus = JobStatus.IN_PROGRESS;
-		hiveExecObj.updateStatusFile();
-		
-		hiveExecObj.executeQuery(sql);
-				
-		hiveExecObj.exportResult();
-	
-		hiveExecObj.updateStatusFile();
-
-		//hiveExecObj.copyQueryFileToOuputDir();
-
-		hiveExecObj.cleanUp();
-				
-	}
 
 	private static void usage() {
 		System.err.println("Usage : java " + HiveExecutor.class.getName()
@@ -261,15 +241,36 @@ public class HiveExecutor {
 	 }
 
 	  
-	private void printColHeaders() throws SQLException {
-		ResultSetMetaData rsmd;
-		while (this.res.next()) {
-			rsmd = this.res.getMetaData();
-			int numOfCols = rsmd.getColumnCount();
-			for (int i = 1; i <= numOfCols; i++) {
-				System.out.print(rsmd.getColumnName(i) + "\t");
-			}
-	
+
+	public static void main(String[] args)  throws SQLException, IOException {
+		
+		if (args.length != 6) {
+			usage();
 		}
+
+		HiveExecutorWithoutMongoDB hiveExecObj = new HiveExecutorWithoutMongoDB(args);
+		
+		hiveExecObj.updateStatusFile();
+		
+		hiveExecObj.printMetaData();
+		
+		hiveExecObj.establishConnection();
+		String sql = hiveExecObj.readFile(hiveExecObj.queryFilePath);
+		
+		hiveExecObj.createOutputDirectory();
+		
+		hiveExecObj.jobStatus = JobStatus.IN_PROGRESS;
+		hiveExecObj.updateStatusFile();
+		
+		hiveExecObj.executeQuery(sql);
+				
+		hiveExecObj.exportResult();
+	
+		hiveExecObj.updateStatusFile();
+
+		//hiveExecObj.copyQueryFileToOuputDir();
+
+		hiveExecObj.cleanUp();
+				
 	}
 }

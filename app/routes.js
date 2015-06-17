@@ -36,7 +36,9 @@ module.exports = function(app){
     app.get('/downloadAdHocJobResultFile/:JobID', commonHandler.downloadAdHocJobResultFile);
 
 
-    /******* Scheduled Job Routes ********/
+    /****************************************/
+    /******* Scheduled Job Routes ***********/
+    /****************************************/
 
     // Get All Scheduled Jobs
     app.get('/schedJob', schedJobHandler.getAllSchedJobs);

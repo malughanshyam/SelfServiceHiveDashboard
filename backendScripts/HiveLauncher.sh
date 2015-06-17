@@ -1,17 +1,27 @@
 #!/bin/bash
-##!/bin/sh - Use it based on system
+##############################################################################################
+## 
+## HiveLauncher.sh
 ##
-## Usage    : 
-##      
-##   Scheduled Job :-->
-##   HiveLauncher.sh SCHED <JobID> <SQLQueryFile> <OutputDir> <NotifyFlag-Y/N> [NotifyEmail]
-##   
-##   AdHocJob Job :-->"
-##   HiveLauncher.sh ADHOC <JobID> <SQLQueryFile> <OutputDir>
+## Usage    :  
+##            Scheduled Job :-->
+##            HiveLauncher.sh SCHED <JobID> <SQLQueryFile> <OutputDir> <NotifyFlag-Y/N> [NotifyEmail]
+##            
+##            AdHocJob Job :-->"
+##            HiveLauncher.sh ADHOC <JobID> <SQLQueryFile> <OutputDir>
 ##
-## Purpose  : 
+## Purpose  : Launches the Hive Executor Java Client to execute the given Query File
+##            Maintains the Job Status and Job Log files
+##            Sends email alerts based on the NotifyFlag  
 ##
+##  Author  : Ghanshhyam Malu
+##            gmalu@ebay.com
 ##
+##  Created : June 17, 2015
+##
+##  Modified : 
+##  
+##############################################################################################
 
 # Usage
 usage (){
@@ -68,6 +78,7 @@ if [ "$1" == "SCHED" ]; then
   fi
 fi
 
+# Initialize the parameters
 jobType=$1
 jobID=$2
 jobName=$3
@@ -81,6 +92,7 @@ statusFile='status.txt'
 logFile='log.log'
 debugLogFile='debug.log'
 
+# Validate if Query file exists
 if [ ! -f $sqlQueryFile ]
 then
    additionallogMsg="File $sqlQueryFile doesn't exist!"
@@ -88,13 +100,13 @@ then
    exit 1
 fi
 
+# Validate if Query file is readable
 if [ ! -r $sqlQueryFile ]
 then
    additionallogMsg="$sqlQueryFile is not readable"
    updateStatusLogFileOnFailure $outputDir $statusFile  $logFile "$additionallogMsg"
    exit 1
 fi 
-
 
 # Change the Current Directory to Hive Script Directory
 cd /Users/gmalu/Documents/Project/SelfServiceHiveDashboard/backendScripts
@@ -114,34 +126,37 @@ done
 mongoDBhost="localhost"
 mongoDBport="27017"
 
+# MongoDB Database
 mongoDashboardDB="SelfServiceHiveDashboard"
 
+# MongoDB Collection
 if [ $jobType == "ADHOC" ]; then
   mongoDashboardDBColl="AdHocJob"
 else
   mongoDashboardDBColl="ScheduledJob"
 fi
 
-
 # Setting up the Log4J Log Files
 logFilePath=$outputDir"\/"$logFile
 debugLogFilePath=$outputDir"\/"$debugLogFile
 
+# Create a new JobID specific log4j.properties file using the log4j_template.properties template file
 sed -e "s|\${reportLogFile}|$logFilePath|g" -e "s|\${debugLogFile}|$debugLogFilePath|g" log4j_template.properties > log4j.properties
 
-#java -cp $CLASSPATH HiveExecutor $jobID $outputDataDir $hiveUser $hiveHost $dbName $inputQueryFile $mongoDBhost $mongoDBport $dashboardDB $dashboardDBCollection
+# Launch the HiveExecutor Java program with the appropriate parameters
 java -cp $CLASSPATH HiveExecutor $jobID $jobName $outputDir $hiveUser $hiveHost $hiveDBName $sqlQueryFile $mongoDBhost $mongoDBport $mongoDashboardDB $mongoDashboardDBColl
 
 # Check the exitStatus
 exitStatus=$?
 
-# If not 0, update the status file of the JobID
+# If not 0, update the Status and Log file of the JobIDs
 if [ $exitStatus -ne 0 ]; then
-  additionallogMsg="Check if Hive server is up."  
+  additionallogMsg="Check if Hive server is up."
   updateStatusLogFileOnFailure $outputDir $statusFile  $logFile "$additionallogMsg"
 fi
 
-# # Email Alert
+# Send Email
+# Check Notify Flag to proceed. If "N", then exit gracefully
 # if [ $notifyFlag == 'N']; then
 #   exit 0
 

@@ -404,12 +404,8 @@ angular.module('dashboardApp')
 
 
     $scope.downloadSchedJobResultFile = function() {
-
         var downloadSchedJobResultFile = '/downloadSchedJobResultFile/' + $scope.schedJob.jobID;
-       // window.open(downloadSchedJobResultFile);
-        dashboardAungularService.downloadFile(downloadSchedJobResultFile);
-        console.log("Downloaded Result File for JobID: " + $scope.schedJob.jobID);
-        return true;
+        window.open(downloadSchedJobResultFile);
     }
 
     $scope.$on('copyDetailsFromAdHocJob', function(event, adHocJobDetails) {

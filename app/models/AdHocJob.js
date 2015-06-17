@@ -1,4 +1,4 @@
-// Mongoose Model/Schema for AdHocJob
+// Mongoose Model/Schema for AdHocJob Collection
 var mongoose = require('mongoose');
 
 var schema = mongoose.Schema({

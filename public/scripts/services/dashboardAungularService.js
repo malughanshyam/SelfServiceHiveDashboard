@@ -167,10 +167,6 @@ angular.module('dashboardApp')
 
   }
 
-  var downloadFile = function(url) {
-    window.open(url);
-  }
-
   var initiateScheduling = function(details){
     scheduleNewJobDetails = details;
   }
@@ -207,7 +203,6 @@ angular.module('dashboardApp')
     createLineChart   : createLineChart,
     saveAsPicture     : saveAsPicture,
     parseIsoDatetime  : parseIsoDatetime,
-    downloadFile      : downloadFile,
     initiateScheduling: initiateScheduling,
     getJobDetailsForScheduling : getJobDetailsForScheduling,
     flashImpAlert     : flashImpAlert

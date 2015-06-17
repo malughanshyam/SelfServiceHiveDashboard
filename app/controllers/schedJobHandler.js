@@ -1,3 +1,5 @@
+// Handler functions for the Scheduled Jobs Module
+
 // Load the Modules
 var fs = require('fs-extra');
 var sys = require('sys')
@@ -232,7 +234,7 @@ exports.submitNewScheduledJob = function(req, res) {
             args += " " + "N"
         }
 
-        // Log File to store the CRON output
+        // Appending CRON Logs to the JobID Log File.
         var cronlogFile = " >> " + normalizePath + jobDir + "/log.log 2>&1"
 
         // Finalized command to be run by CRON
