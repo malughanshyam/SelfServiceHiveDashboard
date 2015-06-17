@@ -262,13 +262,13 @@
                     <!-- New Job Tab Content Begins-->
                     <div id="newAdHocTab" class="tab-pane fade in ">
 
-                        <button type="button" ng-click="flashAlertAndResetNewJobTab()" class="btn btn-sm btn-success pull-right" ng-show="showCreateNewJobBtn">
+                        <button type="button" ng-click="flashAlertAndResetNewJobTab()" class="btn btn-sm btn-success pull-right col-md-offset-2 col-lg-offset-1" ng-show="showCreateNewJobBtn">
                             <i class="fa fa-plus">
                             </i> New Job
                         </button>
 
                         <!-- Create New Job Steps Flow Begins-->
-                        <div class="stepsFlow ">
+                        <div class="stepsFlow col-md-offset-2 col-lg-offset-1 ">
                             <div class="row smpl-step" style="border-bottom: 0; min-width: 500px;">
 
                                 <div class="col-xs-3 smpl-step-step disabled" id="flowStepCreate">
@@ -315,34 +315,34 @@
                         </ul>
 
                         <!-- Tab Conent under Create New Job begins-->
-                        <div class="tab-content">
+                        <div class="tab-content col-md-offset-2 col-lg-offset-1 col-lg-9" >
 
                             <!-- Submit Job Tab Content Begins  -->
                             <div id="newJobTab" class="tab-pane fade in active">
-                                <form class="form-horizontal">
+                                <form class="form-horizontal" ng-submit="submitJob()">
 
                                     <!-- <div class="input-group">
                                       <span class="input-group-addon" id="basic-addon1">Job Name</span>
                                       <input type="text" class="form-control" placeholder="Username" aria-describedby="basic-addon1">
                                       <textarea class="form-control" id="hiveQuery" ng-model="formData.hiveQuery" rows="3" placeholder="Enter your query here..."></textarea>
                                     </div> -->
-
+                                    <br>
                                     <div class="form-group">
                                         <label for="jobName" class="col-sm-2 control-label">Job Name</label>
-                                        <div class="col-sm-10">
-                                            <input type="text" class="form-control" id="jobName" placeholder="Job Name" ng-model="formData.jobName" required>
+                                        <div class="col-sm-10 col-lg-8">
+                                            <input type="text" class="form-control" id="jobName" placeholder="Job Name" ng-model="formData.jobName" maxlength="25" required>
                                         </div>
                                     </div>
                                     <div class="form-group">
                                         <label for="hiveQuery" class="col-sm-2 control-label">Hive Query</label>
-                                        <div class="col-sm-10">
+                                        <div class="col-sm-10 col-lg-8">
                                             <textarea class="form-control" id="hiveQuery" ng-model="formData.hiveQuery" rows="3" placeholder="Enter your query here..." required></textarea>
                                         </div>
                                     </div>
                                     <div class="form-group">
-                                        <div class="col-sm-offset-2 col-sm-10">
-                                            <button ng-click="submitJob()" type="submit" class="btn btn-primary">Submit Query</button>
-                                            <button ng-click="reset()" class="btn btn-default">Clear</button>
+                                        <div class="col-sm-offset-2 col-sm-10 col-lg-6">
+                                            <button type="submit" class="btn btn-primary">Submit Query</button>
+                                            <button type="button" ng-click="reset()" class="btn btn-default">Clear</button>
                                         </div>
                                     </div>
                                 </form>
@@ -781,12 +781,14 @@
 
                             <!-- Submit Job Tab Content Begins  -->
                             <div id="createSchedJobTab" class="tab-pane fade in active">
-                                <form class="form-horizontal" ng-submit="scheduleJob()">
+                                
+                                <br><br>
+                                <form class="form-horizontal col-md-offset-2 col-lg-offset-2" ng-submit="scheduleJob()" >
 
                                     <div class="form-group">
                                         <label for="schedJobName" class="col-sm-2 control-label">Job Name</label>
                                         <div class="col-sm-10 col-lg-6">
-                                            <input type="text" class="form-control" id="schedJobName" placeholder="Job Name" ng-model="schedJob.schedJobName" required>
+                                            <input type="text" class="form-control" id="schedJobName" placeholder="Job Name" ng-model="schedJob.schedJobName" maxlength="25" required>
                                         </div>
                                     </div>
                                     <div class="form-group">
