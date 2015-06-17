@@ -169,7 +169,7 @@ exports.submitNewAdHocJob = function(req, res) {
         // ##   HiveLauncher.sh ADHOC <JobID> <SQLQueryFile> <OutputDir>
         // ##
 
-        args = ["ADHOC", jobID, normalizePath + queryFile, normalizePath + dir]
+        args = ["ADHOC", jobID, jobName, normalizePath + queryFile, normalizePath + dir]
 
         var options = {
             cwd: execDirPath,

@@ -224,7 +224,7 @@ exports.submitNewScheduledJob = function(req, res) {
             execFileName = './HiveLauncher.sh',
             normalizePath = "../"
     
-        var args = "SCHED" + " " + jobID + " " + normalizePath  + queryFile  + " " + normalizePath + jobDir 
+        var args = "SCHED" + " " + jobID + " " + schedJobName + " " + normalizePath  + queryFile  + " " + normalizePath + jobDir 
 
         if (notifyEmailFlag == true){
             args += " " + "Y" + " " + notifyEmailID;

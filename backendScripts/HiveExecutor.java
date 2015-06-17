@@ -24,17 +24,16 @@ import java.nio.file.StandardCopyOption;
 public class HiveExecutor {
 	private static String driverName = "org.apache.hive.jdbc.HiveDriver";
 	private String jobID;
+	private String jobName;
 	private String hiveHost;
 	private String hiveDBName;
 	private String hiveUser;
 	private String queryFilePath;
 	private Connection con;
 	private Statement stmt;
-//	private String jobStatus;
 	private String statusFilePath;
 	private String logFilePath;
 	private String outputDir ;
-	private String outputDataDir;
 	private String resultFilePath;
 	private ResultSet res;
 	private Exception occurredException;
@@ -51,14 +50,15 @@ public class HiveExecutor {
 	
 	HiveExecutor (String [] args) throws IOException{	
 		this.jobID = args[0];
+		this.jobName = args[1];
 		//this.outputDir = "/Users/gmalu/Documents/Project/HiveDashboard/data/"+this.jobID;
 		//this.outputDataDir = args[1];
 		//this.outputDir = this.outputDataDir +this.jobID;
-		this.outputDir = args[1];
-		this.hiveUser = args[2];
-		this.hiveHost = args[3];
-		this.hiveDBName = args[4];
-		this.queryFilePath = args[5];
+		this.outputDir = args[2];
+		this.hiveUser = args[3];
+		this.hiveHost = args[4];
+		this.hiveDBName = args[5];
+		this.queryFilePath = args[6];
 		this.resultFilePath = this.outputDir +"/result.txt";
 		this.statusFilePath = this.outputDir +"/status.txt";
 		this.logFilePath = this.outputDir +"/log.txt";
@@ -67,14 +67,14 @@ public class HiveExecutor {
 		this.writerLog = new PrintWriter(new FileWriter(this.logFilePath, true)); 
 		
 		// Establish MongoDB Connection 
-		// args[6] = mongoHostAddress = "localhost"
-		// args[7] = port = "27017"
-		// args[8] = dashboardDB = "SelfServiceHiveDashboard"
-		// args[9] = dashboardDBCollection = "AdHocJob"
+		// args[7] = mongoHostAddress = "localhost"
+		// args[8] = port = "27017"
+		// args[9] = dashboardDB = "SelfServiceHiveDashboard"
+		// args[10] = dashboardDBCollection = "AdHocJob"
 		
 		try {
-			this.mongoExecutor = new MongoExecutor(args[6], Integer.parseInt(args[7]));
-			this.mongoExecutor.connectDBCollection(args[8], args[9] );		
+			this.mongoExecutor = new MongoExecutor(args[7], Integer.parseInt(args[8]));
+			this.mongoExecutor.connectDBCollection(args[9], args[10] );		
 		} catch (Exception e) {
 			e.printStackTrace();			
 			System.exit(1);
@@ -85,7 +85,7 @@ public class HiveExecutor {
 	private void printMetaData(){
 	
 		this.writerLog.println("Job ID: " + this.jobID);
-		this.writerLog.println("outputDataDir: "+ this.outputDataDir);
+		this.writerLog.println("Job Name: " + this.jobName);
 		this.writerLog.println("outputDir: "+ this.outputDir);		
 		this.writerLog.println("queryFilePath: "+this.queryFilePath);
 		this.writerLog.println("resultFilePath: "+ this.resultFilePath);
@@ -251,7 +251,7 @@ public class HiveExecutor {
 	
 	public static void main(String[] args)  throws SQLException, IOException {
 		
-		if (args.length != 10) {
+		if (args.length != 11) {
 			usage();
 		}
 		HiveExecutor hiveExecObj = new HiveExecutor(args);

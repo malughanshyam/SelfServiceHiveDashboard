@@ -19,10 +19,10 @@ usage (){
     echo -e "\tUsage"
     echo "-------------------------------------------"
     echo "Scheduled Job :-->"
-    echo "$0 SCHED <JobID> <SQLQueryFile> <OutputDir> <NotifyFlag-Y/N> [NotifyEmail]"
+    echo "$0 SCHED <JobID> <JobName> <SQLQueryFile> <OutputDir> <NotifyFlag-Y/N> [NotifyEmail]"
     echo 
     echo "AdHocJob Job :-->"
-    echo "$0 ADHOC <JobID> <SQLQueryFile> <OutputDir>"
+    echo "$0 ADHOC <JobID> <JobName> <SQLQueryFile> <OutputDir>"
     echo
     exit 1
 }
@@ -42,7 +42,7 @@ if [ "$1" != "ADHOC" -a "$1" != "SCHED" ]; then
   usage
 fi
 
-if [ "$1" == "ADHOC" -a "$#" -ne 4 ]; then
+if [ "$1" == "ADHOC" -a "$#" -ne 5 ]; then
   usage
 fi
 
@@ -52,14 +52,14 @@ if [ "$1" == "SCHED" ]; then
     usage
   fi
   
-  if [ "$5" != "Y" -a "$5" != "N" ]; then
+  if [ "$6" != "Y" -a "$6" != "N" ]; then
     echo "Error: Invalid Notify Flag. Provide Y/N"
     echo 
     usage
   fi
 
-  if [ "$5" == "Y" ]; then
-    if [ -z "$6" ]; then
+  if [ "$6" == "Y" ]; then
+    if [ -z "$7" ]; then
       echo
       echo "Error: Invalid EmailID!"
       echo
@@ -70,26 +70,27 @@ fi
 
 jobType=$1
 jobID=$2
-sqlQueryFile=$3
-outputDir=$4
-notifyFlag=$5
-notifyEmail=$6
+jobName=$3
+sqlQueryFile=$4
+outputDir=$5
+notifyFlag=$6
+notifyEmail=$7
 
 # Output File Names
 statusFile='status.txt'
 logFile='log.txt'
 
 
-if [ ! -f $3 ]
+if [ ! -f $sqlQueryFile ]
 then
-   additionallogMsg="File $3 doesn't exist!"
+   additionallogMsg="File $sqlQueryFile doesn't exist!"
    updateStatusLogFileOnFailure $outputDir $statusFile  $logFile $additionallogMsg
    exit 1
 fi
 
-if [ ! -r $3 ]
+if [ ! -r $sqlQueryFile ]
 then
-   additionallogMsg="$3 is not readable"
+   additionallogMsg="$sqlQueryFile is not readable"
    updateStatusLogFileOnFailure $outputDir $statusFile  $logFile $additionallogMsg
    exit 1
 fi 
@@ -122,7 +123,7 @@ else
 fi
 
 #java -cp $CLASSPATH HiveExecutor $jobID $outputDataDir $hiveUser $hiveHost $dbName $inputQueryFile $mongoDBhost $mongoDBport $dashboardDB $dashboardDBCollection
-java -cp $CLASSPATH HiveExecutor $jobID $outputDir $hiveUser $hiveHost $hiveDBName $sqlQueryFile $mongoDBhost $mongoDBport $mongoDashboardDB $mongoDashboardDBColl
+java -cp $CLASSPATH HiveExecutor $jobID $jobName $outputDir $hiveUser $hiveHost $hiveDBName $sqlQueryFile $mongoDBhost $mongoDBport $mongoDashboardDB $mongoDashboardDBColl
 
 # Check the exitStatus
 exitStatus=$?
@@ -139,7 +140,7 @@ fi
 
 # outputDir="../data/ScheduledJobs/5580d9bffce9da2b65a7ca5f"
 # statusFile="status.txt"
-# jobName="TopTrends"
+# jobName="TopTrends" #$jobName
 # jobStatus=`cat $outputDir/$statusFile`
 # jobResultURL=`echo "http://localhost:8080/dashboard.html"`
 

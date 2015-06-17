@@ -491,6 +491,7 @@ angular.module('dashboardApp')
 
 
     $scope.reset = function() {
+        $scope.formData = {}
         $scope.user = angular.copy($scope.master);
     };
 
