@@ -1,6 +1,8 @@
 angular.module('dashboardApp')
   .service('dashboardAungularService', function() {
   
+  var scheduleNewJobDetails;
+
   var createResultTable = function(resultTableDivID, data) {
 
         $(function() {
@@ -169,13 +171,23 @@ angular.module('dashboardApp')
     window.open(url);
   }
 
+  var initiateScheduling = function(details){
+    scheduleNewJobDetails = details;
+  }
+
+  var getJobDetailsForScheduling = function(){
+    return scheduleNewJobDetails;
+  }
+
   return {
     createResultTable : createResultTable,
     createBarChart    : createBarChart,
     createLineChart   : createLineChart,
     saveAsPicture     : saveAsPicture,
     parseIsoDatetime  : parseIsoDatetime,
-    downloadFile      : downloadFile
+    downloadFile      : downloadFile,
+    initiateScheduling: initiateScheduling,
+    getJobDetailsForScheduling : getJobDetailsForScheduling
   };
 
 });

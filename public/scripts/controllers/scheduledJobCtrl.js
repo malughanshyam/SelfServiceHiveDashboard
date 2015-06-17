@@ -409,6 +409,13 @@ angular.module('dashboardApp')
         return true;
     }
 
+    $scope.$on('copyDetailsFromAdHocJob', function(event, adHocJobDetails) {
+        console.log("Received adHocJobDetails from AdHoc Tab");
+        $scope.schedJob.schedJobName = adHocJobDetails.JobName;
+        $scope.schedJob.schedQuery = adHocJobDetails.SQLQuery;
+    });
+
+
     $scope.activateNewScheduleJobTab();
  
     // delete these lines... only for testing

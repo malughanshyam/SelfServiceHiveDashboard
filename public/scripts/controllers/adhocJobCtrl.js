@@ -1,6 +1,6 @@
 angular.module('dashboardApp')
 
-    .controller('adHocJobCtrl', function($scope, $compile, $http, dashboardAungularService) {
+    .controller('adHocJobCtrl', function($scope, $compile, $http, dashboardAungularService, $rootScope) {
 
     // ---------------------------------
     // Controller For Scheduled Job
@@ -12,7 +12,6 @@ angular.module('dashboardApp')
 
     activateTab = function(tab) {
         $('.nav-tabs a[href="#' + tab + '"]').tab('show');
-
     };
 
     // Clone the New AdHoc Tab to use when Create New Job Button is clicked.
@@ -95,9 +94,6 @@ angular.module('dashboardApp')
 
     }
 
-
-
-
     /*    $("#navLinkResult").removeClass('disabled');
         $("#navLinkResult").find('a').attr("data-toggle", "tab");
         $("#navLinkResult").click();
@@ -137,7 +133,6 @@ angular.module('dashboardApp')
         // alertLinkTitle = "Recent Jobs";
         $scope.flashImpAlert(type, message, 4000);
     }
-
 
     $scope.flashImpAlert = function(type, message, displayTime, alertLink, alertLinkTitle) {
         if (['success', 'info', 'warning', 'danger'].indexOf(type) < 0) {
@@ -264,9 +259,7 @@ angular.module('dashboardApp')
 
         }*/
 
-
     }
-
 
     $scope.populateRecentAdHocJobTable = function() {
         var getRecentAdHocJobs = '/adHocJob'
@@ -428,9 +421,7 @@ angular.module('dashboardApp')
         // Store Locally to avoid Recomputing the same chart
         $scope.barChartComputedData = $scope.jobResult
 
-
     }
-
 
     $scope.createLineChart = function() {
 
@@ -453,16 +444,11 @@ angular.module('dashboardApp')
         // Store Locally to avoid Recomputing the same chart
         $scope.lineChartComputedData = $scope.jobResult
 
-
     }
-
-
 
     $scope.saveDivAsPicture = function() {
         dashboardAungularService.saveAsPicture($("#resultPanel"))
     }
-
-
 
     $scope.editAndResubmitJob = function(adHocJob) {
         $('#recentAdHocTab').removeClass('active');
@@ -498,7 +484,7 @@ angular.module('dashboardApp')
             return true;
         return false;
     }
-    
+
     $scope.parseIsoDatetime = function(dateStr){
         return dashboardAungularService.parseIsoDatetime(dateStr); 
     }
@@ -507,6 +493,32 @@ angular.module('dashboardApp')
     $scope.reset = function() {
         $scope.user = angular.copy($scope.master);
     };
+
+
+    $scope.initiateScheduling = function(adHocJob){
+        dashboardAungularService.initiateScheduling(adHocJob);
+        $('#navRecentAdHoc').removeClass('active');
+        $('#recentAdHocTab').removeClass('active');
+        $('#navAdHoc').removeClass('active'); 
+        $('#adHocTab').removeClass('active');      
+
+        $('#navScheduled').addClass('active');
+        $('#scheduledTab').addClass('active');
+        $('#navSchedJobList').removeClass('active');
+        $('#navSchedJobNew').addClass('active');
+        $('#newSchedJobTab').addClass('active'); 
+        $('#createSchedJobStatusTab').removeClass('active');
+        $('#createSchedJobTab').addClass('active'); 
+        
+        //$('#copyDetailsFromAdHocJobBtn').trigger("click");
+
+        // $('#createSchedJobTab').find('#schedJobName').val(adHocJob.JobName);
+        // $('#createSchedJobTab').find('#schedhiveQuery').val(adHocJob.SQLQuery);
+
+        $rootScope.$broadcast('copyDetailsFromAdHocJob', adHocJob);
+        console.log("Send adHocJobDetails to Scheduler Tab");
+
+    }
 
     $scope.reset();
 

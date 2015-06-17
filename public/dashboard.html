@@ -62,11 +62,11 @@
     <div class="container" role="main">
 
 
-        <ul class="nav nav-pills nav-justified" id="adHocJobTabs">
-            <li id="navAdHoc"> <a data-toggle="tab" href="#adHocTab"><h3><i class="fa fa-1x fa-gavel"></i>  AdHoc Jobs</h3></a>
+        <ul class="nav nav-pills nav-justified" id="jobTypeTabs">
+            <li id="navAdHoc"> <a data-toggle="tab" href="#adHocTab"><h4><i class="fa fa-1x fa-gavel"></i>  AdHoc Jobs</h4></a>
             </li>
 
-            <li id="navScheduled"> <a data-toggle="tab" href="#scheduledTab"><h3><i class="fa fa-1x fa-clock-o"></i> Scheduler</h3></a>
+            <li id="navScheduled"> <a data-toggle="tab" href="#scheduledTab"><h4><i class="fa fa-1x fa-clock-o"></i> Scheduler</h4></a>
             </li>
         </ul>
 
@@ -115,9 +115,11 @@
                                     <th> </th>
                                 </tr>
                                 <tr>
-                                    <th colspan="7">
-                                        <div class="input-group">
-                                            <span class="input-group-addon" id="basic-addon1"> <i class="fa fa-1x fa-search"></i>  </span>
+                                    <th colspan="6">
+                                        <div class="input-group col-xs-12">
+                                            <span class="input-group-addon" id="basic-addon1"> 
+                                                <i class="fa fa-1x fa-search"></i>  
+                                            </span>
                                             <input st-search="" class="form-control" placeholder="Search anything..." type="text" aria-describedby="basic-addon1" />
 
                                         </div>
@@ -168,7 +170,7 @@
                                                 <li class="divider"></li>
 
                                                 <li ng-show="row.JobRunStatus == 'JOB_SUCCESSFUL'">
-                                                    <a role="menuitem" ng-click="scheduleJob(row)">
+                                                    <a role="menuitem" ng-click="initiateScheduling(row)">
                                                         <i class="fa fa-clock-o"></i> Schedule
                                                     </a>
                                                 </li>
@@ -183,7 +185,7 @@
                                             </ul>
                                         </div>
 
-                                        <button type="button" ng-click="scheduleJob(row)" class="btn btn-warning btn-xs" id="scheduleBtn" ng-show="row.JobRunStatus == 'JOB_SUCCESSFUL'">
+                                        <button type="button" ng-click="initiateScheduling(row)" class="btn btn-warning btn-xs" id="scheduleBtn" ng-show="row.JobRunStatus == 'JOB_SUCCESSFUL'">
                                             <span class="glyphicon glyphicon-time" aria-hidden="true"></span> Schedule
                                         </button>
 
@@ -565,9 +567,11 @@
                                     <th> </th>
                                 </tr>
                                 <tr>
-                                    <th colspan="9">
-                                        <div class="input-group">
-                                            <span class="input-group-addon" id="basic-addon1"> <i class="fa fa-1x fa-search"></i>  </span>
+                                    <th colspan="15">
+                                        <div class="input-group col-xs-12">
+                                            <span class="input-group-addon" id="basic-addon1"> 
+                                                <i class="fa fa-1x fa-search"></i>  
+                                            </span>
                                             <input st-search="" class="form-control" placeholder="Search by anything (email, status, name...)" type="text" aria-describedby="basic-addon1" />
 
                                         </div>
@@ -636,7 +640,7 @@
                             <tfoot>
                                 <tr>
                                     <td colspan="20" class="text-center">
-                                        <div st-pagination="" st-items-by-page="5" st-displayed-pages="15"></div>
+                                        <div st-pagination="" st-items-by-page="10" st-displayed-pages="20"></div>
                                     </td>
                                 </tr>
                             </tfoot>
@@ -850,12 +854,14 @@
                             <div class="form-group">
                                 <div class="col-sm-offset-2 col-sm-10">
                                     <button type="submit" class="btn btn-primary">Schedule Job</button>
-                                    <button ng-click="schedReset()" class="btn btn-default">Clear</button>
+                                    <button type="button" ng-click="schedReset()" class="btn btn-default">Clear</button>
+                                    
                                 </div>
                             </div>
                             </form>
 
-                            <pre> {{schedJob}} </pre>
+                            <!-- <pre> {{schedJob}} </pre> -->
+
                         </div>
                         <!-- Submit Job Tab Content Ends  -->
 

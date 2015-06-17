@@ -41,7 +41,7 @@ exports.getAllSchedJobs = function(req, res){
             res.status(500)
             return res.send(err)
         } else {
-            detailLogger.debug(' GET - Retrieved all AdHoc Jobs by ', { clientIPaddress: clientIPaddress });
+            detailLogger.debug(' GET - Retrieved all Scheduled Jobs by ', { clientIPaddress: clientIPaddress });
             res.send(scheduledJobs);
         }
     
@@ -50,7 +50,7 @@ exports.getAllSchedJobs = function(req, res){
     ScheduledJob
     .find()
     .sort('-UpdatedTimeStamp')
-    .limit(100)
+    // .limit(100)
     .exec(callback);
 
 };
