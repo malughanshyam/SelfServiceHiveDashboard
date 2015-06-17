@@ -1,12 +1,20 @@
 /**
- * @author gmalu
- *
+ **********************************************************************************************************************************************************************
+ * @author gmalu (Ghanshyam Malu)
+ * June 17, 2015
+ * 
+ * Hive Executor Java Client
+ * Executes the given Hive Query File on the Hive Server and exports the results to the Output File
+ * 
+ * Usage : java HiveExecutor <jobID> <outputDataDir> <hiveUserName> <hiveHost> <dbName> <hiveQueryFile> <mongoDBhost> <mongoDBport> <mongoDBName> <mongoDBCollection>
+ * 
+ * Also, maintains the JobStatus in the MongoDB for tracking purpose
+ ********************************************************************************************************************************************************************** 
  */
 
 import java.sql.SQLException;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
@@ -22,8 +30,11 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import org.apache.log4j.Logger;
 
-
-
+/**
+ * Core class of the HiveExecutor Program
+ * @author gmalu
+ *
+ */
 public class HiveExecutor {
 	private static String driverName = "org.apache.hive.jdbc.HiveDriver";
 	private String jobID;
@@ -41,18 +52,25 @@ public class HiveExecutor {
 	private Exception occurredException;
 	private MongoExecutor mongoExecutor;
 
+	//  Hive Connection Login Timeout
 	public static int HIVE_ESTABLISH_CONNECTION_TIMEOUT = 10 ; //seconds
-	
-	/* Get actual class name to be printed on */
-   static final Logger debugLogger = Logger.getLogger("debugLogger");
-   static final Logger reportLogger = Logger.getLogger("reportLogger");
+		
+	//	Get the Logger information for Log4j
+    static final Logger debugLogger = Logger.getLogger("debugLogger");
+    static final Logger reportLogger = Logger.getLogger("reportLogger");
    
+    // enum to maintain Job Status 
 	public enum JobStatus {
 		NOT_STARTED, SUCCESS, FAILED, IN_PROGRESS
 	}
  
 	private JobStatus jobStatus;
 	
+	/**
+	 * Initializing the class parameters from the program arguments
+	 * @param args
+	 * @throws IOException
+	 */
 	HiveExecutor (String [] args) throws IOException{	
 		debugLogger.debug("Initializing the class parameters from the arguments");
 		
@@ -88,6 +106,9 @@ public class HiveExecutor {
 		
 	}
 	
+	/**
+	 * Prints the Job Metadata onto the Logger
+	 */
 	private void printMetaData(){
 		
 		debugLogger.info("Job ID: " + this.jobID);
@@ -102,6 +123,9 @@ public class HiveExecutor {
 				
 	}
 	
+	/**
+	 * Displays the Program Usage
+	 */
 	private static void usage() {
 		System.err.println("Usage : java " + HiveExecutor.class.getName()
 				+ " jobID outputDataDir hiveUserName hiveHost dbName hiveQueryFile mongoDBhost mongoDBport mongoDBName mongoDBCollection");		
@@ -115,6 +139,10 @@ public class HiveExecutor {
 		System.exit(1);
 	}
 
+	/**
+	 * Establish Hive Connection
+	 * @throws SQLException
+	 */
 	private void establishHiveConnection()  throws SQLException{
 		
 		try {
@@ -132,20 +160,20 @@ public class HiveExecutor {
 			this.stmt = con.createStatement();
 
 		}
-		catch (Exception e) {
-			
-			
+		catch (Exception e) {	
 			debugLogger.error("Exception Establishing Hive Connection : ", e);
 			reportLogger.error("Exception Establishing Hive Connection : ", e);
-			// Update the Status in MongoDB
 			
+			// Update the Status in MongoDB
 			this.mongoExecutor.updateStatusDocument(this.jobID, getJobStatusValue(JobStatus.FAILED) );
 			debugLogger.debug("Updated the Job Run Status in MongoDB :" + this.jobID +" : " + getJobStatusValue(JobStatus.FAILED) );
 
+			// Close MongoDB connection
 			this.mongoExecutor.closeConnection();
 			debugLogger.debug("Closed the MongoDB connection");
 
 			e.printStackTrace();	
+			
 			debugLogger.error("JOB_FAILED");
 			reportLogger.error("JOB_FAILED");
 
@@ -154,6 +182,12 @@ public class HiveExecutor {
 		
 	}
 
+	/**
+	 * Read the Hive Query File
+	 * @param path
+	 * @return
+	 * @throws IOException
+	 */
 	private String readFile(String path) throws IOException {
 		debugLogger.debug("Reading the Query File : "+path);
 		reportLogger.debug("Reading the Query");
@@ -163,6 +197,12 @@ public class HiveExecutor {
 		return query;
 	}
 	
+	/**
+	 * Execute the Hive Query
+	 * @param sql
+	 * @throws IOException
+	 * @throws SQLException
+	 */
 	private void executeQuery(String sql)   throws IOException, SQLException {
 		
 		
@@ -188,6 +228,9 @@ public class HiveExecutor {
 				
 	}
 	
+	/**
+	 * Create the output data directory
+	 */
 	private void createOutputDirectory(){
 		String dirname = this.outputDir;
 	      File d = new File(dirname);
@@ -196,10 +239,14 @@ public class HiveExecutor {
 	      debugLogger.debug("Created Output Directory : " + dirname );
 	}
 
+	/**
+	 * Export the Query Results to the Result File
+	 * @throws SQLException
+	 * @throws FileNotFoundException
+	 * @throws UnsupportedEncodingException
+	 */
 	private void exportResult() throws SQLException, FileNotFoundException, UnsupportedEncodingException{
-		
-		
-		
+			
 		PrintWriter writerResult = new PrintWriter(this.resultFilePath, "UTF-8");
 		
 		switch(this.jobStatus) {
@@ -244,6 +291,9 @@ public class HiveExecutor {
 				debugLogger.debug("Export to Result File completed : "+this.resultFilePath);
 				reportLogger.info("Export to Result File completed");
 				break;
+				
+		default:
+			break;
 			
 		}
 		
@@ -252,14 +302,11 @@ public class HiveExecutor {
 		
 	}
 
-	private void copyQueryFileToOuputDir() throws IOException {
-		
-		File sourceFile = new File(this.queryFilePath);
-		File destFile = new File(this.outputDir + "/sql.txt");
-		Files.copy(sourceFile.toPath(), destFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
-		debugLogger.debug("File Copy completed from "+sourceFile+" to "+destFile);
-	}
-
+	/**
+	 * Update the Job Status in Status File and MongoDB
+	 * @throws FileNotFoundException
+	 * @throws UnsupportedEncodingException
+	 */
 	private void updateStatus() throws FileNotFoundException, UnsupportedEncodingException {
 		
 		// Update the Status File
@@ -277,6 +324,11 @@ public class HiveExecutor {
 	
 	}
 	
+	/**
+	 * Get the Labels for the different Job Status types
+	 * @param jobStatus
+	 * @return
+	 */
 	public static String getJobStatusValue(JobStatus jobStatus){	
 		
 		switch (jobStatus){
@@ -298,40 +350,55 @@ public class HiveExecutor {
 		 }
 	 }
 	
+	/**
+	 * Main program
+	 * @param args
+	 * @throws SQLException
+	 * @throws IOException
+	 */
 	public static void main(String[] args)  throws SQLException, IOException {
 		
 		reportLogger.info("Beginning Execution of Hive Executor Java Client");
 		debugLogger.info("Beginning Execution of Hive Executor Java Client");
 		
-		
+		// Validate the number of arguments supplied
 		if (args.length != 11) {
 			debugLogger.warn("Number of arguments != 11");
 			debugLogger.debug("Arguments: "+ Arrays.toString(args));
 			usage();
 		}
 		
+		// Create new object and initialize the program parameters using the arguments
 		HiveExecutor hiveExecObj = new HiveExecutor(args);
 		
+		// Update the initial Job Status
 		hiveExecObj.updateStatus();
 		
+		// Print the Job metadata
 		hiveExecObj.printMetaData();
 		
+		// Establish Hive Connection
 		hiveExecObj.establishHiveConnection();
+		
+		// Read the Hive Query File
 		String sql = hiveExecObj.readFile(hiveExecObj.queryFilePath);
 		
+		// Create Output Directory
 		hiveExecObj.createOutputDirectory();
 		
+		// Update the Job Status to IN_PROGRESS
 		hiveExecObj.jobStatus = JobStatus.IN_PROGRESS;
 		hiveExecObj.updateStatus();
 		
+		// Execute the Hive Query
 		hiveExecObj.executeQuery(sql);
 				
+		// Export the Hive Results to the Result File
 		hiveExecObj.exportResult();
 
+		// Update the final Job Status
 		hiveExecObj.updateStatus();
-//		//hiveExecObj.copyQueryFileToOuputDir();
 				
 	}
 
-	
 }

@@ -14,6 +14,7 @@ var detailLogger = winston.loggers.get('DetailedLog');
 var JOB_FAILED_STATUS_STRING = 'JOB_FAILED'
 var JOB_NOT_STARTED_STATUS_STRING = 'JOB_NOT_STARTED'
 
+// Types of Log Levels
 // highLevelLogger.debug("Debug")
 // highLevelLogger.verbose("verbose")
 // highLevelLogger.info("info")
@@ -132,7 +133,7 @@ exports.submitNewScheduledJob = function(req, res) {
         })
     };
 
-  
+    // Create Cron Job
     createCronJob = function() {
         // Create Parameters for the CRON job
         // MIN HOUR DOM MON DOW CMD
@@ -219,7 +220,6 @@ exports.submitNewScheduledJob = function(req, res) {
         // ##
 
         // Prepare Command to be run by CRON
-
         var execDirPath = '/Users/gmalu/Documents/Project/SelfServiceHiveDashboard/backendScripts/',
             execFileName = './HiveLauncher.sh',
             normalizePath = "../"
@@ -248,7 +248,7 @@ exports.submitNewScheduledJob = function(req, res) {
 
 
         /* 
-        Sample : 
+        UNIX Cron Commands Sample : 
         ---------------------------------------------------------------
         croncmd="ls -l"
         cronjob="0 0 * * * $croncmd"
@@ -424,8 +424,6 @@ exports.removeScheuledJob = function(req, res) {
 
     // Update the Job in Database
     updateStatusInDB = function() {
-       
-
        var query = { _id: jobID };
        var updateFields = { ScheduleStatus: 'DELETED' }
    
@@ -440,7 +438,7 @@ exports.removeScheuledJob = function(req, res) {
               return res.send({status: "success"});
            }
        }
-
+       
        ScheduledJob.update(query, updateFields , callback)
 
    }

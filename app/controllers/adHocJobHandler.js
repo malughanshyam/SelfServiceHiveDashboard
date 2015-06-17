@@ -14,6 +14,7 @@ var detailLogger = winston.loggers.get('DetailedLog');
 var JOB_FAILED_STATUS_STRING = 'JOB_FAILED'
 var JOB_NOT_STARTED_STATUS_STRING = 'JOB_NOT_STARTED'
 
+// Types of Log Levels
 // highLevelLogger.debug("Debug")
 // highLevelLogger.verbose("verbose")
 // highLevelLogger.info("info")
@@ -153,7 +154,7 @@ exports.submitNewAdHocJob = function(req, res) {
 
     }
 
-
+    // Execute the Hive Script
     executeHiveScript = function() {
 
         var execDirPath = '/Users/gmalu/Documents/Project/SelfServiceHiveDashboard/backendScripts/',
@@ -245,7 +246,7 @@ exports.getStatus = function(req,res){
 };
 
 
-
+// Update Job Status in MongoDB
 exports.updateStatus = function(req,res){
     var JobID = req.params.JobID
   return AdHocJob.findById(JobID, function (err, adHocJob) {

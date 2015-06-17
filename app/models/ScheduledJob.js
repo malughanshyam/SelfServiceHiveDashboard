@@ -1,3 +1,4 @@
+// Mongoose Model/Schema for Scheduled Job
 var mongoose = require('mongoose');
 
 var schema = mongoose.Schema({
