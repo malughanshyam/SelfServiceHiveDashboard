@@ -120,7 +120,7 @@
                                             <span class="input-group-addon" id="basic-addon1"> 
                                                 <i class="fa fa-1x fa-search"></i>  
                                             </span>
-                                            <input st-search="" class="form-control" placeholder="Search anything..." type="text" aria-describedby="basic-addon1" />
+                                            <input st-search="" class="form-control" placeholder="Search by anything (Job Name, Query, Status...)" type="text" aria-describedby="basic-addon1" />
 
                                         </div>
                                     </th>
@@ -132,11 +132,11 @@
                                     <td>{{row.JobName}}</td>
                                     <td><small>{{row.SQLQuery.substring(0, 60)}}</small><a><small ng-show="showPopupFlag(row.SQLQuery,60)" popover="{{row.SQLQuery}}" popover-trigger="click"> ...<i class="fa fa-1x fa-eye"></i></small></a></td>
                                     <!-- <td>{{row.JobRunStatus}}</td> -->
-                                    <td align="center">
-                                        <i tooltip="JOB_SUCCESSFUL" id="statusSuccess" class="fa fa-check-square" ng-show="row.JobRunStatus=='JOB_SUCCESSFUL'"></i>
-                                        <i tooltip="JOB_FAILED" id="statusFail" class="fa fa-exclamation-triangle" ng-show="row.JobRunStatus=='JOB_FAILED'"></i>
-                                        <i tooltip="JOB_IN_PROGRESS" id="statusRunning" class="fa fa-dashboard" ng-show="row.JobRunStatus=='JOB_IN_PROGRESS'"></i>
-                                        <i tooltip="JOB_NOT_STARTED" id="statusNotStarted" class="fa fa-history" ng-show="row.JobRunStatus=='JOB_NOT_STARTED'"></i>
+                                    <td>
+                                        <i tooltip="JOB_SUCCESSFUL" id="statusSuccess" class="fa fa-check-square" ng-show="row.JobRunStatus=='JOB_SUCCESSFUL'"> Success</i>
+                                        <i tooltip="JOB_FAILED" id="statusFail" class="fa fa-exclamation-triangle" ng-show="row.JobRunStatus=='JOB_FAILED'"> Failed</i>
+                                        <i tooltip="JOB_IN_PROGRESS" id="statusRunning" class="fa fa-dashboard" ng-show="row.JobRunStatus=='JOB_IN_PROGRESS'"> Running</i>
+                                        <i tooltip="JOB_NOT_STARTED" id="statusNotStarted" class="fa fa-history" ng-show="row.JobRunStatus=='JOB_NOT_STARTED'"> Not Started</i>
                                     </td>
 
                                     <td><small>{{ parseIsoDatetime(row.UpdatedTimeStamp) }}</small></td>
@@ -572,7 +572,7 @@
                                             <span class="input-group-addon" id="basic-addon1"> 
                                                 <i class="fa fa-1x fa-search"></i>  
                                             </span>
-                                            <input st-search="" class="form-control" placeholder="Search by anything (email, status, name...)" type="text" aria-describedby="basic-addon1" />
+                                            <input st-search="" class="form-control" placeholder="Search by anything (Name, Query, Status, Email...)" type="text" aria-describedby="basic-addon1" />
 
                                         </div>
                                     </th>
@@ -599,11 +599,11 @@
 
                                     <!-- <td><small>{{row.JobRunStatus}}</small></td> -->
 
-                                    <td class="text-center">
-                                        <i tooltip="JOB_SUCCESSFUL" id="statusSuccess" class="fa fa-check-square" ng-show="row.JobRunStatus=='JOB_SUCCESSFUL'"></i>
-                                        <i tooltip="JOB_FAILED" id="statusFail" class="fa fa-exclamation-triangle" ng-show="row.JobRunStatus=='JOB_FAILED'"></i>
-                                        <i tooltip="JOB_IN_PROGRESS" id="statusRunning" class="fa fa-dashboard" ng-show="row.JobRunStatus=='JOB_IN_PROGRESS'"></i>
-                                        <i tooltip="JOB_NOT_STARTED" id="statusNotStarted" class="fa fa-history" ng-show="row.JobRunStatus=='JOB_NOT_STARTED'"></i>
+                                    <td >
+                                        <i tooltip="JOB_SUCCESSFUL" id="statusSuccess" class="fa fa-check-square" ng-show="row.JobRunStatus=='JOB_SUCCESSFUL'"> Success</i>
+                                        <i tooltip="JOB_FAILED" id="statusFail" class="fa fa-exclamation-triangle" ng-show="row.JobRunStatus=='JOB_FAILED'"> Failed</i>
+                                        <i tooltip="JOB_IN_PROGRESS" id="statusRunning" class="fa fa-dashboard" ng-show="row.JobRunStatus=='JOB_IN_PROGRESS'"> Running</i>
+                                        <i tooltip="JOB_NOT_STARTED" id="statusNotStarted" class="fa fa-history" ng-show="row.JobRunStatus=='JOB_NOT_STARTED'"> Not Started</i>
                                     </td>
 
                                     <td><small>{{ parseIsoDatetime(row.UpdatedTimeStamp) }}</small></td>

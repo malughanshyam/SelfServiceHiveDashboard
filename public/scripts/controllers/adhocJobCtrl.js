@@ -126,39 +126,12 @@ angular.module('dashboardApp')
 
     }
 
-    $scope.flashAlertCheckRecentJobs = function() {
-        type = 'info';
-        message = "You can check the status of the submitted job under Recent Jobs";
-        // alertLink = '#recentAdHocTab';
-        // alertLinkTitle = "Recent Jobs";
-        $scope.flashImpAlert(type, message, 4000);
-    }
-
-    $scope.flashImpAlert = function(type, message, displayTime, alertLink, alertLinkTitle) {
-        if (['success', 'info', 'warning', 'danger'].indexOf(type) < 0) {
-            type = 'info'
-        }
-
-        if (alertLink == null || alertLinkTitle == null) {
-            alertLink = '';
-            alertLinkTitle = '';
-        }
-
-        alertHtml = ' <div class="row"> <div class="alert alert-' + type;
-        alertHtml += ' alert-dismissible alignTextCenter" role="alert"> <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button> ';
-        alertHtml += message + ' <a href="' + alertLink + '" class="alert-link">' + alertLinkTitle + '</a> </div> </div> </br>';
-
-        $('#impAlertPlaceholder').html(alertHtml);
-
-        setTimeout(function() {
-            $('#impAlertPlaceholder .alert').remove()
-        }, displayTime);
-    }
-
 
     $scope.flashAlertAndResetNewJobTab = function(){
         $scope.resetNewJobTab();
-        $scope.flashAlertCheckRecentJobs();
+        var type = 'info';
+        var message = "You can check the status of the submitted job under Recent Jobs";
+        dashboardAungularService.flashImpAlert(type, message, 4000);
     }
 
     $scope.activateCurrentJobStatusTab = function() {
@@ -457,7 +430,6 @@ angular.module('dashboardApp')
         $scope.resetNewJobTab();
         $scope.formData.hiveQuery = adHocJob.SQLQuery;
         $scope.formData.jobName = adHocJob.JobName;
-
     }
 
     $scope.resubmitJob = function(adHocJob) {
@@ -465,7 +437,12 @@ angular.module('dashboardApp')
         $scope.formData.hiveQuery = adHocJob.SQLQuery;
         $scope.formData.jobName = adHocJob.JobName;
         $scope.submitJob();
+        
         console.log("Job Resubmitted")
+        var type = 'info';
+        var message = "Job Resubmitted! Hit the Refresh Button to check the execution progress";
+        dashboardAungularService.flashImpAlert(type, message, 8000);
+
         setTimeout(function() {
             $scope.populateRecentAdHocJobTable()
         }, 1000);
@@ -522,6 +499,5 @@ angular.module('dashboardApp')
     }
 
     $scope.reset();
-
 
 });

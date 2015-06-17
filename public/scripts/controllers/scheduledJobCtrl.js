@@ -368,6 +368,9 @@ angular.module('dashboardApp')
                     .success(function(data) {
                         console.log("Job Deleted");
                         $scope.populateScheduledJobsTable();
+                        var type = 'info';
+                        var message = "The Job - " + row.JobName + " has been deleted";
+                        dashboardAungularService.flashImpAlert(type, message, 4000);
                     })
                     .error(function(err) {
                         // $scope.submittedJobStatus='FAILED'
@@ -413,6 +416,9 @@ angular.module('dashboardApp')
         console.log("Received adHocJobDetails from AdHoc Tab");
         $scope.schedJob.schedJobName = adHocJobDetails.JobName;
         $scope.schedJob.schedQuery = adHocJobDetails.SQLQuery;
+        var type = 'info';
+        var message = "Fill in the details to Schedule the Job";
+        dashboardAungularService.flashImpAlert(type, message, 4000);
     });
 
 

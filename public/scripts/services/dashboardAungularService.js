@@ -179,6 +179,28 @@ angular.module('dashboardApp')
     return scheduleNewJobDetails;
   }
 
+  var flashImpAlert = function(type, message, displayTime, alertLink, alertLinkTitle) {
+        if (['success', 'info', 'warning', 'danger'].indexOf(type) < 0) {
+            type = 'info'
+        }
+
+        if (alertLink == null || alertLinkTitle == null) {
+            alertLink = '';
+            alertLinkTitle = '';
+        }
+
+        alertHtml = ' <div class="row"> <div class="alert alert-' + type;
+        alertHtml += ' alert-dismissible alignTextCenter" role="alert"> <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button> ';
+        alertHtml += message + ' <a href="' + alertLink + '" class="alert-link">' + alertLinkTitle + '</a> </div> </div> </br>';
+
+        $('#impAlertPlaceholder').html(alertHtml);
+
+        setTimeout(function() {
+            $('#impAlertPlaceholder .alert').remove()
+        }, displayTime);
+    }
+    
+
   return {
     createResultTable : createResultTable,
     createBarChart    : createBarChart,
@@ -187,7 +209,8 @@ angular.module('dashboardApp')
     parseIsoDatetime  : parseIsoDatetime,
     downloadFile      : downloadFile,
     initiateScheduling: initiateScheduling,
-    getJobDetailsForScheduling : getJobDetailsForScheduling
+    getJobDetailsForScheduling : getJobDetailsForScheduling,
+    flashImpAlert     : flashImpAlert
   };
 
 });
