@@ -109,23 +109,20 @@
             <li id="navJobLog"> <a data-toggle="tab" href="#jobLogTab" ng-click="populateJobLog()"><h4><i class="fa fa-1x fa-gavel"></i> Job Log</h4></a>
             </li>
 
-            <li id="navJobResults">
-
-            <a data-toggle="tab" href="#jobResultsTab" ng-click="populateResults()" ng-show="jobObj.jobRunStatus=='JOB_SUCCESSFUL'"><h4><i class="fa fa-1x fa-gavel"></i> Results</h4></a>
-
-            <a ng-show="jobObj.jobRunStatus!='JOB_SUCCESSFUL'" tooltip="No Results to Display">
-                <h4><i class="fa fa-1x fa-clock-o"></i> Results</h4></a>
-
-                <!-- <a data-toggle="tab" href="#jobResultsTab" ng-click="populateResults()">
-                    <h4><div  ng-show="jobObj.jobRunStatus!='JOB_SUCCESSFUL'">
-                            
-                            </i> 
-                            Results
-                            </div> 
-                        </h4>
-                </a> -->
-
+            <!-- Display on Job == Successful -->
+            <li id="navJobResults" ng-show="jobObj.jobRunStatus=='JOB_SUCCESSFUL'" >
+                <a data-toggle="tab" href="#jobResultsTab" ng-click="populateResults()" ng-show="jobObj.jobRunStatus=='JOB_SUCCESSFUL'"><h4><i class="fa fa-1x fa-gavel"></i> Results</h4></a>
             </li>
+
+
+            <!-- Display on Job != Successful -->
+            <li id="navJobResults" class="disabled" ng-show="jobObj.jobRunStatus!='JOB_SUCCESSFUL'" tooltip="No Results to Display">
+                <a >
+                    <h4><i class="fa fa-1x fa-clock-o"></i> Results
+                    </h4>
+                </a>
+            </li>
+
         </ul>
 
         <div class="tab-content">
@@ -145,7 +142,7 @@
                 <br>
 
                 <!-- Results Display Type Tab Begins -->
-                <ul class="nav nav-pills right-to-left" id="adHocResultTypeTabs">
+                <ul class="nav nav-pills right-to-left" id="resultTypeTabs">
 
                     <li id="navChart1">
                         <div class="btn-group" role="group" aria-label="...">
@@ -169,7 +166,7 @@
                         <div class="btn-group" role="group" aria-label="...">
                             <button type="button" class="btn btn-default btn-xs" data-toggle="tab" href="#tabular" data-tooltip="Show Raw Data"> Tabular</button>
 
-                            <button type="button" class="btn btn-success btn-xs" ng-click="downloadAdHocJobResultFile(formData.jobID)" id="downloadTSVBtnId" data-tooltip="Save As TSV"><span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span></button>
+                            <button type="button" class="btn btn-success btn-xs" ng-click="downloadJobResultFile(formData.jobID)" id="downloadTSVBtnId" data-tooltip="Save As TSV"><span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span></button>
                         </div>
                     </li>
                 </ul>

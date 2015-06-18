@@ -81,6 +81,9 @@ angular.module('dashboardApp')
     // Submit New AdHoc Job to server
     $scope.submitJob = function() {
 
+        // Replace Non Alpha Numeric Characters with underscore(_)
+        $scope.formData.jobName=dashboardAungularService.cleanUpStr($scope.formData.jobName);
+
         $http.post('/submitNewAdHocJob', $scope.formData)
             .success(function(data) {
                 $scope.formData.jobID = data.JobID;

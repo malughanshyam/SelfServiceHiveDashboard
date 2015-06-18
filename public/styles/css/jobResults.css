@@ -13,3 +13,7 @@
 #statusNotStarted {
     color:#f0ad4e;
 }
+
+#resultTypeTabs li {
+    padding-right: 1em;
+}

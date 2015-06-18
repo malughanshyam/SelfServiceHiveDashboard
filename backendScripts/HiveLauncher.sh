@@ -149,34 +149,51 @@ java -cp $CLASSPATH HiveExecutor $jobID $jobName $outputDir $hiveUser $hiveHost 
 
 # Check the exitStatus
 exitStatus=$?
+echo "Exiting with status code:"$exitStatus
 
 # If not 0, update the Status and Log file of the JobIDs
+# if [ $exitStatus -ne 0 ]; then
+#   additionallogMsg="Check if Hive server is up."
+#   updateStatusLogFileOnFailure $outputDir $statusFile  $logFile "$additionallogMsg"
+# fi
+
 if [ $exitStatus -ne 0 ]; then
-  additionallogMsg="Check if Hive server is up."
-  updateStatusLogFileOnFailure $outputDir $statusFile  $logFile "$additionallogMsg"
+  updateStatusLogFileOnFailure $outputDir $statusFile  $logFile
 fi
 
-# Send Email
-# Check Notify Flag to proceed. If "N", then exit gracefully
-# if [ $notifyFlag == 'N']; then
-#   exit 0
 
-# outputDir="../data/ScheduledJobs/5580d9bffce9da2b65a7ca5f"
-# statusFile="status.txt"
-# jobName="TopTrends" #$jobName
-# jobStatus=`cat $outputDir/$statusFile`
-# jobResultURL=`echo "http://localhost:8080/dashboard.html"`
 
-# mailSubject="Subject: Job - "$jobName" ["$jobStatus"] "$'\n'
+## Send Email
+## Check Notify Flag to proceed. If "N", then exit gracefully
+#if [ $notifyFlag == 'N']; then
+#  exit 0
 
-# mailBody=`echo -e "\nThe Job - $jobName has completed with the status\t:  "`
-# mailBody=$mailBody$jobStatus$'\n'
-# mailBody=$mailBody`echo -e "\nCheck out more details at : "`
-# mailBody=$mailBody$jobResultURL$'\n'
-
-# mailSignature=$'\n'$'\n'"--"$'\n'
-# mailSignature=$mailSignature"Self Service Hive Dashboard"$'\n'
-
-# mailComplete=$mailSubject$mailBody$mailSignature
-
-# echo "$mailComplete" | /usr/sbin/sendmail gmalu@ebay.com -f"SelfServiceHiveDashboard"
+#
+## jobType="SCHED"
+## jobID="55826c6395c8393709756ff6"
+## outputDir="../data/ScheduledJobs/5580d9bffce9da2b65a7ca5f"
+## statusFile="status.txt"
+## jobName="TopTrends" #$jobName
+## notifyEmail="gmalu@ebay.com"
+#
+#jobStatus=`cat $outputDir/$statusFile`
+#
+#jobResultURL="http://localhost:8080/views/jobresults.html?jobType="
+#jobResultURL=$jobResultURL$jobType
+#jobResultURL=$jobResultURL"&jobID="$jobID
+##jobResultURL=`echo "http://localhost:8080/views/jobresults.html?jobType=SCHED&jobID=55826c6395c8393709756ff6"`
+#
+#mailSubject="Subject: Job - "$jobName" ["$jobStatus"] "$'\n'
+#
+#mailBody=`echo -e "\nThe Job - $jobName has completed with the status\t:  "`
+#mailBody=$mailBody$jobStatus$'\n'
+#mailBody=$mailBody`echo -e "\nCheck out more details at : "`
+#mailBody=$mailBody$jobResultURL$'\n'
+#
+#mailSignature=$'\n'$'\n'"--"$'\n'
+#mailSignature=$mailSignature"Self Service Hive Dashboard"$'\n'
+#
+#mailComplete=$mailSubject$mailBody$mailSignature
+#
+#echo "$mailComplete" | /usr/sbin/sendmail gmalu@ebay.com -f"SelfServiceHiveDashboard"
+##echo "$mailComplete" > "mail_$notifyEmail.txt"

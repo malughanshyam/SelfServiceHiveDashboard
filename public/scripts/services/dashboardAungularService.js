@@ -28,7 +28,7 @@ angular.module('dashboardApp')
                 tdClass: "",
 
                 // path to an image to display while CSV/TSV data is loading
-                loadingImage: "img/loading1.gif",
+                loadingImage: "/img/loading1.gif",
 
                 // text to display while CSV/TSV is loading
                 loadingText: "Loading Results...",
@@ -195,6 +195,10 @@ angular.module('dashboardApp')
             $('#impAlertPlaceholder .alert').remove()
         }, displayTime);
     }
+
+  var cleanUpStr=function(str){
+    return str.replace(/[^A-Z0-9]+/ig, "_");
+  }
     
 
   return {
@@ -205,7 +209,8 @@ angular.module('dashboardApp')
     parseIsoDatetime  : parseIsoDatetime,
     initiateScheduling: initiateScheduling,
     getJobDetailsForScheduling : getJobDetailsForScheduling,
-    flashImpAlert     : flashImpAlert
+    flashImpAlert     : flashImpAlert,
+    cleanUpStr        : cleanUpStr
   };
 
 });

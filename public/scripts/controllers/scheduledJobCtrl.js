@@ -66,6 +66,9 @@ angular.module('dashboardApp')
 
     $scope.scheduleJob = function() {
 
+        // Replace Non Alpha Numeric Characters with underscore(_)
+        $scope.schedJob.schedJobName = dashboardAungularService.cleanUpStr($scope.schedJob.schedJobName);
+
         $('#createSchedJobTab').removeClass('active');
         $('#createSchedJobStatusTab').addClass('active');
 
