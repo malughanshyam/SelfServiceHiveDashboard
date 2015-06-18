@@ -31,7 +31,7 @@
 
 
     <!-- Load c3.css -->
-    <link href="/styles/css/c3.min.css" rel="stylesheet" >
+    <link href="/styles/css/c3.min.css" rel="stylesheet">
 
     <!-- Load d3.js and c3.js -->
     <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min.js" charset="utf-8"></script> -->
@@ -66,50 +66,65 @@
 
     <div class="container" role="main">
 
-        
+
 
         <h3 class="text-center"> Job Run Details </h3>
-                <div class="col-lg-offset-1 col-sm-10 col-lg-10">
-                    <table class="table table-responsive table-hover ">
-                                <tbody>
-                                    <tr>
-                                        <th> Job Name</th>
-                                        <td> {{jobObj.jobName}}</td>
-                                    </tr>
-                                    <tr>
-                                        <th>Job Type</th>
-                                        <td>
-                                            <div ng-show="jobObj.jobType=='ADHOC'">AdHoc</div>
-                                            <div ng-show="jobObj.jobType=='SCHED'">Scheduled</div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <th>Hive Query</th>
-                                        <td><small><pre class="pre-scrollable"><samp id="submittedHiveQuery">{{jobObj.hiveQuery}}</samp></pre></small></td>
-                                    </tr>
-                                    <tr>
-                                        <th>Job Status</th>
-                                        <td class="strong text-uppercase">
-                                            <i tooltip="JOB_SUCCESSFUL" id="statusSuccess" class="fa fa-check-square" ng-show="jobObj.jobRunStatus=='JOB_SUCCESSFUL'"> Success</i>
-                                            <i tooltip="JOB_FAILED" id="statusFail" class="fa fa-exclamation-triangle" ng-show="jobObj.jobRunStatus=='JOB_FAILED'"> Failed</i>
-                                            <i tooltip="JOB_IN_PROGRESS" id="statusRunning" class="fa fa-dashboard" ng-show="jobObj.jobRunStatus=='JOB_IN_PROGRESS'"> Running</i>
-                                            <i tooltip="JOB_NOT_STARTED" id="statusNotStarted" class="fa fa-history" ng-show="jobObj.jobRunStatus=='JOB_NOT_STARTED'"> Not Started</i>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <th> Last Updated Time </th>
-                                        <td> {{ parseIsoDatetime(jobObj.updatedTimeStamp) }} </td>
-                                    </tr>
-                                    
-                                </tbody>
-                    </table>
-                </div>
+        <div class="col-lg-offset-1 col-sm-10 col-lg-10">
+            <table class="table table-responsive table-hover ">
+                <tbody>
+                    <tr>
+                        <th> Job Name</th>
+                        <td> {{jobObj.jobName}}</td>
+                    </tr>
+                    <tr>
+                        <th>Job Type</th>
+                        <td>
+                            <div ng-show="jobObj.jobType=='ADHOC'">AdHoc</div>
+                            <div ng-show="jobObj.jobType=='SCHED'">Scheduled</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Hive Query</th>
+                        <td><small><pre class="pre-scrollable"><samp id="submittedHiveQuery">{{jobObj.hiveQuery}}</samp></pre></small></td>
+                    </tr>
+                    <tr>
+                        <th>Job Status</th>
+                        <td class="strong text-uppercase">
+                            <i tooltip="JOB_SUCCESSFUL" id="statusSuccess" class="fa fa-check-square" ng-show="jobObj.jobRunStatus=='JOB_SUCCESSFUL'"> Success</i>
+                            <i tooltip="JOB_FAILED" id="statusFail" class="fa fa-exclamation-triangle" ng-show="jobObj.jobRunStatus=='JOB_FAILED'"> Failed</i>
+                            <i tooltip="JOB_IN_PROGRESS" id="statusRunning" class="fa fa-dashboard" ng-show="jobObj.jobRunStatus=='JOB_IN_PROGRESS'"> Running</i>
+                            <i tooltip="JOB_NOT_STARTED" id="statusNotStarted" class="fa fa-history" ng-show="jobObj.jobRunStatus=='JOB_NOT_STARTED'"> Not Started</i>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th> Last Updated Time </th>
+                        <td> {{ parseIsoDatetime(jobObj.updatedTimeStamp) }} </td>
+                    </tr>
+
+                </tbody>
+            </table>
+        </div>
 
         <ul class="nav nav-tabs nav-justified" id="">
             <li id="navJobLog"> <a data-toggle="tab" href="#jobLogTab" ng-click="populateJobLog()"><h4><i class="fa fa-1x fa-gavel"></i> Job Log</h4></a>
             </li>
 
-            <li id="navJobResults"> <a data-toggle="tab" href="#jobResultsTab" ng-click="populateResults()"><h4><i class="fa fa-1x fa-clock-o"></i> Results</h4></a>
+            <li id="navJobResults">
+
+            <a data-toggle="tab" href="#jobResultsTab" ng-click="populateResults()" ng-show="jobObj.jobRunStatus=='JOB_SUCCESSFUL'"><h4><i class="fa fa-1x fa-gavel"></i> Results</h4></a>
+
+            <a ng-show="jobObj.jobRunStatus!='JOB_SUCCESSFUL'" tooltip="No Results to Display">
+                <h4><i class="fa fa-1x fa-clock-o"></i> Results</h4></a>
+
+                <!-- <a data-toggle="tab" href="#jobResultsTab" ng-click="populateResults()">
+                    <h4><div  ng-show="jobObj.jobRunStatus!='JOB_SUCCESSFUL'">
+                            
+                            </i> 
+                            Results
+                            </div> 
+                        </h4>
+                </a> -->
+
             </li>
         </ul>
 
@@ -121,14 +136,14 @@
                 <div id="jobLogDiv">
                     <pre class="pre-scrollable" id="jobLogPre"><samp>{{jobObj.jobLog}}</samp></pre>
                 </div>
-                
+
             </div>
             <!-- Job Log Tab Content Ends-->
 
             <!-- Job Results Tab Content Begins-->
             <div id="jobResultsTab" class="tab-pane fade">
                 <br>
-                
+
                 <!-- Results Display Type Tab Begins -->
                 <ul class="nav nav-pills right-to-left" id="adHocResultTypeTabs">
 
