@@ -102,13 +102,21 @@
                                 <tr>
                                     <!-- <th st-sort="JobID">JobID</th> -->
                                     <th st-sort="JobName" style="white-space: nowrap">
-                                        <a tooltip="Click to sort by Job Name">Job Name</a></th>
+                                        <a tooltip="Click to sort by Job Name">Job Name</a>
+                                    </th>
+
                                     <th st-sort="SQLQuery">
-                                        <a tooltip="Click to sort by Hive Query">Hive Query</a></th>
+                                        <a tooltip="Click to sort by Hive Query">Hive Query</a>
+                                    </th>
+                                    
                                     <th st-sort="Status" align="center">
-                                        <a tooltip="Click to sort by Status">Status</a></th>
+                                        <a tooltip="Click to sort by Status">Status</a>
+                                    </th>
+                                    
                                     <th st-sort="UpdatedTimeStamp" st-sort-default="reverse">
-                                        <a tooltip="Click to sort by TimeStamp">UpdatedTimeStamp</a></th>
+                                        <a tooltip="Click to sort by TimeStamp">UpdatedTimeStamp</a>
+                                    </th>
+                                    
                                     <th> </th>
                                     <th> </th>
                                 </tr>
@@ -128,8 +136,12 @@
                                 <tr ng-repeat="row in displayedCollection">
                                     <!-- <td>{{row.JobID}}</td> -->
                                     <td>{{row.JobName}}</td>
-                                    <td><small>{{row.SQLQuery.substring(0, 60)}}</small><a><small ng-show="showPopupFlag(row.SQLQuery,60)" popover="{{row.SQLQuery}}" popover-trigger="click"> ...<i class="fa fa-1x fa-eye"></i></small></a></td>
-                                    <!-- <td>{{row.JobRunStatus}}</td> -->
+
+                                    <td>
+                                        <small>{{row.SQLQuery.substring(0, 60)}}</small>
+                                        <a><small ng-show="showPopupFlag(row.SQLQuery,60)" popover="{{row.SQLQuery}}" popover-trigger="click"> ...<i class="fa fa-1x fa-eye"></i></small></a>
+                                    </td>
+                                    
                                     <td>
                                         <i tooltip="JOB_SUCCESSFUL" id="statusSuccess" class="fa fa-check-square" ng-show="row.JobRunStatus=='JOB_SUCCESSFUL'"> Success</i>
                                         <i tooltip="JOB_FAILED" id="statusFail" class="fa fa-exclamation-triangle" ng-show="row.JobRunStatus=='JOB_FAILED'"> Failed</i>
@@ -137,7 +149,10 @@
                                         <i tooltip="JOB_NOT_STARTED" id="statusNotStarted" class="fa fa-history" ng-show="row.JobRunStatus=='JOB_NOT_STARTED'"> Not Started</i>
                                     </td>
 
-                                    <td><small>{{ parseIsoDatetime(row.UpdatedTimeStamp) }}</small></td>
+                                    <td>
+                                        <small>{{ parseIsoDatetime(row.UpdatedTimeStamp) }}</small>
+                                    </td>
+                                    
                                     <td>
                                         <button type="button" ng-click="viewAdHocJobResultsModal(row)" class="btn btn-success btn-xs" ng-show="row.JobRunStatus == 'JOB_SUCCESSFUL'">
                                             <span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span> Results
@@ -146,8 +161,6 @@
                                         <button type="button" ng-click="viewAdHocJobLogModal(row)" ng-class="{'btn-danger': row.JobRunStatus == 'JOB_FAILED' , 'btn-warning': row.JobRunStatus == 'JOB_IN_PROGRESS'}" class="btn  btn-xs" ng-show="row.JobRunStatus == 'JOB_FAILED'">
                                             <span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span> View Log
                                         </button>
-
-
                                     </td>
 
                                     <td>
@@ -182,17 +195,17 @@
 
                                             </ul>
                                         </div>
-
+                                        <br>
                                         <button type="button" ng-click="initiateScheduling(row)" class="btn btn-warning btn-xs" id="scheduleBtn" ng-show="row.JobRunStatus == 'JOB_SUCCESSFUL'">
                                             <span class="glyphicon glyphicon-time" aria-hidden="true"></span> Schedule
                                         </button>
-
                                     </td>
+
                                 </tr>
                             </tbody>
                             <tfoot>
                                 <tr>
-                                    <td colspan="5" class="text-center">
+                                    <td colspan="6" class="text-center">
                                         <div st-pagination="" st-items-by-page="15" st-displayed-pages="15"></div>
                                     </td>
                                 </tr>
@@ -526,11 +539,9 @@
                                 <tr>
                                     <!-- <th st-sort="JobID">JobID</th> -->
                                     <th st-sort="JobName" style="white-space: nowrap">
-                                        <a data-toggle="tooltip" title="Click to sort by Job Name">Job Name</a></th>
+                                        <a tooltip="Click to sort by Job Name">Job Name</a></th>
                                     <th st-sort="SQLQuery">
-                                        <a data-toggle="tooltip" title="Click to sort by Hive Query">Hive Query</a></th>
-                                    <!-- <th st-sort="Status">
-                                        <a data-toggle="tooltip" title="Click to sort by ExecutionDays">ExecutionDays</a></th> -->
+                                        <a tooltip="Click to sort by Hive Query">Hive Query</a></th>
 
                                     <th><small tooltip="Sunday">S</small></th>
                                     <th>
@@ -548,15 +559,12 @@
 
 
                                     <th st-sort="ExecutionTime">
-                                        <a data-toggle="tooltip" title="Click to sort by ExecutionTime"><small>Sch.Time (24H)</small></a></th>
+                                        <a><small tooltip="Click to sort by ExecutionTime">Sch.Time (24H)</small></a></th>
 
-
-                                    <!-- <th st-sort="Status">
-                                        <a data-toggle="tooltip" title="Click to sort by NotifyEmail">NotifyEmail</a></th> -->
                                     <th st-sort="LastRunStatus" class="text-center">
-                                        <a data-toggle="tooltip" title="Click to sort by LastRunStatus"><small>Last Run Status</small></a></th>
+                                        <a><small tooltip="Click to sort by LastRunStatus">Last Run Status</small></a></th>
                                     <th st-sort="UpdatedTimeStamp" st-sort-default="reverse">
-                                        <a data-toggle="tooltip" title="Click to sort by TimeStamp"><small>Latest Timestamp</small></a></th>
+                                        <a><small tooltip="Click to sort by TimeStamp">Latest Timestamp</small></a></th>
                                     <th> </th>
                                     <th> </th>
                                     <th> </th>
@@ -574,19 +582,22 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr ng-repeat="row in displayedSchedJobsCollection" ng-class="{'deletedJob': row.ScheduleStatus=='DELETED'}">
+                                <tr ng-repeat="row in displayedSchedJobsCollection" ng-class="{'deletedJob': row.ScheduleStatus=='DELETED'}"  > 
                                     <!-- <td>{{row.JobID}}</td> -->
-                                    <td>{{row.JobName}}</td>
+                                    <td>{{row.JobName}} 
+                                        <i ng-show={{row.ScheduleStatus=="DELETED"}} tooltip="Job has been Deleted"><strong>(Deleted)</strong></i>
+                                    </td>
+
                                     <td><small>{{row.SQLQuery.substring(0, 30)}}</small><a><small ng-show="showPopupFlag(row.SQLQuery,30)" popover="{{row.SQLQuery}}" popover-trigger="click"> ...<i class="fa fa-1x fa-eye"></i></small></a></td>
 
 
-                                    <td><small tooltip="Sunday"><i class="fa fa-check-square" ng-show="row.ExecutionDays.SUN==true"></i></small></td>
-                                    <td><small tooltip="Monday"><i class="fa fa-check-square" ng-show="row.ExecutionDays.MON==true"></i></small></td>
-                                    <td><small tooltip="Tuesday"><i class="fa fa-check-square" ng-show="row.ExecutionDays.TUE==true"></i></small></td>
-                                    <td><small tooltip="Wednesday"><i class="fa fa-check-square" ng-show="row.ExecutionDays.WED==true"></i></small></td>
-                                    <td><small tooltip="Thursday"><i class="fa fa-check-square" ng-show="row.ExecutionDays.THU==true"></i></small></td>
-                                    <td><small tooltip="Friday"><i class="fa fa-check-square" ng-show="row.ExecutionDays.FRI==true"></i></small></td>
-                                    <td><small tooltip="Runs on Saturday"><i class="fa fa-check-square" ng-show="row.ExecutionDays.SAT==true"></i></small></td>
+                                    <td><small tooltip="Sunday"><i class="fa fa-check-circle runDay" ng-show="row.ExecutionDays.SUN==true"></i></small></td>
+                                    <td><small tooltip="Monday"><i class="fa fa-check-circle runDay" ng-show="row.ExecutionDays.MON==true"></i></small></td>
+                                    <td><small tooltip="Tuesday"><i class="fa fa-check-circle runDay" ng-show="row.ExecutionDays.TUE==true"></i></small></td>
+                                    <td><small tooltip="Wednesday"><i class="fa fa-check-circle runDay" ng-show="row.ExecutionDays.WED==true"></i></small></td>
+                                    <td><small tooltip="Thursday"><i class="fa fa-check-circle runDay" ng-show="row.ExecutionDays.THU==true"></i></small></td>
+                                    <td><small tooltip="Friday"><i class="fa fa-check-circle runDay" ng-show="row.ExecutionDays.FRI==true"></i></small></td>
+                                    <td><small tooltip="Saturday"><i class="fa fa-check-circle runDay" ng-show="row.ExecutionDays.SAT==true"></i></small></td>
 
 
                                     <td>{{row.ExecutionTime.Hours}}:{{row.ExecutionTime.Minutes}}</td>
@@ -628,6 +639,7 @@
                                         </button>
 
                                     </td>
+                                </i>
                                 </tr>
                             </tbody>
                             <tfoot>
