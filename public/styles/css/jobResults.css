@@ -1,0 +1,15 @@
+#statusSuccess {
+    color: #00CC33 ;
+}
+
+#statusFail {
+    color: #FF0000 ;
+}
+
+#statusRunning {
+    color:#5bc0de;
+}
+
+#statusNotStarted {
+    color:#f0ad4e;
+}
