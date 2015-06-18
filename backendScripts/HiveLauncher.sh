@@ -112,9 +112,10 @@ fi
 cd /Users/gmalu/Documents/Project/SelfServiceHiveDashboard/backendScripts
 
 # Hive Server Parameters
-hiveHost="172.16.226.129:10000";
-hiveDBName="default";
-hiveUser="hive";
+#hiveHost="172.16.226.129:10000";
+hiveHost="vqctd-hadoopas1.phx01.ebayadvertising.com:10000"
+hiveDBName="default"
+hiveUser="hive"
 
 # Adding JARS to CLASSPATH
 HIVE_JARS=./HiveJDBCjars 

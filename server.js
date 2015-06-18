@@ -1,8 +1,29 @@
+/**
+##############################################################################################
+## ------------------------------
+## Self Service Hive Dasboard
+## ------------------------------
+## 
+##  File 	: server.js
+##  
+##  Purpose : Configuration file for the NodeJS Server
+##
+##  Author  : Ghanshhyam Malu
+##            gmalu@ebay.com
+##
+##  Created : June 17, 2015
+##
+##  Modified : 
+##  
+##############################################################################################
+*/
+
 // set up ======================================================================
 var express  = require('express');
-var app      = express(); 								// create our app w/ express
+var app      = express(); 								
 
-var logger = require('./app/config/logger'); 			// load the Logger config
+// load the Logger config
+var logger = require('./app/config/logger'); 			
 
 // Load the loggers
 var winston = require('winston');
@@ -22,12 +43,11 @@ process.on('uncaughtException', function(err){
 
 var mongoose = require('mongoose'); 					// mongoose for mongodb
 var port  	 = process.env.PORT || 8080; 				// set the port
-var morgan = require('morgan'); 		// log requests to the console (express4)
-var bodyParser = require('body-parser'); 	// pull information from HTML POST (express4)
-var methodOverride = require('method-override'); // simulate DELETE and PUT (express4)
+var morgan = require('morgan'); 						// log requests to the console (express4)
+var bodyParser = require('body-parser'); 				// pull information from HTML POST (express4)
+var methodOverride = require('method-override'); 		// simulate DELETE and PUT (express4)
 var cookieParser = require('cookie-parser');
-
-var database = require('./app/config/database'); 			// load the database config
+var database = require('./app/config/database'); 		// load the database config
 var cors = require("cors");
 
 // configuration ===============================================================
@@ -56,6 +76,6 @@ require('./app/routes.js')(app);
 
 // listen (start app with node server.js) ======================================
 app.listen(port);
-console.log("App listening on port " + port);
+console.log("SelfServiceHiveDasboard Server App listening on port " + port);
 
 module.exports = app;

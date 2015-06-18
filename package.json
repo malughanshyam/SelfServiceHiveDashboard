@@ -1,21 +1,22 @@
 {
-  "name"         : "Dashboard",
+  "name"         : "Self Service Hive Dashboard",
   "version"      : "0.0.0",
-  "description"  : "Dashboard",
+  "description"  : "Self Service Hive Dashboard",
   "main"         : "server.js",
-  "author"       : "Dashboard",
+  "author"       : "Ghanshyam Malu",
   "dependencies" : {
-    "express"    : "4.8.0",
-    "morgan"	 : "*",
-	"body-parser": "*",
-	"method-override": "*",
-	"serve-favicon": "*",
-	"cookie-parser": "*",
-	"debug": "*",
-  "fs-extra" : "*",
-  "bootstrap" : "*",
-  "mongoose": "*",
-  "winston":"*",
-  "cors":"*"
+      "express"    : "4.8.0",
+      "morgan"	 : "1.2.3",
+      "body-parser": "1.12.4",
+      "method-override": "2.1.3",
+      "serve-favicon": "2.2.1",
+      "cookie-parser": "1.0.1",
+      "debug": "0.7.4",
+      "fs-extra" : "0.18.4",
+      //  "bootstrap" : "*",
+      "mongoose":"4.0.4",
+      "winston":"1.0.0",
+      "cors":"2.7.1",
+      "nodemon":"*"
   }
 }

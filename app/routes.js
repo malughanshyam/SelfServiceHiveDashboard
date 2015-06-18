@@ -64,7 +64,26 @@ module.exports = function(app){
 
     // Default Route
     app.get('/', function (req, res) {
-        res.sendFile('dashboard.html', { root: __dirname + '/../public/'}); 
+        res.sendFile('views/dashboard.html', { root: __dirname + '/../public/'}); 
+    });
+
+    app.use(function(req, res, next){
+        res.status(404);
+
+        // respond with html page
+        if (req.accepts('html')) {
+            res.status(404).sendfile('./public/views/404.html');
+            return;
+        }
+
+        // respond with json
+        if (req.accepts('json')) {
+            res.send({ error: 'Page Not found' });
+            return;
+        }
+
+        // default to plain-text. send()
+        res.type('txt').send('Page Not found');
     });
 
 }
