@@ -404,9 +404,11 @@ angular.module('dashboardApp')
         $('#recentAdHocTab').removeClass('active');
         $('#navAdHoc').removeClass('active'); 
         $('#adHocTab').removeClass('active');      
-
+        $('#adHocTab').removeClass('in');
+        
         $('#navScheduled').addClass('active');
         $('#scheduledTab').addClass('active');
+        $('#scheduledTab').addClass('in');
         $('#navSchedJobList').removeClass('active');
         $('#navSchedJobNew').addClass('active');
         $('#newSchedJobTab').addClass('active'); 

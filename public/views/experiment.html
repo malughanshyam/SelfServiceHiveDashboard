@@ -154,17 +154,23 @@
                                     </td>
                                     
                                     <td>
+
+                                        <div id="viewRecentJobLogBtn">
+                                        <button type="button"  ng-click="viewAdHocJobLogModal(row)" ng-class="{'btn-danger': row.JobRunStatus == 'JOB_FAILED' , 'btn-warning': row.JobRunStatus == 'JOB_IN_PROGRESS' , 'btn-default': row.JobRunStatus == 'JOB_SUCCESSFUL'}" class="btn  btn-xs" ng-hide="row.JobRunStatus == 'JOB_NOT_STARTED'">
+                                            <span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span> View Log
+                                        </button>
+
+                                        </div>
+
                                         <button type="button" ng-click="viewAdHocJobResultsModal(row)" class="btn btn-success btn-xs" ng-show="row.JobRunStatus == 'JOB_SUCCESSFUL'">
                                             <span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span> Results
                                         </button>
 
+<!-- 
+
                                         <button type="button" ng-click="viewAdHocJobLogModal(row)" ng-class="{'btn-danger': row.JobRunStatus == 'JOB_FAILED' , 'btn-warning': row.JobRunStatus == 'JOB_IN_PROGRESS'}" class="btn  btn-xs" ng-show="row.JobRunStatus == 'JOB_FAILED'">
                                             <span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span> View Log
-                                        </button>
-
-                                        <button type="button" ng-click="viewAdHocJobLogModal(row)" ng-class="{'btn-info': row.JobRunStatus == 'JOB_IN_PROGRESS'}" class="btn  btn-xs" ng-show="row.JobRunStatus == 'JOB_IN_PROGRESS'">
-                                            <span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span> View Log
-                                        </button>
+                                        </button> -->
 
                                     </td>
 
