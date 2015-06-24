@@ -91,10 +91,15 @@
                     <!-- Recent Jobs Tab Content Begins-->
                     <div id="recentAdHocTab" class="tab-pane fade in ">
                         <h3>Recent Jobs
-                            <button type="button" ng-click="populateRecentAdHocJobTable()" class="btn btn-sm btn-success pull-right">
-                                <i class="fa fa-refresh">
-                                </i> Refresh
-                            </button>
+                            <div class="pull-right">
+                                    <button type="button" ng-click="populateRecentAdHocJobTable()" class="btn btn-sm btn-success btn-xs" ng-show="adHocJobTableAutoRefreshFlag==false">
+                                        <i class="fa fa-refresh">
+                                        </i> Refresh
+                                    </button>
+                                    <button type="button" id="autoRefreshAdHocJobTableBtn" class="btn btn-default btn-xs" ng-click="toggleAdHocJobTableAutoRefreshBtn()">
+                                        Auto Refresh Off
+                                    </button>
+                            </div>                       
                         </h3>
 
                         <table id="recentAdHocJobTable" st-table="displayedCollection" st-safe-src="recentAdHocJobs" class="table table-responsive table-hover ">
@@ -520,11 +525,15 @@
                     <!-- Scheduled Jobs List Tab Content Begins-->
                     <div id="schedJobListTab" class="tab-pane fade in ">
                         <h3>Scheduled Jobs - Monitor
-                       
-                         <button type="button" ng-click="populateScheduledJobsTable()" class="btn btn-sm btn-success pull-right">
-                            <i class="fa fa-refresh">
-                            </i> Refresh
-                        </button>
+                            <div class="pull-right">
+                                    <button type="button" ng-click="populateScheduledJobsTable()" class="btn btn-sm btn-success btn-xs" ng-show="schedJobTableAutoRefreshFlag==false">
+                                        <i class="fa fa-refresh">
+                                        </i> Refresh
+                                    </button>
+                                    <button type="button" id="autoRefreshSchedJobTableBtn" class="btn btn-default btn-xs" ng-click="toggleSchedJobTableAutoRefreshBtn()">
+                                        Auto Refresh Off
+                                    </button>
+                            </div>                       
                         </h3>
 
 

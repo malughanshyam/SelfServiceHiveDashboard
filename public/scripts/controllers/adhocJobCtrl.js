@@ -10,6 +10,40 @@ angular.module('dashboardApp')
     $scope.recentAdHocJobs = [];
     $scope.displayedCollection = [];
 
+    // Automatic Refresh of Recent AdHoc Job Table
+    $scope.adHocJobTableAutoRefreshFlag = false
+
+    $scope.enableAdHocJobTableAutoRefresh = function(){
+        // Create a Timer
+        $scope.refreshAdHocJobTableInterval = setInterval(function() {
+            $scope.populateRecentAdHocJobTable();
+        }, 2000); // 1 second = 1000 milliseconds
+
+    }
+
+    $scope.disableAdHocJobTableAutoRefresh = function(){
+        // Clear Timer
+        clearInterval($scope.refreshAdHocJobTableInterval);
+    }
+
+    $scope.toggleAdHocJobTableAutoRefreshBtn = function(){
+        if ($scope.adHocJobTableAutoRefreshFlag == false){
+            $scope.adHocJobTableAutoRefreshFlag = true
+            $('#autoRefreshAdHocJobTableBtn').addClass('active');
+            $('#autoRefreshAdHocJobTableBtn').prop('aria-pressed', true);
+            $('#autoRefreshAdHocJobTableBtn').html('<i class="fa fa-refresh"> </i> Auto Refresh On');
+            $scope.enableAdHocJobTableAutoRefresh();
+        } else {
+            $scope.adHocJobTableAutoRefreshFlag = false
+            $('#autoRefreshAdHocJobTableBtn').removeClass('active');
+            $('#autoRefreshAdHocJobTableBtn').prop('aria-pressed', false);
+            $('#autoRefreshAdHocJobTableBtn').html('Auto Refresh Off');
+            $scope.disableAdHocJobTableAutoRefresh();
+        }
+    }
+
+
+
     // Function to Activate a Tab
     activateTab = function(tab) {
         $('.nav-tabs a[href="#' + tab + '"]').tab('show');

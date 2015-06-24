@@ -12,6 +12,38 @@ angular.module('dashboardApp')
     $scope.displayedSchedJobsCollection = [];
     $scope.allSchedJobs = [];
 
+    // Automatic Refresh of Recent Sched Job Table
+    $scope.schedJobTableAutoRefreshFlag = false
+
+    $scope.enableSchedJobTableAutoRefresh = function(){
+        // Create a Timer
+        $scope.refreshSchedJobTableInterval = setInterval(function() {
+            $scope.populateScheduledJobsTable();
+        }, 2000); // 1 second = 1000 milliseconds
+
+    }
+
+    $scope.disableSchedJobTableAutoRefresh = function(){
+        // Clear Timer
+        clearInterval($scope.refreshSchedJobTableInterval);
+    }
+
+    $scope.toggleSchedJobTableAutoRefreshBtn = function(){
+        if ($scope.schedJobTableAutoRefreshFlag == false){
+            $scope.schedJobTableAutoRefreshFlag = true
+            $('#autoRefreshSchedJobTableBtn').addClass('active');
+            $('#autoRefreshSchedJobTableBtn').prop('aria-pressed', true);
+            $('#autoRefreshSchedJobTableBtn').html('<i class="fa fa-refresh"> </i> Auto Refresh On');
+            $scope.enableSchedJobTableAutoRefresh();
+        } else {
+            $scope.schedJobTableAutoRefreshFlag = false
+            $('#autoRefreshSchedJobTableBtn').removeClass('active');
+            $('#autoRefreshSchedJobTableBtn').prop('aria-pressed', false);
+            $('#autoRefreshSchedJobTableBtn').html('Auto Refresh Off')
+            $scope.disableSchedJobTableAutoRefresh();
+        }
+    }
+
     // Initialize Schedule New Job
     $scope.initializeScheduleNewJob = function() {
         $scope.schedJob = {};

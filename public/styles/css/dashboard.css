@@ -174,24 +174,18 @@ pre {
 
 
 /* Change active color of Day Button clicked in New Scheule Job Tab*/
-#runDayChkBoxDiv .btn.active, .btn:active {
+#runDayChkBoxDiv .btn.active, #runDayChkBoxDiv .btn:active {
     background-color: #2aabd2;
     color: #fff;
     text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.2);
-    font-size: 14px;
-    font-weight: 400;
-    line-height: 1.42857;
 }
 
 /* Change active color of Yes/No button for Notify By Email on Create Scheduled Job form */
-#notifyChkBox .btn.active, .btn:active {
+#notifyChkBox .btn.active, #notifyChkBox .btn:active {
     background-color: #2aabd2;
     color: #fff;
     outline: 0 none;
     text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.2);
-    font-size: 14px;
-    font-weight: 400;
-    line-height: 1.42857;
 }
 
 
@@ -242,3 +236,13 @@ pre {
 #scheduledJobsTableId .runDay {
     color:#000000; 
 }
+
+/* Change active color of Auto Refresh button */
+.btn-default.active#autoRefreshSchedJobTableBtn , .btn-default:active#autoRefreshSchedJobTableBtn, .btn-default.active#autoRefreshAdHocJobTableBtn , .btn-default:active#autoRefreshAdHocJobTableBtn {    
+    /*background-color: #2aabd2;*/
+    background-color: #5cb85c;
+    color: #fff;
+    outline: 0 none;
+    text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.2);
+}
+
