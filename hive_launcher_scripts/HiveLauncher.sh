@@ -53,7 +53,7 @@ updateStatusLogFileOnFailure () {
     echo "Hive Launcher Script Failed! " "$additionallogMsg" >> $outputDataDir/$logFile
 
     # Update Job Status in MongoDB
-    $MONGO_PATH/mongo --host $mongoDBhost --port $mongoDBport SelfServiceHiveDashboard --eval 'db.'"$mongoDashboardDBColl"'.update({JobID: "'$jobID'"},{$set: {JobRunStatus : "JOB_FAILED" } })'
+    $MONGO_PATH/mongo --host $mongoDBhost --port $mongoDBport SelfServiceHiveDashboard --eval 'db.'$mongoDashboardDBColl'.update({JobID: "'$jobID'"},{$set: {JobRunStatus : "JOB_FAILED" } })'
 }
 
 # Validations of Arguments

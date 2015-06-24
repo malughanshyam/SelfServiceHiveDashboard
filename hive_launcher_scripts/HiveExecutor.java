@@ -371,11 +371,12 @@ public class HiveExecutor {
 		// Create new object and initialize the program parameters using the arguments
 		HiveExecutor hiveExecObj = new HiveExecutor(args);
 		
-		// Update the initial Job Status
-		hiveExecObj.updateStatus();
-		
 		// Print the Job metadata
 		hiveExecObj.printMetaData();
+		
+		// Update the Job Status to IN_PROGRESS
+		hiveExecObj.jobStatus = JobStatus.IN_PROGRESS;
+		hiveExecObj.updateStatus();
 		
 		// Establish Hive Connection
 		hiveExecObj.establishHiveConnection();
@@ -385,10 +386,6 @@ public class HiveExecutor {
 		
 		// Create Output Directory
 		hiveExecObj.createOutputDirectory();
-		
-		// Update the Job Status to IN_PROGRESS
-		hiveExecObj.jobStatus = JobStatus.IN_PROGRESS;
-		hiveExecObj.updateStatus();
 		
 		// Execute the Hive Query
 		hiveExecObj.executeQuery(sql);
