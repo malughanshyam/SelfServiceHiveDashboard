@@ -42,8 +42,6 @@ angular.module('dashboardApp')
         }
     }
 
-
-
     // Function to Activate a Tab
     activateTab = function(tab) {
         $('.nav-tabs a[href="#' + tab + '"]').tab('show');
@@ -85,7 +83,7 @@ angular.module('dashboardApp')
         $scope.output = ''
 
         $scope.formData.hiveQuery = ''
-        $scope.formData.jobID = ''
+        $scope.formData.jobID = null
         $scope.formData.jobName = ''
         $scope.submittedJobStatus = 'JOB_NOT_STARTED'
         $scope.showJobLog = false
@@ -177,7 +175,7 @@ angular.module('dashboardApp')
     $scope.refreshJobStatus = function() {
 
         console.log("Refreshing Job Status");
-        $scope.checkStatusURL = '/jobStatus/' + $scope.formData.jobID;
+        $scope.checkStatusURL = '/adHocJobStatus/' + $scope.formData.jobID;
 
         $http.get($scope.checkStatusURL, $scope.formData)
             .success(function(data) {
@@ -393,16 +391,20 @@ angular.module('dashboardApp')
     // Resubmit Job
     $scope.resubmitJob = function(adHocJob) {
         $scope.resetNewJobTab();
+        $('#newAdHocTab').removeClass('active');
+        $scope.formData.jobID = adHocJob.JobID;
         $scope.formData.hiveQuery = adHocJob.SQLQuery;
         $scope.formData.jobName = adHocJob.JobName;
         $scope.submitJob();
-        
+
         var type = 'info';
         var message = "Job Resubmitted! Hit the Refresh Button to check the execution progress";
         dashboardAungularService.flashImpAlert(type, message, 8000);
 
         setTimeout(function() {
-            $scope.populateRecentAdHocJobTable()
+            //$scope.populateRecentAdHocJobTable();
+            $('#autoRefreshAdHocJobTableBtn').trigger('click');
+            clearInterval($scope.refreshInterval);
         }, 1000);
     }
 

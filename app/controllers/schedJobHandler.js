@@ -376,7 +376,7 @@ exports.removeScheuledJob = function(req, res) {
     var clientIPaddress = req.ip || req.header('x-forwarded-for') || req.connection.remoteAddress;    
     var jobID = req.params.JobID
     console.log("JobID received for deletion: " + jobID);
-    if (jobID == null || jobID == 'undefined'){
+    if (!jobID){
         detailLogger.error('JobID - %s Error Deleting Scheduled Job %s' ,jobID, JSON.stringify({ clientIPaddress: clientIPaddress, error: 'JobID not specified'}));
         res.status(500);
         return res.json(({status: '500 Server error', error: 'JobID not specified'}))

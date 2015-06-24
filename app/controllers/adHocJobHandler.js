@@ -58,7 +58,6 @@ exports.getAllAdHocJobs = function(req, res) {
     .find()
     .sort('-UpdatedTimeStamp')
     .limit(100)
-//    .sort('-UpdatedTimeStamp')
     .exec(callback);
 
 }
@@ -81,7 +80,6 @@ exports.getAdHocJobByJobID = function (req, res) {
 
 // Create new AdHoc Job
 exports.submitNewAdHocJob = function(req, res) {
-
 	
     // Initialize the AdHoc Job Variables
     var jobName = req.body.jobName;
@@ -97,56 +95,83 @@ exports.submitNewAdHocJob = function(req, res) {
     var clientIPaddress = req.ip || req.header('x-forwarded-for') || req.connection.remoteAddress;
     var jobStatus = JOB_NOT_STARTED_STATUS_STRING
 
-    // Create a new Job ID 	
-    var ObjectId = mongoose.Types.ObjectId;
-    jobID = new ObjectId;
-
-    jobID = jobID.toString();
-
-    detailLogger.info(' JobID - %s New AdHoc Job Submitted: %s', jobID, JSON.stringify({ clientIPaddress: clientIPaddress, JobName : jobName, sqlQuery : sqlQuery  }));
-    highLevelLogger.info(' JobID - %s New AdHoc Job Submitted: %s', jobID, JSON.stringify({ clientIPaddress: clientIPaddress, JobName : jobName, sqlQuery : sqlQuery  }));
-
     res.set('Access-Control-Allow-Origin', '*');
 
-    // Create a MongoDB record for the AdHoc Job
-    AdHocJob.create({
-        _id             : jobID,
-        JobID           : jobID,
-        JobName         : jobName,
-        SQLQuery        : sqlQuery,
-        SubmittedByIP   : clientIPaddress,
-        JobRunStatus    : jobStatus,
-        CreatedTimeStamp: new Date(),
-        UpdatedTimeStamp: new Date()
-    }, function(err, adHocQuery) {
-        if (err) {
-        	detailLogger.error('JobID - %s Error creating new record: %s' ,jobID, JSON.stringify({ error: err}));
-            res.status(500)
-            return res.send(err)
-        } else {
-       		detailLogger.debug('JobID - %s  New Job details inserted into database', jobID  );
-        	createJobDirectory();
+    var jobID = req.body.jobID;
+
+    if (!jobID){
+        // Create a new Job ID     
+        var ObjectId = mongoose.Types.ObjectId;
+        jobID = new ObjectId;
+
+        jobID = jobID.toString();
+
+        detailLogger.info(' JobID - %s New AdHoc Job Submitted: %s', jobID, JSON.stringify({ clientIPaddress: clientIPaddress, JobName : jobName, sqlQuery : sqlQuery  }));
+        highLevelLogger.info(' JobID - %s New AdHoc Job Submitted: %s', jobID, JSON.stringify({ clientIPaddress: clientIPaddress, JobName : jobName, sqlQuery : sqlQuery  }));
+
+        // Create a MongoDB record for the AdHoc Job
+        AdHocJob.create({
+            _id             : jobID,
+            JobID           : jobID,
+            JobName         : jobName,
+            SQLQuery        : sqlQuery,
+            SubmittedByIP   : clientIPaddress,
+            JobRunStatus    : jobStatus,
+            CreatedTimeStamp: new Date(),
+            UpdatedTimeStamp: new Date()
+        }, function(err, adHocQuery) {
+            if (err) {
+                detailLogger.error('JobID - %s Error creating new record: %s' ,jobID, JSON.stringify({ error: err}));
+                res.status(500)
+                return res.send(err)
+            } else {
+                detailLogger.debug('JobID - %s  New Job details inserted into database', jobID  );
+                jobDataDir = dataDir + jobID;
+                queryFile = jobDataDir + '/sql.txt';
+                createJobDirectory();
+            }
+
+        });
+
+    } else {
+
+      highLevelLogger.info('JobID - %s AdHoc Job Resubmitted' ,jobID);
+      detailLogger.info('JobID - %s AdHoc Job Resubmitted' ,jobID);
+
+        var query = { _id: jobID };
+        var updateFields = { JobRunStatus: jobStatus , SubmittedByIP   : clientIPaddress, UpdatedTimeStamp : new Date() };
+   
+        function callback (err) {
+         if (err) {
+                detailLogger.error('JobID - %s Error updating the JobRunStatus to %s in database : %s' ,jobID, jobStatus, JSON.stringify({ error: err}));
+           }
+           else {
+                detailLogger.info('JobID - %s Updated the Resubmitted AdHocJob Job JobRunStatus to %s in database' ,jobID, jobStatus);
+                jobDataDir = dataDir + jobID;
+                queryFile = jobDataDir + '/sql.txt';
+                res.send({ "JobID": jobID }); 
+                executeHiveScript();
+           }
         }
 
-    });
+       AdHocJob.update(query, updateFields , callback)
+
+    }
 
     // Create a directory for the JobID
     createJobDirectory = function() {
 
-        dir = dataDir + jobID,
-            queryFile = dir + '/sql.txt';
-
         console.log("jobID: " + jobID)
-        console.log("Dir: " + dir)
+        console.log("Dir: " + jobDataDir)
         console.log("QueryFile: " + queryFile)
 
-        fs.ensureDir(dir, function(err) {
+        fs.ensureDir(jobDataDir, function(err) {
             if (err) {
-            	detailLogger.error('JobID - %s Error creating new directory: %s', jobID,  JSON.stringify({Directory: dir, error: err}));
+            	detailLogger.error('JobID - %s Error creating new directory: %s', jobID,  JSON.stringify({Directory: jobDataDir, error: err}));
                 res.status(500);
                 return res.send(err);
             } else {
-	            detailLogger.debug('JobID - %s  New JobID directory created: %s',jobID, JSON.stringify ({Directory: dir}));
+	            detailLogger.debug('JobID - %s  New JobID directory created: %s',jobID, JSON.stringify ({Directory: jobDataDir}));
 		        
                 fs.outputFile(queryFile, sqlQuery, function (err) {
                     if (err){
@@ -158,7 +183,7 @@ exports.submitNewAdHocJob = function(req, res) {
                         res.send({
                             "JobID": jobID
                         }); 
-                        executeHiveScript()
+                        executeHiveScript();
                     }
                 });
 
@@ -179,7 +204,7 @@ exports.submitNewAdHocJob = function(req, res) {
         // ##   HiveLauncher.sh ADHOC <JobID> <SQLQueryFile> <OutputDir>
         // ##
 
-        args = ["ADHOC", jobID, jobName, normalizePath + queryFile, normalizePath + dir]
+        args = ["ADHOC", jobID, jobName, normalizePath + queryFile, normalizePath + jobDataDir]
 
         var options = {
             cwd: execDirPath,
@@ -209,14 +234,14 @@ exports.submitNewAdHocJob = function(req, res) {
        
 
        var query = { _id: jobID };
-       var updateFields = { JobRunStatus: status }
+       var updateFields = { JobRunStatus: status , UpdatedTimeStamp : new Date() };
    
        function callback (err) {
          if (err) {
-               detailLogger.error('JobID - %s Error updating the Job status to %s in Database: %s' ,jobID, status, JSON.stringify({ error: err}));
+               detailLogger.error('JobID - %s Error updating the AdHoc Job status to %s in Database: %s' ,jobID, status, JSON.stringify({ error: err}));
            }
            else {
-              detailLogger.info('JobID - %s Updated the Scheduled Job status to %s in Database' ,jobID, status);
+              detailLogger.info('JobID - %s Updated the AdHoc Job status to %s in Database' ,jobID, status);
            }
        }
 
@@ -227,15 +252,12 @@ exports.submitNewAdHocJob = function(req, res) {
 };
 
 // Get Job Status from the data/jobID/status.txt file
-exports.getStatus = function(req,res){
+exports.getAdHocJobStatus = function(req,res){
 
 	var clientIPaddress = req.ip || req.header('x-forwarded-for') || req.connection.remoteAddress;
 	var jobID = req.params.JobID
-	if (jobID != null){
+	if (jobID){
         jobStatusFile = dataDir+jobID+"/status.txt";
-
-
-		console.log("Job Status File: "+jobStatusFile);
 		fs.readFile(jobStatusFile, 'utf8', function (err,data) {
 		  	if (err) {
 		  		detailLogger.error('JobID - %s Error fetching Job Status %s' ,jobID, JSON.stringify({ clientIPaddress: clientIPaddress, error: err, statusFile: jobStatusFile}));

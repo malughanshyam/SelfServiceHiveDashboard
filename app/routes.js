@@ -24,7 +24,7 @@ module.exports = function(app){
     app.post('/submitNewAdHocJob', adHocJobHandler.submitNewAdHocJob);
     
     // Get AdHoc Job Status
-    app.get('/jobStatus/:JobID', adHocJobHandler.getStatus);
+    app.get('/adHocJobStatus/:JobID', adHocJobHandler.getAdHocJobStatus);
 
     // Get AdHoc Job Log
     app.get('/adHocJobLog/:JobID', commonHandler.adHocJobLog);

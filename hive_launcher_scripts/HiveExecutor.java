@@ -357,16 +357,16 @@ public class HiveExecutor {
 	 * @throws IOException
 	 */
 	public static void main(String[] args)  throws SQLException, IOException {
-		
-		reportLogger.info("Beginning Execution of Hive Executor Java Client");
-		debugLogger.info("Beginning Execution of Hive Executor Java Client");
-		
+				
 		// Validate the number of arguments supplied
 		if (args.length != 11) {
 			debugLogger.warn("Number of arguments != 11");
 			debugLogger.debug("Arguments: "+ Arrays.toString(args));
 			usage();
 		}
+		
+		reportLogger.info("***** Beginning Execution of Hive Executor Java Client *****");
+		debugLogger.info("***** Beginning Execution of Hive Executor Java Client *****");
 		
 		// Create new object and initialize the program parameters using the arguments
 		HiveExecutor hiveExecObj = new HiveExecutor(args);
@@ -395,6 +395,9 @@ public class HiveExecutor {
 
 		// Update the final Job Status
 		hiveExecObj.updateStatus();
+		
+		reportLogger.info("***** Ending Execution of Hive Executor Java Client *****");
+		debugLogger.info("***** Ending Execution of Hive Executor Java Client *****");
 				
 	}
 

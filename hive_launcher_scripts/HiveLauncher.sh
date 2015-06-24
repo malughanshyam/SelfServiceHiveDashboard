@@ -39,6 +39,7 @@ usage (){
 
 # Update Status and Log Files in case failure
 updateStatusLogFileOnFailure () {
+    echo $@
     jobID=$1
     outputDataDir=$2
     statusFile=$3
@@ -92,7 +93,7 @@ jobType=$1
 jobID=$2
 jobName=$3
 sqlQueryFile=$4
-outputDir=$5
+outputDataDir=$5
 notifyFlag=$6
 notifyEmail=$7
 
@@ -100,24 +101,43 @@ notifyEmail=$7
 statusFile='status.txt'
 logFile='log.log'
 debugLogFile='debug.log'
+resultFile='result.txt'
 
 MONGO_PATH=../lib/mongodb/bin/
 
 # Validate if Query file exists
-if [ ! -f $sqlQueryFile ]
-then
+if [ ! -f $sqlQueryFile ]; then
    additionallogMsg="File $sqlQueryFile doesn't exist!"
-   updateStatusLogFileOnFailure $outputDir $statusFile  $logFile "$additionallogMsg" $mongoDBhost $mongoDBport $mongoDashboardDBColl $MONGO_PATH
+   updateStatusLogFileOnFailure $outputDataDir $statusFile  $logFile "$additionallogMsg" $mongoDBhost $mongoDBport $mongoDashboardDBColl $MONGO_PATH
    exit 1
 fi
 
 # Validate if Query file is readable
-if [ ! -r $sqlQueryFile ]
-then
+if [ ! -r $sqlQueryFile ]; then
    additionallogMsg="$sqlQueryFile is not readable"
-   updateStatusLogFileOnFailure $outputDir $statusFile  $logFile "$additionallogMsg" $mongoDBhost $mongoDBport $mongoDashboardDBColl $MONGO_PATH
+   updateStatusLogFileOnFailure $outputDataDir $statusFile  $logFile "$additionallogMsg" $mongoDBhost $mongoDBport $mongoDashboardDBColl $MONGO_PATH
    exit 1
 fi 
+
+
+# Remove Status file if exists
+if [ -f $outputDataDir/$statusFile ]; then
+  echo "Removing existing Status file: " $outputDataDir/$statusFile
+  rm $outputDataDir/$statusFile
+fi
+
+# Remove Log file if exists
+if [ -f $outputDataDir/$logFile ]; then
+  echo "Removing existing Log file: " $outputDataDir/$logFile
+  rm $outputDataDir/$logFile
+fi
+
+# Remove Result file if exists
+if [ -f $outputDataDir/$resultFile ]; then
+  echo "Removing existing Result file: " $outputDataDir/$resultFile
+  rm $outputDataDir/$resultFile
+fi
+
 
 # Change the Current Directory to Hive Script Directory
 #cd /Users/gmalu/Documents/Project/SelfServiceHiveDashboard/backendScripts
@@ -149,28 +169,24 @@ else
 fi
 
 # Setting up the Log4J Log Files
-logFilePath=$outputDir"\/"$logFile
-debugLogFilePath=$outputDir"\/"$debugLogFile
+logFilePath=$outputDataDir"\/"$logFile
+debugLogFilePath=$outputDataDir"\/"$debugLogFile
 
 # Create a new JobID specific log4j.properties file using the log4j_template.properties template file
 sed -e "s|\${reportLogFile}|$logFilePath|g" -e "s|\${debugLogFile}|$debugLogFilePath|g" log4j_template.properties > log4j.properties
 
 # Launch the HiveExecutor Java program with the appropriate parameters
-java -cp $CLASSPATH HiveExecutor $jobID $jobName $outputDir $hiveUser $hiveHost $hiveDBName $sqlQueryFile $mongoDBhost $mongoDBport $mongoDashboardDB $mongoDashboardDBColl
+java -cp $CLASSPATH HiveExecutor $jobID $jobName $outputDataDir $hiveUser $hiveHost $hiveDBName $sqlQueryFile $mongoDBhost $mongoDBport $mongoDashboardDB $mongoDashboardDBColl
 
 # Check the exitStatus
-exitStatus=$?
+# exitStatus=$?
+exitStatus=1
 echo "Exiting with status code:"$exitStatus
 
-# If not 0, update the Status and Log file of the JobIDs
-# if [ $exitStatus -ne 0 ]; then
-#   additionallogMsg="Check if Hive server is up."
-#   updateStatusLogFileOnFailure $outputDir $statusFile  $logFile "$additionallogMsg"
-# fi
 
 if [ $exitStatus -ne 0 ]; then
   additionallogMsg="."
-  updateStatusLogFileOnFailure $jobID $outputDir $statusFile  $logFile $additionallogMsg $mongoDBhost $mongoDBport $mongoDashboardDBColl $MONGO_PATH
+  updateStatusLogFileOnFailure $jobID $outputDataDir $statusFile  $logFile $additionallogMsg $mongoDBhost $mongoDBport $mongoDashboardDBColl $MONGO_PATH
 fi
 
 
