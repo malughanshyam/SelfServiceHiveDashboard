@@ -1,3 +1,0 @@
-select stock_symbol as SYM, nyse_stocks.stock_price_open, stock_price_low from nyse_stocks 
-where stock_symbol = 'IBM' 
-limit 5;

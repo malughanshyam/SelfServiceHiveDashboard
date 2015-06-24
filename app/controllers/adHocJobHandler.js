@@ -33,6 +33,10 @@ var JOB_NOT_STARTED_STATUS_STRING = 'JOB_NOT_STARTED'
 // Include the MongoDB Schema 
 AdHocJob = require('../models/AdHocJob');
 
+var execDirPath = 'hive_launcher_scripts/';
+var execFileName = './HiveLauncher.sh';
+var normalizePath = "../";
+
 // Get all the AdHoc Jobs
 exports.getAllAdHocJobs = function(req, res) {
 
@@ -165,10 +169,6 @@ exports.submitNewAdHocJob = function(req, res) {
 
     // Execute the Hive Script
     executeHiveScript = function() {
-
-        var execDirPath = '/Users/gmalu/Documents/Project/SelfServiceHiveDashboard/backendScripts/',
-            execFileName = './HiveLauncher.sh',
-            normalizePath = "../"
 
         // ##  HiveLauncher Script Usage :
         // ##      

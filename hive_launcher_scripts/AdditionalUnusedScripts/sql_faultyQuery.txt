@@ -1,0 +1,3 @@
+select * from nyse_stocksasdf 
+where stock_symbol = 'IBM' 
+limit 5;

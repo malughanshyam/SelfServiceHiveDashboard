@@ -1,0 +1,10 @@
+Subject: Job - TopTrends [JOB_SUCCESSFUL] 
+
+The Job - TopTrends has completed with the status	:  JOB_SUCCESSFUL
+
+Check out more details at : http://localhost:8080/views/jobresults.html?jobType=SCHED&jobID=55826c6395c8393709756ff6
+
+
+--
+Self Service Hive Dashboard
+

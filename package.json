@@ -1,5 +1,5 @@
 {
-  "name"         : "Self Service Hive Dashboard",
+  "name"         : "self_service_hive_dashboard",
   "version"      : "0.0.0",
   "description"  : "Self Service Hive Dashboard",
   "main"         : "server.js",
@@ -13,7 +13,6 @@
       "cookie-parser": "1.0.1",
       "debug": "0.7.4",
       "fs-extra" : "0.18.4",
-      //  "bootstrap" : "*",
       "mongoose":"4.0.4",
       "winston":"1.0.0",
       "cors":"2.7.1",

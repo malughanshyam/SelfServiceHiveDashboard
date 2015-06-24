@@ -33,6 +33,10 @@ var JOB_NOT_STARTED_STATUS_STRING = 'JOB_NOT_STARTED'
 // Include the MongoDB Schema 
 ScheduledJob = require('../models/ScheduledJob');
 
+var execDirPath = 'hive_launcher_scripts/';
+var execFileName = './HiveLauncher.sh';
+var normalizePath = "../";
+
 // Get all Scheduled Jobs
 exports.getAllSchedJobs = function(req, res){
 
@@ -222,9 +226,6 @@ exports.submitNewScheduledJob = function(req, res) {
         // ##
 
         // Prepare Command to be run by CRON
-        var execDirPath = '/Users/gmalu/Documents/Project/SelfServiceHiveDashboard/backendScripts/',
-            execFileName = './HiveLauncher.sh',
-            normalizePath = "../"
     
         var args = "SCHED" + " " + jobID + " " + schedJobName + " " + normalizePath  + queryFile  + " " + normalizePath + jobDir 
 
