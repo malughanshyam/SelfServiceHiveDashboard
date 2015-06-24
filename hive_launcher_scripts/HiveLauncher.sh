@@ -119,7 +119,7 @@ if [ ! -r $sqlQueryFile ]; then
    exit 1
 fi 
 
-
+###### Clean Up ######
 # Remove Status file if exists
 if [ -f $outputDataDir/$statusFile ]; then
   echo "Removing existing Status file: " $outputDataDir/$statusFile
@@ -179,8 +179,7 @@ sed -e "s|\${reportLogFile}|$logFilePath|g" -e "s|\${debugLogFile}|$debugLogFile
 java -cp $CLASSPATH HiveExecutor $jobID $jobName $outputDataDir $hiveUser $hiveHost $hiveDBName $sqlQueryFile $mongoDBhost $mongoDBport $mongoDashboardDB $mongoDashboardDBColl
 
 # Check the exitStatus
-# exitStatus=$?
-exitStatus=1
+exitStatus=$?
 echo "Exiting with status code:"$exitStatus
 
 

@@ -251,8 +251,37 @@ exports.submitNewAdHocJob = function(req, res) {
 
 };
 
-// Get Job Status from the data/jobID/status.txt file
+
+// Get Job Status from the MongoDB
 exports.getAdHocJobStatus = function(req,res){
+
+    var clientIPaddress = req.ip || req.header('x-forwarded-for') || req.connection.remoteAddress;
+    var jobID = req.params.JobID
+    if (jobID){
+        
+        var callback = function(err, adHocJob) {
+            if (err){
+                detailLogger.error('JobID - %s Error fetching Job Status %s' ,jobID, JSON.stringify({ clientIPaddress: clientIPaddress, error: err}));
+                highLevelLogger.error('JobID - %s Error fetching Job Status %s' ,jobID, JSON.stringify({ clientIPaddress: clientIPaddress, error: err}));
+                res.status(500)
+                return res.send(err)
+            } else {
+                detailLogger.debug('JobID - %s Checked Job Status: %s',jobID, adHocJob.JobRunStatus);
+                highLevelLogger.debug('JobID - %s Checked Job Status: %s',jobID, adHocJob.JobRunStatus);        
+                res.send(adHocJob.JobRunStatus);
+            }
+        
+        }
+        AdHocJob.findOne({ JobID: jobID }, 'JobRunStatus', callback);
+     } else{
+        detailLogger.error('JobID - %s Error fetching Job Status %s' ,jobID, JSON.stringify({ clientIPaddress: clientIPaddress, error: 'JobID not specified'}));
+        return res.json(({status: '500 Server error', error: 'JobID not specified'}))
+    }   
+
+}
+
+// Get Job Status from the data/jobID/status.txt file
+exports.getAdHocJobStatusFromFile = function(req,res){
 
 	var clientIPaddress = req.ip || req.header('x-forwarded-for') || req.connection.remoteAddress;
 	var jobID = req.params.JobID
