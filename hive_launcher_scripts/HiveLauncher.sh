@@ -39,12 +39,21 @@ usage (){
 
 # Update Status and Log Files in case failure
 updateStatusLogFileOnFailure () {
-    outputDataDir=$1
-    statusFile=$2
-    logFile=$3
-    additionallogMsg=$4
+    jobID=$1
+    outputDataDir=$2
+    statusFile=$3
+    logFile=$4
+    additionallogMsg=$5
+    mongoDBhost=$6
+    mongoDBport=$7
+    mongoDashboardDBColl=$8
+    MONGO_PATH=$9
+    
     echo "JOB_FAILED" > $outputDataDir/$statusFile
     echo "Hive Launcher Script Failed! " "$additionallogMsg" >> $outputDataDir/$logFile
+
+    # Update Job Status in MongoDB
+    $MONGO_PATH/mongo --host $mongoDBhost --port $mongoDBport SelfServiceHiveDashboard --eval 'db.'"$mongoDashboardDBColl"'.update({JobID: "'$jobID'"},{$set: {JobRunStatus : "JOB_FAILED" } })'
 }
 
 # Validations of Arguments
@@ -92,11 +101,13 @@ statusFile='status.txt'
 logFile='log.log'
 debugLogFile='debug.log'
 
+MONGO_PATH=../lib/mongodb/bin/
+
 # Validate if Query file exists
 if [ ! -f $sqlQueryFile ]
 then
    additionallogMsg="File $sqlQueryFile doesn't exist!"
-   updateStatusLogFileOnFailure $outputDir $statusFile  $logFile "$additionallogMsg"
+   updateStatusLogFileOnFailure $outputDir $statusFile  $logFile "$additionallogMsg" $mongoDBhost $mongoDBport $mongoDashboardDBColl $MONGO_PATH
    exit 1
 fi
 
@@ -104,12 +115,12 @@ fi
 if [ ! -r $sqlQueryFile ]
 then
    additionallogMsg="$sqlQueryFile is not readable"
-   updateStatusLogFileOnFailure $outputDir $statusFile  $logFile "$additionallogMsg"
+   updateStatusLogFileOnFailure $outputDir $statusFile  $logFile "$additionallogMsg" $mongoDBhost $mongoDBport $mongoDashboardDBColl $MONGO_PATH
    exit 1
 fi 
 
 # Change the Current Directory to Hive Script Directory
-cd /Users/gmalu/Documents/Project/SelfServiceHiveDashboard/backendScripts
+#cd /Users/gmalu/Documents/Project/SelfServiceHiveDashboard/backendScripts
 
 # Hive Server Parameters
 hiveHost="172.16.226.129:10000";
@@ -158,7 +169,8 @@ echo "Exiting with status code:"$exitStatus
 # fi
 
 if [ $exitStatus -ne 0 ]; then
-  updateStatusLogFileOnFailure $outputDir $statusFile  $logFile
+  additionallogMsg="."
+  updateStatusLogFileOnFailure $jobID $outputDir $statusFile  $logFile $additionallogMsg $mongoDBhost $mongoDBport $mongoDashboardDBColl $MONGO_PATH
 fi
 
 
