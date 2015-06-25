@@ -17,7 +17,7 @@ angular.module('dashboardApp')
         // Create a Timer
         $scope.refreshAdHocJobTableInterval = setInterval(function() {
             $scope.populateRecentAdHocJobTable();
-        }, 2000); // 1 second = 1000 milliseconds
+        }, 4000); // 1 second = 1000 milliseconds
 
     }
 
@@ -100,12 +100,13 @@ angular.module('dashboardApp')
 
     // Function to Reset New Job Tab
     $scope.resetNewJobTab = function() {
-
+                
         $scope.initializeNewJobTab();
         
         // Replace the New AdHoc Tab with a clone of the backup created earlier
         $("#newAdHocTab").replaceWith(newAdHocTabClone.clone());
         $compile($('#newAdHocTab'))($scope);
+        // $('#recentAdHocTab').removeClass('active');
         $('#newAdHocTab').addClass('active');
         
     }
@@ -403,6 +404,7 @@ angular.module('dashboardApp')
 
         setTimeout(function() {
             //$scope.populateRecentAdHocJobTable();
+            $scope.adHocJobTableAutoRefreshFlag = false
             $('#autoRefreshAdHocJobTableBtn').trigger('click');
             clearInterval($scope.refreshInterval);
         }, 1000);

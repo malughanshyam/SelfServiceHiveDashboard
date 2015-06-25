@@ -19,7 +19,7 @@ angular.module('dashboardApp')
         // Create a Timer
         $scope.refreshSchedJobTableInterval = setInterval(function() {
             $scope.populateScheduledJobsTable();
-        }, 2000); // 1 second = 1000 milliseconds
+        }, 4000); // 1 second = 1000 milliseconds
 
     }
 
