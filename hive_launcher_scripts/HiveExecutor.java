@@ -45,12 +45,9 @@ public class HiveExecutor {
 	private String queryFilePath;
 	private Connection con;
 	private Statement stmt;
-	private String statusFilePath;
 	private String outputDir ;
 	private String resultFilePath;
 	private ResultSet res;
-	private Exception occurredException;
-	private MongoExecutor mongoExecutor;
 
 	//  Hive Connection Login Timeout
 	public static int HIVE_ESTABLISH_CONNECTION_TIMEOUT = 10 ; //seconds
@@ -58,14 +55,7 @@ public class HiveExecutor {
 	//	Get the Logger information for Log4j
     static final Logger debugLogger = Logger.getLogger("debugLogger");
     static final Logger reportLogger = Logger.getLogger("reportLogger");
-   
-    // enum to maintain Job Status 
-	public enum JobStatus {
-		NOT_STARTED, SUCCESS, FAILED, IN_PROGRESS
-	}
- 
-	private JobStatus jobStatus;
-	
+   	
 	/**
 	 * Initializing the class parameters from the program arguments
 	 * @param args
@@ -82,27 +72,6 @@ public class HiveExecutor {
 		this.hiveDBName = args[5];
 		this.queryFilePath = args[6];
 		this.resultFilePath = this.outputDir +"/result.txt";
-		this.statusFilePath = this.outputDir +"/status.txt";
-		this.jobStatus = JobStatus.NOT_STARTED;
-		
-		// Establish MongoDB Connection 
-		// args[7] = mongoHostAddress = "localhost"
-		// args[8] = port = "27017"
-		// args[9] = dashboardDB = "SelfServiceHiveDashboard"
-		// args[10] = dashboardDBCollection = "AdHocJob"
-		
-		try {
-			debugLogger.debug("Creating MongoExecutor Object");
-			this.mongoExecutor = new MongoExecutor(args[7], Integer.parseInt(args[8]));
-			
-			debugLogger.debug("Establishing MongoDB Connection for maintaining Job Status Details in the database");
-			this.mongoExecutor.connectDBCollection(args[9], args[10] );		
-		} catch (Exception e) {
-			e.printStackTrace();			
-			debugLogger.error("Exception connecting to MongoDB : ", e);
-			reportLogger.error("Error connecting to MongoDB : ",e);
-			System.exit(1);
-		}
 		
 	}
 	
@@ -113,14 +82,13 @@ public class HiveExecutor {
 		
 		debugLogger.info("Job ID: " + this.jobID);
 		debugLogger.info("Job Name: " + this.jobName);
-		debugLogger.info("outputDir: "+ this.outputDir);		
-		debugLogger.info("queryFilePath: "+this.queryFilePath);
-		debugLogger.info("resultFilePath: "+ this.resultFilePath);
-		debugLogger.info("statusFilePath: "+this.statusFilePath);
+		debugLogger.info("Output Data Directory: "+ this.outputDir);		
+		debugLogger.info("Query File Path: "+this.queryFilePath);
+		debugLogger.info("Result File Path: "+ this.resultFilePath);
 
 		reportLogger.info("Job ID: " + this.jobID);
 		reportLogger.info("Job Name: " + this.jobName);
-				
+		
 	}
 	
 	/**
@@ -128,13 +96,13 @@ public class HiveExecutor {
 	 */
 	private static void usage() {
 		System.err.println("Usage : java " + HiveExecutor.class.getName()
-				+ " jobID outputDataDir hiveUserName hiveHost dbName hiveQueryFile mongoDBhost mongoDBport mongoDBName mongoDBCollection");		
+				+ " jobID outputDataDir hiveUserName hiveHost dbName hiveQueryFile");		
 		
 		debugLogger.error("Usage : java " + HiveExecutor.class.getName()
-				+ " jobID outputDataDir hiveUserName hiveHost dbName hiveQueryFile mongoDBhost mongoDBport mongoDBName mongoDBCollection");		
+				+ " jobID outputDataDir hiveUserName hiveHost dbName hiveQueryFile");		
 		
 		reportLogger.error("Usage : java " + HiveExecutor.class.getName()
-				+ " jobID outputDataDir hiveUserName hiveHost dbName hiveQueryFile mongoDBhost mongoDBport mongoDBName mongoDBCollection");		
+				+ " jobID outputDataDir hiveUserName hiveHost dbName hiveQueryFile");		
 		
 		System.exit(1);
 	}
@@ -163,19 +131,11 @@ public class HiveExecutor {
 		catch (Exception e) {	
 			debugLogger.error("Exception Establishing Hive Connection : ", e);
 			reportLogger.error("Exception Establishing Hive Connection : ", e);
-			
-			// Update the Status in MongoDB
-			this.mongoExecutor.updateStatusDocument(this.jobID, getJobStatusValue(JobStatus.FAILED) );
-			debugLogger.debug("Updated the Job Run Status in MongoDB :" + this.jobID +" : " + getJobStatusValue(JobStatus.FAILED) );
-
-			// Close MongoDB connection
-			this.mongoExecutor.closeConnection();
-			debugLogger.debug("Closed the MongoDB connection");
-
+		
 			e.printStackTrace();	
 			
-			debugLogger.error("JOB_FAILED");
-			reportLogger.error("JOB_FAILED");
+			debugLogger.error(this.jobID + " - JOB_FAILED");
+			reportLogger.error( this.jobID + " - JOB_FAILED");
 
 			System.exit(1);
 		}
@@ -189,12 +149,32 @@ public class HiveExecutor {
 	 * @throws IOException
 	 */
 	private String readFile(String path) throws IOException {
+		
 		debugLogger.debug("Reading the Query File : "+path);
 		reportLogger.debug("Reading the Query");
-		byte[] encoded = Files.readAllBytes(Paths.get(path));
-		String query = new String(encoded, Charset.defaultCharset());
-		query = query.replaceAll("\r", "").replaceAll("\n", " ").replaceAll(";", "");
-		return query;
+		
+		String query = "";
+		
+		try {
+			byte[] encoded = Files.readAllBytes(Paths.get(path));
+			query = new String(encoded, Charset.defaultCharset());
+			query = query.replaceAll("\r", "").replaceAll("\n", " ").replaceAll(";", "");
+
+		}
+		catch (Exception e){
+			debugLogger.error("Exception reading Query file : ", e);
+			reportLogger.error("Exception reading Query file : ", e);
+		
+			e.printStackTrace();	
+			
+			debugLogger.error(this.jobID + " - JOB_FAILED");
+			reportLogger.error( this.jobID + " - JOB_FAILED");
+
+			System.exit(1);
+
+		}
+		
+		return query;			
 	}
 	
 	/**
@@ -212,7 +192,6 @@ public class HiveExecutor {
 			reportLogger.debug("Executing Query : "+sql);
 				
 			this.res = stmt.executeQuery(sql);
-			this.jobStatus = JobStatus.SUCCESS;
 			
 			debugLogger.debug("Query Execution Completed");
 			reportLogger.debug("Query Execution Completed");
@@ -221,23 +200,12 @@ public class HiveExecutor {
 		} catch (Exception e){
 			debugLogger.error("Exception executing Hive Query : ",e);
 			reportLogger.error("Exception executing Hive Query : ", e);
-			
-			this.occurredException = e;
-			this.jobStatus = JobStatus.FAILED;
+	
+			System.exit(1);
 		} 
 				
 	}
 	
-	/**
-	 * Create the output data directory
-	 */
-	private void createOutputDirectory(){
-		String dirname = this.outputDir;
-	      File d = new File(dirname);
-	      // Create directory now.
-	      d.mkdirs();
-	      debugLogger.debug("Created Output Directory : " + dirname );
-	}
 
 	/**
 	 * Export the Query Results to the Result File
@@ -246,110 +214,55 @@ public class HiveExecutor {
 	 * @throws UnsupportedEncodingException
 	 */
 	private void exportResult() throws SQLException, FileNotFoundException, UnsupportedEncodingException{
-			
-		PrintWriter writerResult = new PrintWriter(this.resultFilePath, "UTF-8");
 		
-		switch(this.jobStatus) {
+		try {
+			debugLogger.debug("Exporting Results to File");
+			reportLogger.info("Exporting Results to File");
 		
-			case FAILED:
-				debugLogger.debug("Exporting "+getJobStatusValue(this.jobStatus)+" to Result File");
-				writerResult.println(getJobStatusValue(this.jobStatus));
-				break;
+			PrintWriter writerResult = new PrintWriter(this.resultFilePath, "UTF-8");
 			
-			case SUCCESS:
-				debugLogger.debug("Exporting Results to File");
-				reportLogger.info("Exporting Results to File");
+			ResultSetMetaData rsmd;
+			boolean headerPrinted = false;
+			
+			while (this.res.next()) {
+				rsmd = this.res.getMetaData();
+				int numOfCols = rsmd.getColumnCount();
 				
-				ResultSetMetaData rsmd;
-				boolean headerPrinted = false;
-				
-				while (this.res.next()) {
-					rsmd = this.res.getMetaData();
-					int numOfCols = rsmd.getColumnCount();
-					
-					if (!headerPrinted){
-						debugLogger.debug("Printing Column Headers to Result File");
-						for (int i = 1; i <= numOfCols; i++) {
-							writerResult.print(rsmd.getColumnName(i).toUpperCase());
-							if (i != numOfCols){
-								writerResult.print("\t");
-							}
-						}
-						writerResult.println();
-						headerPrinted = true;
-					}
-					
-										
-					for (int i = 1; i <= numOfCols; i++) {	
-						writerResult.print(this.res.getString(i));
+				if (!headerPrinted){
+					debugLogger.debug("Printing Column Headers to Result File");
+					for (int i = 1; i <= numOfCols; i++) {
+						writerResult.print(rsmd.getColumnName(i).toUpperCase());
 						if (i != numOfCols){
 							writerResult.print("\t");
 						}
 					}
 					writerResult.println();
+					headerPrinted = true;
 				}
-				debugLogger.debug("Export to Result File completed : "+this.resultFilePath);
-				reportLogger.info("Export to Result File completed");
-				break;
 				
-		default:
-			break;
+									
+				for (int i = 1; i <= numOfCols; i++) {	
+					writerResult.print(this.res.getString(i));
+					if (i != numOfCols){
+						writerResult.print("\t");
+					}
+				}
+				writerResult.println();
+			}
+	
+			writerResult.close();
 			
+			debugLogger.debug("Export to Result File completed : "+this.resultFilePath);
+			reportLogger.info("Export to Result File completed");		
 		}
-		
-		writerResult.close();
-		
+		catch (Exception e){
+			debugLogger.error("Exception Exporting Results : ",e);
+			reportLogger.error("Exception Exporting Results : ", e);
+			System.exit(1);
+		} 
 		
 	}
 
-	/**
-	 * Update the Job Status in Status File and MongoDB
-	 * @throws FileNotFoundException
-	 * @throws UnsupportedEncodingException
-	 */
-	private void updateStatus() throws FileNotFoundException, UnsupportedEncodingException {
-		
-		// Update the Status File
-		PrintWriter writerStatus = new PrintWriter(this.statusFilePath, "UTF-8");
-		
-		debugLogger.debug("Updated the Status File to "+getJobStatusValue(this.jobStatus));
-		reportLogger.info("Updated the Status File to "+getJobStatusValue(this.jobStatus));
-		
-		writerStatus.print(getJobStatusValue(this.jobStatus));
-		writerStatus.close();
-		
-		// Update the Status in MongoDB
-		this.mongoExecutor.updateStatusDocument(this.jobID, getJobStatusValue(this.jobStatus) );
-		debugLogger.debug("Updated the Status of JobID - "+this.jobID+" to "+getJobStatusValue(this.jobStatus)+" in MongoDB");
-	
-	}
-	
-	/**
-	 * Get the Labels for the different Job Status types
-	 * @param jobStatus
-	 * @return
-	 */
-	public static String getJobStatusValue(JobStatus jobStatus){	
-		
-		switch (jobStatus){
-		
-		  case SUCCESS:     
-			  return "JOB_SUCCESSFUL";
-			  
-		  case NOT_STARTED:   
-			  return "JOB_NOT_STARTED";
-			  
-		  case FAILED:  
-			  return "JOB_FAILED";
-			  
-		  case IN_PROGRESS:    
-			  return "JOB_IN_PROGRESS";
-			  
-		  default:      
-			  return null;
-		 }
-	 }
-	
 	/**
 	 * Main program
 	 * @param args
@@ -359,45 +272,35 @@ public class HiveExecutor {
 	public static void main(String[] args)  throws SQLException, IOException {
 				
 		// Validate the number of arguments supplied
-		if (args.length != 11) {
-			debugLogger.warn("Number of arguments != 11");
+		if (args.length != 7) {
+			debugLogger.warn("Number of arguments != 7");
 			debugLogger.debug("Arguments: "+ Arrays.toString(args));
 			usage();
 		}
 		
-		reportLogger.info("***** Beginning Execution of Hive Executor Java Client *****");
-		debugLogger.info("***** Beginning Execution of Hive Executor Java Client *****");
+		reportLogger.info("## Beginning Execution of Hive Executor Java Client ##");
+		debugLogger.info("## Beginning Execution of Hive Executor Java Client ##");
 		
 		// Create new object and initialize the program parameters using the arguments
 		HiveExecutor hiveExecObj = new HiveExecutor(args);
 		
 		// Print the Job metadata
 		hiveExecObj.printMetaData();
-		
-		// Update the Job Status to IN_PROGRESS
-		hiveExecObj.jobStatus = JobStatus.IN_PROGRESS;
-		hiveExecObj.updateStatus();
-		
+				
 		// Establish Hive Connection
 		hiveExecObj.establishHiveConnection();
 		
 		// Read the Hive Query File
 		String sql = hiveExecObj.readFile(hiveExecObj.queryFilePath);
-		
-		// Create Output Directory
-		hiveExecObj.createOutputDirectory();
-		
+				
 		// Execute the Hive Query
 		hiveExecObj.executeQuery(sql);
 				
 		// Export the Hive Results to the Result File
 		hiveExecObj.exportResult();
-
-		// Update the final Job Status
-		hiveExecObj.updateStatus();
 		
-		reportLogger.info("***** Ending Execution of Hive Executor Java Client *****");
-		debugLogger.info("***** Ending Execution of Hive Executor Java Client *****");
+		reportLogger.info("## Ending Execution of Hive Executor Java Client ##");
+		debugLogger.info("## Ending Execution of Hive Executor Java Client ##");
 				
 	}
 
