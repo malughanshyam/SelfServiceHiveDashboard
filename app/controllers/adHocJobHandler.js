@@ -106,6 +106,9 @@ exports.submitNewAdHocJob = function(req, res) {
 
         jobID = jobID.toString();
 
+        // Prefix JobID with JobName
+        jobID = jobName.trim() + '_' + jobID;
+
         detailLogger.info(' JobID - %s New AdHoc Job Submitted: %s', jobID, JSON.stringify({ clientIPaddress: clientIPaddress, JobName : jobName, sqlQuery : sqlQuery  }));
         highLevelLogger.info(' JobID - %s New AdHoc Job Submitted: %s', jobID, JSON.stringify({ clientIPaddress: clientIPaddress, JobName : jobName, sqlQuery : sqlQuery  }));
 

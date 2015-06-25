@@ -3,7 +3,7 @@ var mongoose = require('mongoose');
 
 var schema = mongoose.Schema({
 	_id				: String,
-    JobID      	 	: String,
+    JobID      	 	: { type: String, index: true },
     JobName     	: String,
     SQLQuery    	: String, 
     SubmittedByIP 	: String,
