@@ -236,25 +236,36 @@ updateLogFile $jobID $outputDataDir $logFile "DEBUG" "$logMsg"
 updateLogFile $jobID $outputDataDir $debugLogFile "DEBUG" "$logMsg" 
 
 if [ $exitStatus -ne 0 ]; then
-  logMsg="Hive Executor Script Failed! "
-  updateLogFile $jobID $outputDataDir $logFile "ERROR" "$logMsg" 
-  updateLogFile $jobID $outputDataDir $debugLogFile "ERROR" "$logMsg" 
 
   jobStatus="JOB_FAILED"
   updateStatusFile $jobStatus $outputDataDir $statusFile
 
   updateStatusInMongoDB $MONGO_PATH $mongoDBhost $mongoDBport $mongoDashboardDBColl $jobID $jobStatus
 
-else
+  logMsg="JOB_FAILED! Updated Status in MongoDB"
+  updateLogFile $jobID $outputDataDir $logFile "ERROR" "$logMsg" 
+  updateLogFile $jobID $outputDataDir $debugLogFile "ERROR" "$logMsg" 
 
-  logMsg="Hive Executor Script Completed Successfully! "
-  updateLogFile $jobID $outputDataDir $logFile "INFO " "$logMsg" 
-  updateLogFile $jobID $outputDataDir $debugLogFile "INFO " "$logMsg" 
+  logMsg="Hive Executor Script Failed! "
+  updateLogFile $jobID $outputDataDir $logFile "ERROR" "$logMsg" 
+  updateLogFile $jobID $outputDataDir $debugLogFile "ERROR" "$logMsg" 
+
+
+else
 
   jobStatus="JOB_SUCCESSFUL"
   updateStatusFile $jobStatus $outputDataDir $statusFile
 
   updateStatusInMongoDB $MONGO_PATH $mongoDBhost $mongoDBport $mongoDashboardDBColl $jobID $jobStatus
+
+  logMsg="JOB_SUCCESSFUL! Updated Status in MongoDB"
+  updateLogFile $jobID $outputDataDir $logFile "INFO " "$logMsg" 
+  updateLogFile $jobID $outputDataDir $debugLogFile "INFO " "$logMsg" 
+
+  logMsg="Hive Executor Script Completed Successfully! "
+  updateLogFile $jobID $outputDataDir $logFile "INFO " "$logMsg" 
+  updateLogFile $jobID $outputDataDir $debugLogFile "INFO " "$logMsg" 
+
 fi
 
 

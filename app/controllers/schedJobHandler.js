@@ -33,7 +33,7 @@ var JOB_NOT_STARTED_STATUS_STRING = 'JOB_NOT_STARTED'
 // Include the MongoDB Schema 
 ScheduledJob = require('../models/ScheduledJob');
 
-var execDirPath = 'hive_launcher_scripts/';
+var execDirPath = path.resolve('hive_launcher_scripts/');
 var execFileName = './HiveLauncher.sh';
 var normalizePath = "../";
 
@@ -113,7 +113,7 @@ exports.submitNewScheduledJob = function(req, res) {
     jobID = jobID.toString();
 
     // Prefix JobID with JobName
-    jobID = jobName.trim() + '_' + jobID;
+    jobID = schedJobName.trim() + '_' + jobID;
 
     detailLogger.info(' JobID - %s New Scheduled Job Submitted: %s', jobID, JSON.stringify({ clientIPaddress: clientIPaddress, JobName : schedJobName, SQLQuery : sqlQuery, ScheduledTime : req.body.jobSchedTime, ScheduledDays : req.body.days , NotifyFlag: req.body.notifyEmailFlag, NotifyEmailID : req.body.notifyEmailID}));
     highLevelLogger.info(' JobID - %s New Scheduled Job Submitted: %s', jobID, JSON.stringify({ clientIPaddress: clientIPaddress, JobName : schedJobName, SQLQuery : sqlQuery, ScheduledTime : req.body.jobSchedTime, ScheduledDays : req.body.days , NotifyFlag: req.body.notifyEmailFlag, NotifyEmailID : req.body.notifyEmailID}));

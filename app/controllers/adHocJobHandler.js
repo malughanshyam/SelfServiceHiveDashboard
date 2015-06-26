@@ -33,7 +33,7 @@ var JOB_NOT_STARTED_STATUS_STRING = 'JOB_NOT_STARTED'
 // Include the MongoDB Schema 
 AdHocJob = require('../models/AdHocJob');
 
-var execDirPath = 'hive_launcher_scripts/';
+var execDirPath = path.resolve('hive_launcher_scripts/');
 var execFileName = './HiveLauncher.sh';
 var normalizePath = "../";
 

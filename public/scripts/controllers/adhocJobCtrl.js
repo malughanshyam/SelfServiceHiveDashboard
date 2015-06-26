@@ -438,7 +438,8 @@ angular.module('dashboardApp')
     // Initiate Scheduling an AdHoc Job
     $scope.initiateScheduling = function(adHocJob){
         dashboardAungularService.initiateScheduling(adHocJob);
-        $('#navRecentAdHoc').removeClass('active');
+      
+      /*  $('#navRecentAdHoc').removeClass('active');
         $('#recentAdHocTab').removeClass('active');
         $('#navAdHoc').removeClass('active'); 
         $('#adHocTab').removeClass('active');      
@@ -452,7 +453,10 @@ angular.module('dashboardApp')
         $('#newSchedJobTab').addClass('active'); 
         $('#createSchedJobStatusTab').removeClass('active');
         $('#createSchedJobTab').addClass('active'); 
-        
+    */    
+        $( "#scheduledTabNavLink" ).click();
+        $( "#navSchedJobNew" ).click();
+
         // Broadcast an event with the adHocJob details
         $rootScope.$broadcast('copyDetailsFromAdHocJob', adHocJob);
         

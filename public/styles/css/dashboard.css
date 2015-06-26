@@ -1,3 +1,21 @@
+body {
+    padding-top: 5em;
+}
+
+#homeTabs {
+    padding-top: 5em;
+}
+
+/**[id]:before { 
+  display: block; 
+  content: " "; 
+  margin-top: -75px; 
+  height: 75px; 
+  visibility: hidden; 
+}*/
+
+
+
 .smpl-step {
     margin-top: 40px;
 }
@@ -128,10 +146,17 @@ pre {
   }
 }
 
-/*.stepsFlow{
-    padding-left: 20%
+@media (min-width: 768px) {
+  .anchor {
+    padding-top: 60px;
+    margin-top: -60px;
+  }
 }
-*/
+
+.stepsFlow{
+    padding-top: 2em;
+}
+
 
 
 /*style.css*/
@@ -168,7 +193,7 @@ pre {
   width: 90%;
 }
 
-#editSubmitBtnGrp , #viewRecentJobLogBtn{
+#editSubmitBtnGrp, #viewRecentJobResultsBtn {
     padding-bottom:  0.5em;
 }
 
