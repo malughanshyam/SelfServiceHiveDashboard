@@ -65,6 +65,7 @@ updateStatusInMongoDB () {
     $MONGO_PATH/mongo --host $mongoDBhost --port $mongoDBport SelfServiceHiveDashboard --eval 'db.'$mongoDashboardDBColl'.update({JobID: "'$jobID'"},{$set: {JobRunStatus : "'$jobStatus'" } })'   
 }
 
+
 # Validations of Arguments
 if [ "$1" != "ADHOC" -a "$1" != "SCHED" ]; then
   usage
@@ -78,7 +79,7 @@ fi
 
 if [ "$1" == "SCHED" ]; then
   
-  if [ $# -lt 5 -o $# -gt 6 ]; then
+  if [ $# -lt 6 -o $# -gt 7 ]; then
     usage
     exit 1
   fi
@@ -269,41 +270,36 @@ else
 fi
 
 
+# Send Email
+if [ $notifyFlag == 'Y' ]; then
 
-## Send Email
-## Check Notify Flag to proceed. If "N", then exit gracefully
-#if [ $notifyFlag == 'N']; then
-#  exit 0
+  #jobStatus=`cat $outputDataDir/$statusFile`
+  #jobResultURL="http://localhost:8096/views/jobresults.html?jobType="
+  jobResultURL="http://vqctd-hadoopas1.phx01.ebayadvertising.com:8096/views/jobresults.html?jobType="
+  jobResultURL=$jobResultURL$jobType
+  jobResultURL=$jobResultURL"&jobID="$jobID
+  #jobResultURL=`echo "http://localhost:8080/views/jobresults.html?jobType=SCHED&jobID=55826c6395c8393709756ff6"`
 
-#
-## jobType="SCHED"
-## jobID="55826c6395c8393709756ff6"
-## outputDir="../data/ScheduledJobs/5580d9bffce9da2b65a7ca5f"
-## statusFile="status.txt"
-## jobName="TopTrends" #$jobName
-## notifyEmail="gmalu@ebay.com"
-#
-#jobStatus=`cat $outputDir/$statusFile`
-#
-#jobResultURL="http://localhost:8080/views/jobresults.html?jobType="
-#jobResultURL=$jobResultURL$jobType
-#jobResultURL=$jobResultURL"&jobID="$jobID
-##jobResultURL=`echo "http://localhost:8080/views/jobresults.html?jobType=SCHED&jobID=55826c6395c8393709756ff6"`
-#
-#mailSubject="Subject: Job - "$jobName" ["$jobStatus"] "$'\n'
-#
-#mailBody=`echo -e "\nThe Job - $jobName has completed with the status\t:  "`
-#mailBody=$mailBody$jobStatus$'\n'
-#mailBody=$mailBody`echo -e "\nCheck out more details at : "`
-#mailBody=$mailBody$jobResultURL$'\n'
-#
-#mailSignature=$'\n'$'\n'"--"$'\n'
-#mailSignature=$mailSignature"Self Service Hive Dashboard"$'\n'
-#
-#mailComplete=$mailSubject$mailBody$mailSignature
-#
-#echo "$mailComplete" | /usr/sbin/sendmail gmalu@ebay.com -f"SelfServiceHiveDashboard"
-##echo "$mailComplete" > "mail_$notifyEmail.txt"
+  mailSubject="Subject: Job - "$jobName" ["$jobStatus"] "$'\n'
+
+  mailBody=`echo -e "\nThe Job - $jobName has completed with the status\t:  "`
+  mailBody=$mailBody$jobStatus$'\n'
+  mailBody=$mailBody`echo -e "\nCheck out more details at : "`
+  mailBody=$mailBody$jobResultURL$'\n'
+
+  mailSignature=$'\n'$'\n'"--"$'\n'
+  mailSignature=$mailSignature"Self Service Hive Dashboard"$'\n'
+
+  mailComplete=$mailSubject$mailBody$mailSignature
+
+  echo "$mailComplete" | /usr/sbin/sendmail $notifyEmail
+
+  logMsg="Alert mail sent to $notifyEmail with Results URL: $jobResultURL"
+  updateLogFile $jobID $outputDataDir $logFile "INFO " "$logMsg" 
+  updateLogFile $jobID $outputDataDir $debugLogFile "INFO " "$logMsg" 
+
+  #echo "$mailComplete" > "mail_$notifyEmail.txt"
+fi
 
 # Log into Debug Log File
 logMsg="******** Ending Execution of Hive Launcher Script ********"
