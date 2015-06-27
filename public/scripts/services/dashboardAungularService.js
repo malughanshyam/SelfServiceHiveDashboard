@@ -1,7 +1,35 @@
 angular.module('dashboardApp')
-  .service('dashboardAungularService', function() {
+  .service('dashboardAungularService', function($http) {
   
   var scheduleNewJobDetails;
+
+  // Set up Server Clock on Navigation Bar
+  var serverTime;
+
+  // Get Server Time
+  var getServerTimeAndStartClock = function () {  
+    $http.get('/serverTime')
+        .success(function(data) {
+            serverTime = moment(data);
+            var duration = moment.duration({'s' : 1});
+            tickClock(duration);
+        })
+        .error(function(err) {
+            console.log("Get Server Time Failed")
+            $('#serverClock').text("xx:xx:xx");
+        });
+    
+  }
+
+  // Tick clock every second
+  var tickClock = function(duration){
+      serverTime.add(duration); // February 1
+      $('#serverClock').text(serverTime.tz('America/New_York').format("ddd, MMMM D YYYY, hh:mm:ss A z"));
+      setTimeout(function(){tickClock(duration)},1000);
+  }
+  
+  // Start Server Clock
+  getServerTimeAndStartClock();
 
   var createResultTable = function(resultTableDivID, data) {
 
@@ -156,14 +184,16 @@ angular.module('dashboardApp')
 
   var parseIsoDatetime = function(dtstr){
   
-      MM = {Jan:"January", Feb:"February", Mar:"March", Apr:"April", May:"May", Jun:"June", Jul:"July", Aug:"August", Sep:"September", Oct:"October", Nov:"November", Dec:"December"}
+      return moment(dtstr).tz('America/New_York').format("ddd, MMMM D YYYY, hh:mm A z");
+
+      /*MM = {Jan:"January", Feb:"February", Mar:"March", Apr:"April", May:"May", Jun:"June", Jul:"July", Aug:"August", Sep:"September", Oct:"October", Nov:"November", Dec:"December"}
 
       return String(new Date(dtstr)).replace(
           /\w{3} (\w{3}) (\d{2}) (\d{4}) (\d{2}):(\d{2}):[^(]+\(([A-Z]{3})\)/,
           function($0,$1,$2,$3,$4,$5,$6){
               return MM[$1]+" "+$2+", "+$3+" - "+$4%12+":"+$5+(+$4>12?" PM":" AM")+" "+$6 
           }
-      )
+      )*/
 
   }
 

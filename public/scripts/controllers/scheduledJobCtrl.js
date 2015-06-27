@@ -86,14 +86,12 @@ angular.module('dashboardApp')
     }
 
     $scope.jobSchedTimePickerValidate = function (){
-        console.log("ngChange: " +  $scope.schedJob.jobSchedTime.completeTime);
         if (!$scope.schedJob.jobSchedTime.completeTime){
             $scope.jobSchedSetDefaultTime();
             $scope.invalidTimeAlert = true
             return;
         }
         $scope.invalidTimeAlert = false;
-        console.log($scope.invalidTimeAlert)
     }
 
     $scope.scheduleJob = function() {
@@ -109,21 +107,13 @@ angular.module('dashboardApp')
         $scope.schedJob.jobSchedTime.hours = $scope.schedJob.jobSchedTime.completeTime.getHours();
         $scope.schedJob.jobSchedTime.minutes = $scope.schedJob.jobSchedTime.completeTime.getMinutes();
 
-        console.log($scope.schedJob.jobSchedTime.hours + ":" + $scope.schedJob.jobSchedTime.minutes);
-
-        console.log("SubmitJob Clicked");
-
         $http.post('/submitSchedJob', $scope.schedJob)
             .success(function(data) {
-                console.log("Job Scheduled Successfully");
                 $scope.schedJob.jobID = data.JobID;
-                console.log("schedJob.jobID: "+ $scope.schedJob.jobID);
                 $('#createSchedJobStatusPlaceholderDiv').html('<h3 align="center"> <i id="success" class="fa fa-check-square-o fa-3x "></i> <br>Job Scheduled </h3>');
 
             })
             .error(function(err) {
-                console.log("Job Scheduling Failed")
-                console.log(err)
                 $('#createSchedJobStatusPlaceholderDiv').html('<h3 align="center"> <i id="failed" class="fa fa-exclamation-triangle fa-3x "></i> <br>Scheduling Failed </h3>');
                 $('#createSchedJobStatusPlaceholderDiv').append('<pre> <h3>Error</h3><br>' + err + '</pre')
             });
@@ -157,14 +147,12 @@ angular.module('dashboardApp')
     }
 
     $scope.viewSchedJobLogModal = function(schedJob) {
-        console.log("Clicked viewLogModal");
         $('#modalViewSchedLog').modal('show')
 
         $("#modalViewSchedLog").find('#JobName').text(schedJob.JobName);
         $("#modalViewSchedLog").find('#JobStatus').text("(" + schedJob.JobRunStatus + ")");
 
         $scope.getJobLog(schedJob.JobID, function() {
-            console.log("In callback");
             $scope.jobLogSelected = $scope.jobLogRetrieved;
             $("#modalViewSchedLog").find('#jobLogPre').text($scope.jobLogRetrieved);
 
@@ -178,13 +166,11 @@ angular.module('dashboardApp')
         $http.get($scope.checkLogURL, $scope.formData)
         .success(function(data) {
             $scope.jobLogRetrieved = data;
-            console.log("Successfully retrieved JobLog");
             callBack();
 
         })
         .error(function(err) {
             $scope.jobLogRetrieved = "Fetching Log Failed" + err
-            console.log("Fetching Log Failed");
             callBack();
         });
 
@@ -351,7 +337,6 @@ angular.module('dashboardApp')
         var chartWidth = $("#jobResultPanelBodyContent").width();
         var chartDivID = '#sJobchart1'
 
-        console.log("calling dashboard service")
         dashboardAungularService.createBarChart($scope.jobResult, chartDivID, chartWidth); 
 
         $('#downloadBarChartBtnId').removeClass('disabled');
@@ -401,7 +386,6 @@ angular.module('dashboardApp')
             if (userResponse==true){
                 $http.put(removeScheduledJobURL)
                     .success(function(data) {
-                        console.log("Job Deleted");
                         $scope.populateScheduledJobsTable();
                         var type = 'info';
                         var message = "The Job - " + row.JobName + " has been deleted";
@@ -444,7 +428,6 @@ angular.module('dashboardApp')
     }
 
     $scope.$on('copyDetailsFromAdHocJob', function(event, adHocJobDetails) {
-        console.log("Received adHocJobDetails from AdHoc Tab");
         $scope.schedJob.schedJobName = adHocJobDetails.JobName;
         $scope.schedJob.schedQuery = adHocJobDetails.SQLQuery;
         var type = 'info';

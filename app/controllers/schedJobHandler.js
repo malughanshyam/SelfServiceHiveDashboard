@@ -343,7 +343,7 @@ exports.submitNewScheduledJob = function(req, res) {
             NotifyFlag      : notifyEmailFlag,
             NotifyEmail     : notifyEmailID,
             JobRunStatus    : jobRunStatus,
-            CronTabJob      : crontabInsertCmd,
+            CronTabJob      : crontabJobCmd,
             CreatedTimeStamp: new Date(),
             UpdatedTimeStamp: new Date()
 
@@ -431,7 +431,7 @@ exports.removeScheuledJob = function(req, res) {
     // Update the Job in Database
     updateStatusInDB = function() {
        var query = { _id: jobID };
-       var updateFields = { ScheduleStatus: 'DELETED' }
+       var updateFields = { ScheduleStatus: 'DELETED', UpdatedTimeStamp : new Date() };
    
        function callback (err) {
          if (err) {

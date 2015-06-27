@@ -62,6 +62,11 @@ module.exports = function(app){
     // Download Result File    
     app.get('/downloadSchedJobResultFile/:JobID', commonHandler.downloadSchedJobResultFile);
 
+    // Get Server Time
+    app.get('/serverTime', function (req, res) {
+        res.send(new Date());
+    });
+
     // Default Route
     app.get('/', function (req, res) {
         res.sendFile('views/dashboard.html', { root: __dirname + '/../public/'}); 

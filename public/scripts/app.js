@@ -10,12 +10,10 @@ $( "#schedulerTile" ).click(function() {
 });
 
 $('#adHocTabNavLink').click(function(){
-	console.log("cliecked aa")
 	window.scrollTo(0, 0);
 
 });
 
 $('#scheduledTabNavLink').click(function(){
-	console.log("cliecked ss")
 	window.scrollTo(0, 0);
 });
