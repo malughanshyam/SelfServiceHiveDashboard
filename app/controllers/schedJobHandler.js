@@ -122,6 +122,7 @@ exports.submitNewScheduledJob = function(req, res) {
 
     var jobDir = dataDir + jobID;
     var queryFile = jobDir + '/sql.txt';
+    var crontabJobCmd;
     var crontabInsertCmd ;
 
     // Create a directory for the JobID
@@ -247,7 +248,7 @@ exports.submitNewScheduledJob = function(req, res) {
 
         // Final CRON Job
         // MIN HOUR DOM MON DOW CMD
-        var crontabJobCmd = min + " " + hours + " " + dayOfMonth + " " + month + " " + dayOfWeek + " " + cronCmd;
+        crontabJobCmd = min + " " + hours + " " + dayOfMonth + " " + month + " " + dayOfWeek + " " + cronCmd;
 
 
         detailLogger.debug('JobID - %s  Inserting Cron Job Command : %s' ,jobID, JSON.stringify({ clientIPaddress: clientIPaddress, crontabJobCmd: crontabJobCmd }));
