@@ -644,7 +644,7 @@
 
 
                                     <th st-sort="ExecutionTime">
-                                        <a><small tooltip="Click to sort by ExecutionTime">Sch.Time (24H)</small></a></th>
+                                        <a><small tooltip="Click to sort by ExecutionTime">Sch.Time <br><small>(Eastern Time)</small></small></a></th>
 
                                     <th st-sort="LastRunStatus" class="text-center">
                                         <a><small tooltip="Click to sort by LastRunStatus">Last Run Status</small></a></th>
@@ -685,8 +685,8 @@
                                     <td><small tooltip="Saturday"><i class="fa fa-check-circle runDay" ng-show="row.ExecutionDays.SAT==true"></i></small></td>
 
 
-                                    <td>{{row.ExecutionTime.Hours}}:{{row.ExecutionTime.Minutes}}</td>
-
+                                    <!-- <td>{{row.ExecutionTime.Hours}}:{{row.ExecutionTime.Minutes}}</td> -->
+                                    <td><small> {{ convertTime24Hto12H(row.ExecutionTime)}}</small></td>
 
                                     <!-- <td><small>{{row.JobRunStatus}}</small></td> -->
 

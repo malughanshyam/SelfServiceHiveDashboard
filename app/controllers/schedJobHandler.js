@@ -317,20 +317,24 @@ exports.submitNewScheduledJob = function(req, res) {
     createDBRecord = function(){
 
         var jobStatus = 'ACTIVE';
+
+        function checkTime(i) {
+            if (i<10) {i = "0" + i};  // add zero in front of numbers < 10
+            return i;
+        }
+
+        hoursStr = checkTime(executionTime.hours);
+        minStr = checkTime(executionTime.minutes);
+
+        /*
         hoursStr = executionTime.hours + "";
         minStr = executionTime.minutes + "";
-
-        console.log(hoursStr)
-        console.log(hoursStr.length)
-        console.log()
-        console.log(minStr)
-        console.log(minStr.length)
 
         if (hoursStr.length != 2)
             hoursStr = "0" + hoursStr;
 
         if (minStr.length != 2)
-            minStr = "0" + minStr;
+            minStr = "0" + minStr;*/
 
         ScheduledJob.create({
             _id             : jobID,

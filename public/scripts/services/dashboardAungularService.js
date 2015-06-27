@@ -229,7 +229,55 @@ angular.module('dashboardApp')
   var cleanUpStr=function(str){
     return str.replace(/[^A-Z0-9]+/ig, "_");
   }
+
+  var convertTime24Hto12H_bkp = function(timeStr) {
+    var hours = timeStr.Hours;
+    var minutes = timeStr.Minutes;
+    var suffix = hours >= 12 ? "PM":"AM";
+
+    function checkTime(i) {
+        if (i<10) {i = "0" + i};  // add zero in front of numbers < 10
+        return i;
+    }
+
+    hours = ((hours + 11) % 12 + 1) ;
+
+    hoursStr = checkTime(hours);
+    minStr = checkTime(minutes);
+
+    timeStr12H = hours + ":" + minutes + " " + suffix;
+    console.log( timeStr.Hours + ":" + timeStr.Minutes + " converted to " + timeStr12H);
+
+    return timeStr12H;
+  }
     
+  function convertTime24Hto12H(time24) {
+    
+    function normalizeDigit(i) {
+        if (i<10) {i = "0" + i};  // add zero in front of numbers < 10
+        return i;
+    }
+
+    var hours = time24.Hours;
+//    var minutes = normalizeDigit(time24.Minutes);
+    var minutes = time24.Minutes;
+    var time12;
+    if (hours == 12) {
+        time12 = hours + ':' + minutes + ' PM';
+    } else {
+        if (hours == 00) {
+            time12 = '12:' + minutes + ' AM';
+        } else {
+            if (hours > 12) {
+                hours = (hours - 12);
+                time12 = normalizeDigit(hours) + ':' + minutes + ' PM';
+            } else {
+                time12 = hours + ':' + minutes + ' AM';
+            }
+        }
+    }
+    return time12;
+  }  
 
   return {
     createResultTable : createResultTable,
@@ -240,7 +288,8 @@ angular.module('dashboardApp')
     initiateScheduling: initiateScheduling,
     getJobDetailsForScheduling : getJobDetailsForScheduling,
     flashImpAlert     : flashImpAlert,
-    cleanUpStr        : cleanUpStr
+    cleanUpStr        : cleanUpStr,
+    convertTime24Hto12H : convertTime24Hto12H
   };
 
 });

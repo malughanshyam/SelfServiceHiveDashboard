@@ -421,6 +421,10 @@ angular.module('dashboardApp')
         return dashboardAungularService.parseIsoDatetime(dateStr); 
     }
 
+    $scope.convertTime24Hto12H = function(timeStr){
+        return dashboardAungularService.convertTime24Hto12H(timeStr);
+    }
+
 
     $scope.downloadSchedJobResultFile = function() {
         var downloadSchedJobResultFile = '/downloadSchedJobResultFile/' + $scope.schedJob.jobID;
