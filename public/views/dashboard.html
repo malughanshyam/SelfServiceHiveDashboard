@@ -667,9 +667,10 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr ng-repeat="row in displayedSchedJobsCollection" ng-class="{'deletedJob': row.ScheduleStatus=='DELETED'}"  > 
+                                <tr ng-repeat="row in displayedSchedJobsCollection" ng-class="{'deletedJob': row.ScheduleStatus=='DELETED' , 'disabledJob': row.ScheduleStatus=='DISABLED'}"  > 
                                     <!-- <td>{{row.JobID}}</td> -->
                                     <td>{{row.JobName}} 
+                                        <i ng-show={{row.ScheduleStatus=="DISABLED"}} tooltip="Job has been Disabled"><strong>(Disabled)</strong></i>
                                         <i ng-show={{row.ScheduleStatus=="DELETED"}} tooltip="Job has been Deleted"><strong>(Deleted)</strong></i>
                                     </td>
 
@@ -720,7 +721,16 @@
 
                                     <td>
 
-                                        <button type="button" ng-click="deleteSchedJob(row)" class="btn btn-danger btn-xs" ng-hide='row.ScheduleStatus=="DELETED"' tooltip="Delete Scheduled Job - {{row.JobName}}"><span class="fa fa-trash" aria-hidden="true"></span>
+                                        <!-- Disable Button -->
+                                        <button type="button" ng-click="disableSchedJob(row)" class="btn btn-warning btn-xs" ng-hide='row.ScheduleStatus=="DELETED" || row.ScheduleStatus=="DISABLED"' tooltip="Disable Scheduled Job - {{row.JobName}}"><span class="glyphicon glyphicon-pause" aria-hidden="true"></span>
+                                        </button>
+
+                                        <!-- Enable Button -->
+                                        <button type="button" ng-click="enableSchedJob(row)" class="btn btn-info btn-xs" ng-hide='row.ScheduleStatus=="DELETED" || row.ScheduleStatus=="ACTIVE"' tooltip="Enable Scheduled Job - {{row.JobName}}"><span class="glyphicon glyphicon-play" aria-hidden="true"></span>
+                                        </button>
+
+                                        <!-- Delete Button -->
+                                        <button type="button" ng-click="deleteSchedJob(row)" class="btn btn-danger btn-xs" ng-hide='row.ScheduleStatus=="DELETED"' tooltip="Delete Scheduled Job - {{row.JobName}}"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
                                         </button>
 
                                     </td>
@@ -907,7 +917,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <pre> {{schedJob.jobSchedTime}}</pre>
+
                                     <div class="form-group">
                                         <label for="jobSchedTimePicker" class="col-sm-2 control-label">Trigger Time<br><small>(Eastern Time)</small></label>
                                         <div class="col-sm-10">

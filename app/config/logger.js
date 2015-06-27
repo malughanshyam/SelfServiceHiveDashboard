@@ -40,7 +40,7 @@ winston.loggers.add('HighLevelLog', {
 // Configure the logger for 'Detailed Logs'
 //
 winston.loggers.add('DetailedLog', {
-  console: {
+  /*console: {
     level: 'debug',
     colorize: true,
     label: 'Detailed Log',
@@ -48,7 +48,7 @@ winston.loggers.add('DetailedLog', {
     handleExceptions: true,
     json: false
 //    prettyPrint:true
-  },
+  },*/
   file: {
     level: 'debug',
     // colorize: true,

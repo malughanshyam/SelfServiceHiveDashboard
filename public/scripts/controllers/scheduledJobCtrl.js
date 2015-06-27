@@ -387,7 +387,7 @@ angular.module('dashboardApp')
                 $http.put(removeScheduledJobURL)
                     .success(function(data) {
                         $scope.populateScheduledJobsTable();
-                        var type = 'info';
+                        var type = 'danger';
                         var message = "The Job - " + row.JobName + " has been deleted";
                         dashboardAungularService.flashImpAlert(type, message, 4000);
                     })
@@ -400,12 +400,64 @@ angular.module('dashboardApp')
 
             }
 
+        }); 
 
+    }
+
+    // Diabled Scheduled Job
+    $scope.disableSchedJob = function(row){
+        
+        var disableScheduledJobURL = '/disableSchedJob/' + row.JobID
+
+        bootbox.confirm("Are you sure you want to disable the Job - "+row.JobName+" ?", function(userResponse) {
+            if (userResponse==true){
+                $http.put(disableScheduledJobURL)
+                    .success(function(data) {
+                        $scope.populateScheduledJobsTable();
+                        var type = 'warning';
+                        var message = "The Job - " + row.JobName + " has been disabled";
+                        dashboardAungularService.flashImpAlert(type, message, 4000);
+                    })
+                    .error(function(err) {
+                        // $scope.submittedJobStatus='FAILED'
+                        console.log("Job Disable Failed");
+                        console.log(err);
+
+                });
+
+            }
 
         }); 
 
-        
     }
+
+    // Enable Scheduled Job
+    $scope.enableSchedJob = function(row){
+        
+        var enableScheduledJobURL = '/enableSchedJob/' + row.JobID
+
+        bootbox.confirm("Are you sure you want to enable the Job - "+row.JobName+" ?", function(userResponse) {
+            if (userResponse==true){
+                $http.put(enableScheduledJobURL)
+                    .success(function(data) {
+                        $scope.populateScheduledJobsTable();
+                        var type = 'success';
+                        var message = "The Job - " + row.JobName + " has been enabled";
+                        dashboardAungularService.flashImpAlert(type, message, 4000);
+                    })
+                    .error(function(err) {
+                        // $scope.submittedJobStatus='FAILED'
+                        console.log("Job Enable Failed");
+                        console.log(err);
+
+                });
+
+            }
+
+        }); 
+
+    }
+
 
     $scope.saveDivAsPicture = function() {
         dashboardAungularService.saveAsPicture($("#resultPanel"))

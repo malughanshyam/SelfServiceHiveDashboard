@@ -252,15 +252,35 @@ pre {
 }
 
 /* Font color of Deleted Scheduled Jobs*/
-#scheduledJobsTableId  > tbody > .deletedJob , #scheduledJobsTableId  > tbody > .deletedJob  .fa  {
+#scheduledJobsTableId  > tbody > .deletedJob , #scheduledJobsTableId  > tbody > .deletedJob  .fa {
     color:#808080; 
-/*    text-decoration: line-through;*/
+    text-decoration: line-through;
      
+}
+
+/* Font color of Disabled Scheduled Jobs*/
+#scheduledJobsTableId  > tbody > .disabledJob , #scheduledJobsTableId  > tbody > .disabledJob  .fa  {
+    color:#808080;      
 }
 
 #scheduledJobsTableId .runDay {
     color:#000000; 
 }
+
+/* Font color of Disabled and Deleted Scheduled Jobs*/
+#scheduledJobsTableId  > tbody > .disabledJob #statusNotStarted , #scheduledJobsTableId  > tbody > .deletedJob #statusNotStarted  {
+    color:#808080;      
+}
+#scheduledJobsTableId  > tbody > .disabledJob #statusRunning, #scheduledJobsTableId  > tbody > .deletedJob #statusRunning  {
+    color:#808080;      
+}
+#scheduledJobsTableId  > tbody > .disabledJob #statusFail, #scheduledJobsTableId  > tbody > .deletedJob #statusFail {
+    color:#808080;      
+}
+#scheduledJobsTableId  > tbody > .disabledJob #statusSuccess, #scheduledJobsTableId  > tbody > .deletedJob #statusSuccess {
+    color:#808080;      
+}
+
 
 /* Change active color of Auto Refresh button */
 .btn-default.active#autoRefreshSchedJobTableBtn , .btn-default:active#autoRefreshSchedJobTableBtn, .btn-default.active#autoRefreshAdHocJobTableBtn , .btn-default:active#autoRefreshAdHocJobTableBtn {    

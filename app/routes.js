@@ -49,10 +49,17 @@ module.exports = function(app){
     // Submit New Scheduled Job
     app.post('/submitSchedJob', schedJobHandler.submitNewScheduledJob);
 
-    // Submit New Scheduled Job
-    app.put('/removeSchedJob/:JobID', schedJobHandler.removeScheuledJob);
+    // Disable Scheduled Job
+    app.put('/disableSchedJob/:JobID', schedJobHandler.disableScheduledJob);
 
-    // Get AdHoc Job Log
+    // Enable Scheduled Job
+    app.put('/enableSchedJob/:JobID', schedJobHandler.enableScheduledJob);
+
+    // Delete Scheduled Job
+    app.put('/removeSchedJob/:JobID', schedJobHandler.removeScheduledJob);
+
+
+    // Get Scheduled Job Log
     app.get('/schedJobLog/:JobID', commonHandler.schedJobLog);
 
 

@@ -267,6 +267,15 @@ exports.submitNewScheduledJob = function(req, res) {
         To remove it from the crontab:
 
         ( crontab -l | grep -v "$croncmd" ) | crontab -
+
+        To disable it from the crontab:
+
+        ( crontab -l | grep -v "$croncmd" ; echo "# $cronjob" ) | crontab -
+
+        To enable it from the crontab:
+
+        ( crontab -l | grep -v "$croncmd" ; echo "$cronjob" ) | crontab -
+
         ---------------------------------------------------------------
         */
  
@@ -326,16 +335,6 @@ exports.submitNewScheduledJob = function(req, res) {
         hoursStr = checkTime(executionTime.hours);
         minStr = checkTime(executionTime.minutes);
 
-        /*
-        hoursStr = executionTime.hours + "";
-        minStr = executionTime.minutes + "";
-
-        if (hoursStr.length != 2)
-            hoursStr = "0" + hoursStr;
-
-        if (minStr.length != 2)
-            minStr = "0" + minStr;*/
-
         ScheduledJob.create({
             _id             : jobID,
             JobID           : jobID,
@@ -380,16 +379,15 @@ exports.submitNewScheduledJob = function(req, res) {
 };
 
 // Delete Scheduled Job and data 
-exports.removeScheuledJob = function(req, res) {
+exports.removeScheduledJob = function(req, res) {
     var clientIPaddress = req.ip || req.header('x-forwarded-for') || req.connection.remoteAddress;    
     var jobID = req.params.JobID
-    console.log("JobID received for deletion: " + jobID);
+    
     if (!jobID){
         detailLogger.error('JobID - %s Error Deleting Scheduled Job %s' ,jobID, JSON.stringify({ clientIPaddress: clientIPaddress, error: 'JobID not specified'}));
         res.status(500);
         return res.json(({status: '500 Server error', error: 'JobID not specified'}))
     }
-
 
     detailLogger.debug('JobID - %s  Removing Crontab Job : %s' ,jobID, JSON.stringify({ clientIPaddress: clientIPaddress, jobID: jobID }));       
 
@@ -457,9 +455,146 @@ exports.removeScheuledJob = function(req, res) {
 
 }
 
-// Cancel Scheduled Job
-exports.cancelScheuledJob = function(req, res) {
+
+/*        To disable it from the crontab:
+
+        ( crontab -l | grep -v "$croncmd" ; echo "# $cronjob" ) | crontab -
+
+        To enable it from the crontab:
+
+        ( crontab -l | grep -v "$croncmd" ; echo "$cronjob" ) | crontab -
+        */
+
+// Disable Scheduled Job
+exports.disableScheduledJob = function(req, res) {
+    var clientIPaddress = req.ip || req.header('x-forwarded-for') || req.connection.remoteAddress;    
+    var jobID = req.params.JobID
     
+    if (!jobID){
+        detailLogger.error('JobID - %s Error Disabling Scheduled Job %s' ,jobID, JSON.stringify({ clientIPaddress: clientIPaddress, error: 'JobID not specified'}));
+        res.status(500);
+        return res.json(({status: '500 Server error', error: 'JobID not specified'}))
+    }
+
+    detailLogger.debug('JobID - %s  Disabling Crontab Job : %s' ,jobID, JSON.stringify({ clientIPaddress: clientIPaddress, jobID: jobID }));       
+
+    var crontabDisableCmd = "( crontab -l | sed '/" +jobID+ "/s!^!#!' ) | crontab -";
+
+    // Callback function to be executed after Command Execution
+    var callback = function (error, stdout, stderr) {
+       if (error) {
+         detailLogger.error('JobID - %s  Disabling of CRON Job failed: %s',jobID, JSON.stringify({ error: error}));
+         highLevelLogger.error('JobID - %s  Disabling of CRON Job failed: %s',jobID, JSON.stringify({ error: error}));
+       }
+    };
+
+    var options = {
+        //cwd: execDirPath,
+        timeout: 0
+    }
+
+    // Execute the command to REMOVE the CRON job from the CRON file
+    var disableCronJobCmdExec = child_process.exec(crontabDisableCmd, options, callback);
+
+    // Check the exit code of the command 
+    disableCronJobCmdExec.on('exit', function (code) {
+        detailLogger.debug('disableCronJobCmdExec Child process exited with exit code '+code);   
+        if (code == 0) {
+            detailLogger.info('JobID - %s  CRON Job Disabled Successfully: %s',jobID, JSON.stringify({ crontabDisableCmd: crontabDisableCmd}));
+            highLevelLogger.info('JobID - %s  CRON Job Disabled Successfully: %s',jobID, JSON.stringify({ crontabDisableCmd: crontabDisableCmd}));
+            updateStatusInDB();        
+        } else {
+            res.status(500);
+            res.send({status: "failed", err : err})
+        }
+
+    });
+
+
+    // Update the Job in Database
+    updateStatusInDB = function() {
+       var query = { _id: jobID };
+       var updateFields = { ScheduleStatus: 'DISABLED', UpdatedTimeStamp : new Date() };
+   
+       function callback (err) {
+         if (err) {
+               detailLogger.error('JobID - %s Error updating the Job status to Disabled in Database: %s' ,jobID, JSON.stringify({ error: err}));
+               res.status(500);
+               return res.send({status: "failed", err : err})
+           }
+           else {
+              detailLogger.info('JobID - %s Updated the Scheduled Job status to Disabled in Database' ,jobID);
+              return res.send({status: "success"});
+           }
+       }
+       
+       ScheduledJob.update(query, updateFields , callback)
+   }
 }
 
+// Enable Scheduled Job
+exports.enableScheduledJob = function(req, res) {
+    var clientIPaddress = req.ip || req.header('x-forwarded-for') || req.connection.remoteAddress;    
+    var jobID = req.params.JobID
+    
+    if (!jobID){
+        detailLogger.error('JobID - %s Error Enabling Scheduled Job %s' ,jobID, JSON.stringify({ clientIPaddress: clientIPaddress, error: 'JobID not specified'}));
+        res.status(500);
+        return res.json(({status: '500 Server error', error: 'JobID not specified'}))
+    }
 
+    detailLogger.debug('JobID - %s  Enabling Crontab Job : %s' ,jobID, JSON.stringify({ clientIPaddress: clientIPaddress, jobID: jobID }));       
+
+    var crontabEnableCmd = "( crontab -l | sed '/" +jobID+ "/s!^.!!' ) | crontab -";
+
+    // Callback function to be executed after Command Execution
+    var callback = function (error, stdout, stderr) {
+       if (error) {
+         detailLogger.error('JobID - %s  Enabling of CRON Job failed: %s',jobID, JSON.stringify({ error: error}));
+         highLevelLogger.error('JobID - %s  Enabling of CRON Job failed: %s',jobID, JSON.stringify({ error: error}));
+       }
+    };
+
+    var options = {
+        //cwd: execDirPath,
+        timeout: 0
+    }
+
+    // Execute the command to REMOVE the CRON job from the CRON file
+    var enableCronJobCmdExec = child_process.exec(crontabEnableCmd, options, callback);
+
+    // Check the exit code of the command 
+    enableCronJobCmdExec.on('exit', function (code) {
+        detailLogger.debug('enableCronJobCmdExec Child process exited with exit code '+code);   
+        if (code == 0) {
+            detailLogger.info('JobID - %s  CRON Job Enabled Successfully: %s',jobID, JSON.stringify({ enableCronJobCmdExec: enableCronJobCmdExec}));
+            highLevelLogger.info('JobID - %s  CRON Job Enabled Successfully: %s',jobID, JSON.stringify({ enableCronJobCmdExec: enableCronJobCmdExec}));
+            updateStatusInDB();        
+        } else {
+            res.status(500);
+            res.send({status: "failed", err : err})
+        }
+
+    });
+
+
+    // Update the Job in Database
+    updateStatusInDB = function() {
+       var query = { _id: jobID };
+       var updateFields = { ScheduleStatus: 'ACTIVE', UpdatedTimeStamp : new Date() };
+   
+       function callback (err) {
+         if (err) {
+               detailLogger.error('JobID - %s Error updating the Job status to ACTIVE in Database: %s' ,jobID, JSON.stringify({ error: err}));
+               res.status(500);
+               return res.send({status: "failed", err : err})
+           }
+           else {
+              detailLogger.info('JobID - %s Updated the Scheduled Job status to ACTIVE in Database' ,jobID);
+              return res.send({status: "success"});
+           }
+       }
+       
+       ScheduledJob.update(query, updateFields , callback)
+   }
+}
