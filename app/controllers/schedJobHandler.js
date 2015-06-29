@@ -1,5 +1,4 @@
 // Handler functions for the Scheduled Jobs Module
-
 // Load the Modules
 var fs = require('fs-extra');
 var sys = require('sys')
@@ -38,49 +37,59 @@ var execFileName = './HiveLauncher.sh';
 var normalizePath = "../";
 
 // Get all Scheduled Jobs
-exports.getAllSchedJobs = function(req, res){
+exports.getAllSchedJobs = function(req, res) {
 
-	var clientIPaddress = req.ip || req.header('x-forwarded-for') || req.connection.remoteAddress;
-	
+    var clientIPaddress = req.ip || req.header('x-forwarded-for') || req.connection.remoteAddress;
+
     var callback = function(err, scheduledJobs) {
-        if (err){
-            detailLogger.error('GET - Error retrieving all record: %s' ,jobID, JSON.stringify({ clientIPaddress: clientIPaddress, error: err}));
+        if (err) {
+            detailLogger.error('GET - Error retrieving all record: %s', jobID, JSON.stringify({
+                clientIPaddress: clientIPaddress,
+                error: err
+            }));
             res.status(500)
             return res.send(err)
         } else {
-            detailLogger.debug(' GET - Retrieved all Scheduled Jobs by ', { clientIPaddress: clientIPaddress });
+            detailLogger.debug(' GET - Retrieved all Scheduled Jobs by ', {
+                clientIPaddress: clientIPaddress
+            });
             res.send(scheduledJobs);
         }
-    
+
     }
 
     ScheduledJob
-    .find()
-    .sort('-UpdatedTimeStamp')
-    // .limit(100)
-    .exec(callback);
+        .find()
+        .sort('-UpdatedTimeStamp')
+        // .limit(100)
+        .exec(callback);
 
 };
 
 // Get Scheduled Job based on Job ID
-exports.getScheduledJobByJobID = function (req, res) {
+exports.getScheduledJobByJobID = function(req, res) {
     var jobID = req.params.JobID;
     var clientIPaddress = req.ip || req.header('x-forwarded-for') || req.connection.remoteAddress;
-    return ScheduledJob.findById(jobID, function (err, schedJob) {
-    if (!err) {
-        detailLogger.debug(' JobID - %s information retrieved by: %s', jobID, JSON.stringify({ clientIPaddress: clientIPaddress }));
-        return res.send(schedJob);
-    } else {
-        detailLogger.debug(' JobID - %s information retrieval failed by: %s', jobID, JSON.stringify({ clientIPaddress: clientIPaddress, error: err  }));
-        res.status(500)
-        return res.send(err)
-    }
-  });
+    return ScheduledJob.findById(jobID, function(err, schedJob) {
+        if (!err) {
+            detailLogger.debug(' JobID - %s information retrieved by: %s', jobID, JSON.stringify({
+                clientIPaddress: clientIPaddress
+            }));
+            return res.send(schedJob);
+        } else {
+            detailLogger.debug(' JobID - %s information retrieval failed by: %s', jobID, JSON.stringify({
+                clientIPaddress: clientIPaddress,
+                error: err
+            }));
+            res.status(500)
+            return res.send(err)
+        }
+    });
 }
 
 // Create Scheduled Job
 exports.submitNewScheduledJob = function(req, res) {
-	
+
     // Initialize the AdHoc Job Variables
     var schedJobName = req.body.schedJobName;
     if (schedJobName == null || schedJobName == '') {
@@ -96,17 +105,17 @@ exports.submitNewScheduledJob = function(req, res) {
     var executionTime = req.body.jobSchedTime;
     var executionDays = req.body.days;
     var notifyEmailFlag = req.body.notifyEmailFlag;
-    var notifyEmailID   = req.body.notifyEmailID || "";
+    var notifyEmailID = req.body.notifyEmailID || "";
     var jobRunStatus = JOB_NOT_STARTED_STATUS_STRING;
 
     // Validate Notification Flag and EmailID
     if (!notifyEmailID) {
         notifyEmailFlag = false;
-    } else{
+    } else {
         notifyEmailFlag = true;
     }
 
-    // Create a new Job ID 	
+    // Create a new Job ID  
     var ObjectId = mongoose.Types.ObjectId;
     var jobID = new ObjectId;
 
@@ -115,29 +124,55 @@ exports.submitNewScheduledJob = function(req, res) {
     // Prefix JobID with JobName
     jobID = schedJobName.trim() + '_' + jobID;
 
-    detailLogger.info(' JobID - %s New Scheduled Job Submitted: %s', jobID, JSON.stringify({ clientIPaddress: clientIPaddress, JobName : schedJobName, SQLQuery : sqlQuery, ScheduledTime : req.body.jobSchedTime, ScheduledDays : req.body.days , NotifyFlag: req.body.notifyEmailFlag, NotifyEmailID : req.body.notifyEmailID}));
-    highLevelLogger.info(' JobID - %s New Scheduled Job Submitted: %s', jobID, JSON.stringify({ clientIPaddress: clientIPaddress, JobName : schedJobName, SQLQuery : sqlQuery, ScheduledTime : req.body.jobSchedTime, ScheduledDays : req.body.days , NotifyFlag: req.body.notifyEmailFlag, NotifyEmailID : req.body.notifyEmailID}));
+    detailLogger.info(' JobID - %s New Scheduled Job Submitted: %s', jobID, JSON.stringify({
+        clientIPaddress: clientIPaddress,
+        JobName: schedJobName,
+        SQLQuery: sqlQuery,
+        ScheduledTime: req.body.jobSchedTime,
+        ScheduledDays: req.body.days,
+        NotifyFlag: req.body.notifyEmailFlag,
+        NotifyEmailID: req.body.notifyEmailID
+    }));
+    highLevelLogger.info(' JobID - %s New Scheduled Job Submitted: %s', jobID, JSON.stringify({
+        clientIPaddress: clientIPaddress,
+        JobName: schedJobName,
+        SQLQuery: sqlQuery,
+        ScheduledTime: req.body.jobSchedTime,
+        ScheduledDays: req.body.days,
+        NotifyFlag: req.body.notifyEmailFlag,
+        NotifyEmailID: req.body.notifyEmailID
+    }));
 
     res.set('Access-Control-Allow-Origin', '*');
 
     var jobDir = dataDir + jobID;
     var queryFile = jobDir + '/sql.txt';
     var crontabJobCmd;
-    var crontabInsertCmd ;
+    var crontabInsertCmd;
 
     // Create a directory for the JobID
     createJobDirectory = function() {
-        
+
         fs.ensureDir(jobDir, function(err) {
             if (err) {
-                detailLogger.error('JobID - %s Error creating new directory: %s', jobID,  JSON.stringify({Directory: jobDir, error: err}));
+                detailLogger.error('JobID - %s Error creating new directory: %s', jobID, JSON.stringify({
+                    Directory: jobDir,
+                    error: err
+                }));
                 res.status(500)
-                return res.send({JobID : null, err : err})
+                return res.send({
+                    JobID: null,
+                    err: err
+                })
             } else {
-                detailLogger.debug('JobID - %s  New JobID directory created: %s',jobID, JSON.stringify ({Directory: jobDir}));
+                detailLogger.debug('JobID - %s  New JobID directory created: %s', jobID, JSON.stringify({
+                    Directory: jobDir
+                }));
                 var ws = fs.createOutputStream(queryFile)
                 ws.write(sqlQuery)
-                detailLogger.debug('JobID - %s  Hive Query written to file: %s',jobID, JSON.stringify({ QueryFile : queryFile}));
+                detailLogger.debug('JobID - %s  Hive Query written to file: %s', jobID, JSON.stringify({
+                    QueryFile: queryFile
+                }));
                 createCronJob();
             }
         })
@@ -163,62 +198,56 @@ exports.submitNewScheduledJob = function(req, res) {
 
         if (executionDays.sun == true) {
             dayOfWeek += "0";
-        } 
+        }
 
         if (executionDays.mon == true) {
-            if (dayOfWeek.length > 0)
-            {
+            if (dayOfWeek.length > 0) {
                 dayOfWeek += ",";
             }
 
-            dayOfWeek +="1";
+            dayOfWeek += "1";
 
-        } 
+        }
 
         if (executionDays.tue == true) {
-            if (dayOfWeek.length > 0)
-            {
+            if (dayOfWeek.length > 0) {
                 dayOfWeek += ",";
             }
 
-            dayOfWeek +="2";
-        } 
+            dayOfWeek += "2";
+        }
 
         if (executionDays.wed == true) {
-            if (dayOfWeek.length > 0)
-            {
+            if (dayOfWeek.length > 0) {
                 dayOfWeek += ",";
             }
 
-            dayOfWeek +="3";
-        } 
+            dayOfWeek += "3";
+        }
 
         if (executionDays.thu == true) {
-            if (dayOfWeek.length > 0)
-            {
+            if (dayOfWeek.length > 0) {
                 dayOfWeek += ",";
             }
 
-            dayOfWeek +="4";
-        } 
+            dayOfWeek += "4";
+        }
 
         if (executionDays.fri == true) {
-            if (dayOfWeek.length > 0)
-            {
+            if (dayOfWeek.length > 0) {
                 dayOfWeek += ",";
             }
 
-            dayOfWeek +="5";
-        } 
+            dayOfWeek += "5";
+        }
 
         if (executionDays.sat == true) {
-            if (dayOfWeek.length > 0)
-            {
+            if (dayOfWeek.length > 0) {
                 dayOfWeek += ",";
             }
 
-            dayOfWeek +="6";
-        } 
+            dayOfWeek += "6";
+        }
 
         // ##  HiveLauncher Script Usage :
         // ##      
@@ -230,12 +259,12 @@ exports.submitNewScheduledJob = function(req, res) {
         // ##
 
         // Prepare Command to be run by CRON
-    
-        var args = "SCHED" + " " + jobID + " " + schedJobName + " " + normalizePath  + queryFile  + " " + normalizePath + jobDir 
 
-        if (notifyEmailFlag == true){
+        var args = "SCHED" + " " + jobID + " " + schedJobName + " " + normalizePath + queryFile + " " + normalizePath + jobDir
+
+        if (notifyEmailFlag == true) {
             args += " " + "Y" + " " + notifyEmailID;
-        } else{
+        } else {
             args += " " + "N"
         }
 
@@ -251,7 +280,10 @@ exports.submitNewScheduledJob = function(req, res) {
         crontabJobCmd = min + " " + hours + " " + dayOfMonth + " " + month + " " + dayOfWeek + " " + cronCmd;
 
 
-        detailLogger.debug('JobID - %s  Inserting Cron Job Command : %s' ,jobID, JSON.stringify({ clientIPaddress: clientIPaddress, crontabJobCmd: crontabJobCmd }));
+        detailLogger.debug('JobID - %s  Inserting Cron Job Command : %s', jobID, JSON.stringify({
+            clientIPaddress: clientIPaddress,
+            crontabJobCmd: crontabJobCmd
+        }));
 
 
         /* 
@@ -278,21 +310,28 @@ exports.submitNewScheduledJob = function(req, res) {
 
         ---------------------------------------------------------------
         */
- 
+
         //( crontab -l | grep -v "$croncmd" ; echo "$cronjob" ) | crontab -
         crontabInsertCmd = '( crontab -l | grep -v "' + cronCmd + '" ; echo "' + crontabJobCmd + '" ) | crontab -';
 
         // Sample : crontab -l | grep -v \"cd /Users/gmalu/Documents/Project/SelfServiceHiveDashboard/backendScripts/ && ./HiveLauncher.sh 557b51d8a502c4091617c3a7 ../data/scheduledJobs/557b51d8a502c4091617c3a7/sql.txt ../data/scheduledJobs/557b51d8a502c4091617c3a7 > data/scheduledJobs/cronLogs.log 2>&1\" ; echo \"45 22 * * 0,1 cd /Users/gmalu/Documents/Project/SelfServiceHiveDashboard/backendScripts/ && ./HiveLauncher.sh 557b51d8a502c4091617c3a7 ../data/scheduledJobs/557b51d8a502c4091617c3a7/sql.txt ../data/scheduledJobs/557b51d8a502c4091617c3a7> data/scheduledJobs/cronLogs.log 2>&1\" ) | crontab -
-        
-        detailLogger.debug('JobID - %s  Executing Crontab Job Insertion Command : %s' ,jobID, JSON.stringify({ clientIPaddress: clientIPaddress, crontabInsertCmd: crontabInsertCmd }));       
-        
+
+        detailLogger.debug('JobID - %s  Executing Crontab Job Insertion Command : %s', jobID, JSON.stringify({
+            clientIPaddress: clientIPaddress,
+            crontabInsertCmd: crontabInsertCmd
+        }));
+
 
         // Callback function to be executed after Command Execution
-        var callback = function (error, stdout, stderr) {
-           if (error) {
-             detailLogger.error('JobID - %s  Inserting CRON Job failed: %s',jobID, JSON.stringify({ error: error}));
-             highLevelLogger.error('JobID - %s  Inserting CRON Job failed: %s',jobID, JSON.stringify({ error: error}));
-           }
+        var callback = function(error, stdout, stderr) {
+            if (error) {
+                detailLogger.error('JobID - %s  Inserting CRON Job failed: %s', jobID, JSON.stringify({
+                    error: error
+                }));
+                highLevelLogger.error('JobID - %s  Inserting CRON Job failed: %s', jobID, JSON.stringify({
+                    error: error
+                }));
+            }
         };
 
 
@@ -305,15 +344,22 @@ exports.submitNewScheduledJob = function(req, res) {
         var insertCronJobCmdExec = child_process.exec(crontabInsertCmd, options, callback);
 
         // Check the exit code of the command 
-        insertCronJobCmdExec.on('exit', function (code) {
-            detailLogger.debug('insertCronJobCmdExec Child process exited with exit code '+code);   
+        insertCronJobCmdExec.on('exit', function(code) {
+            detailLogger.debug('insertCronJobCmdExec Child process exited with exit code ' + code);
             if (code == 0) {
-                detailLogger.info('JobID - %s  CRON Job Scheduled Successfully: %s',jobID, JSON.stringify({ crontabJobCmd: crontabInsertCmd}));
-                highLevelLogger.info('JobID - %s  CRON Job Scheduled Successfully: %s',jobID, JSON.stringify({ crontabJobCmd: crontabInsertCmd}));
-                createDBRecord();        
+                detailLogger.info('JobID - %s  CRON Job Scheduled Successfully: %s', jobID, JSON.stringify({
+                    crontabJobCmd: crontabInsertCmd
+                }));
+                highLevelLogger.info('JobID - %s  CRON Job Scheduled Successfully: %s', jobID, JSON.stringify({
+                    crontabJobCmd: crontabInsertCmd
+                }));
+                createDBRecord();
             } else {
                 res.status(500);
-                res.send({JobID : null, err : err})
+                res.send({
+                    JobID: null,
+                    err: err
+                })
                 removeJobIDdirectory();
             }
 
@@ -323,12 +369,14 @@ exports.submitNewScheduledJob = function(req, res) {
 
 
     // Create a MongoDB record for the Scheduled Job
-    createDBRecord = function(){
+    createDBRecord = function() {
 
         var jobStatus = 'ACTIVE';
 
         function checkTime(i) {
-            if (i<10) {i = "0" + i};  // add zero in front of numbers < 10
+            if (i < 10) {
+                i = "0" + i
+            }; // add zero in front of numbers < 10
             return i;
         }
 
@@ -336,31 +384,51 @@ exports.submitNewScheduledJob = function(req, res) {
         minStr = checkTime(executionTime.minutes);
 
         ScheduledJob.create({
-            _id             : jobID,
-            JobID           : jobID,
-            JobName         : schedJobName,
-            SQLQuery        : sqlQuery,
-            SubmittedByIP   : clientIPaddress,
-            ScheduleStatus  : jobStatus,
-            ExecutionTime   : { Hours: hoursStr, Minutes: minStr } ,
-            ExecutionDays   : { SUN: executionDays.sun, MON : executionDays.mon , TUE : executionDays.tue, WED: executionDays.wed, THU: executionDays.thu, FRI: executionDays.fri, SAT: executionDays.sat },
-            NotifyFlag      : notifyEmailFlag,
-            NotifyEmail     : notifyEmailID,
-            JobRunStatus    : jobRunStatus,
-            CronTabJob      : crontabJobCmd,
+            _id: jobID,
+            JobID: jobID,
+            JobName: schedJobName,
+            SQLQuery: sqlQuery,
+            SubmittedByIP: clientIPaddress,
+            ScheduleStatus: jobStatus,
+            ExecutionTime: {
+                Hours: hoursStr,
+                Minutes: minStr
+            },
+            ExecutionDays: {
+                SUN: executionDays.sun,
+                MON: executionDays.mon,
+                TUE: executionDays.tue,
+                WED: executionDays.wed,
+                THU: executionDays.thu,
+                FRI: executionDays.fri,
+                SAT: executionDays.sat
+            },
+            NotifyFlag: notifyEmailFlag,
+            NotifyEmail: notifyEmailID,
+            JobRunStatus: jobRunStatus,
+            CronTabJob: crontabJobCmd,
             CreatedTimeStamp: new Date(),
             UpdatedTimeStamp: new Date()
 
         }, function(err, scheduledJob) {
             if (err) {
-                detailLogger.error('JobID - %s Error creating new record: %s' ,jobID, JSON.stringify({ error: err}));
+                detailLogger.error('JobID - %s Error creating new record: %s', jobID, JSON.stringify({
+                    error: err
+                }));
                 res.status(500);
-                res.send({JobID : null, err : err});
+                res.send({
+                    JobID: null,
+                    err: err
+                });
                 removeJobIDdirectory();
             } else {
-                detailLogger.debug('JobID - %s  New Job details inserted into database : %s', jobID , JSON.stringify({ scheduledJob: scheduledJob}) );
-                return res.send({"JobID" : jobID });
-               
+                detailLogger.debug('JobID - %s  New Job details inserted into database : %s', jobID, JSON.stringify({
+                    scheduledJob: scheduledJob
+                }));
+                return res.send({
+                    "JobID": jobID
+                });
+
             }
 
         });
@@ -370,7 +438,9 @@ exports.submitNewScheduledJob = function(req, res) {
     // Remove the JobID Directory Created -- Called as part of Rollback / failure
     removeJobIDdirectory = function() {
         fs.removeSync(jobDir);
-        detailLogger.debug('JobID - %s  Directory deleted: %s', jobID , JSON.stringify({ jobDir: jobDir}) );
+        detailLogger.debug('JobID - %s  Directory deleted: %s', jobID, JSON.stringify({
+            jobDir: jobDir
+        }));
     }
 
     // Initiate the Schedule Job process
@@ -380,16 +450,25 @@ exports.submitNewScheduledJob = function(req, res) {
 
 // Delete Scheduled Job and data 
 exports.removeScheduledJob = function(req, res) {
-    var clientIPaddress = req.ip || req.header('x-forwarded-for') || req.connection.remoteAddress;    
+    var clientIPaddress = req.ip || req.header('x-forwarded-for') || req.connection.remoteAddress;
     var jobID = req.params.JobID
-    
-    if (!jobID){
-        detailLogger.error('JobID - %s Error Deleting Scheduled Job %s' ,jobID, JSON.stringify({ clientIPaddress: clientIPaddress, error: 'JobID not specified'}));
+
+    if (!jobID) {
+        detailLogger.error('JobID - %s Error Deleting Scheduled Job %s', jobID, JSON.stringify({
+            clientIPaddress: clientIPaddress,
+            error: 'JobID not specified'
+        }));
         res.status(500);
-        return res.json(({status: '500 Server error', error: 'JobID not specified'}))
+        return res.json(({
+            status: '500 Server error',
+            error: 'JobID not specified'
+        }))
     }
 
-    detailLogger.debug('JobID - %s  Removing Crontab Job : %s' ,jobID, JSON.stringify({ clientIPaddress: clientIPaddress, jobID: jobID }));       
+    detailLogger.debug('JobID - %s  Removing Crontab Job : %s', jobID, JSON.stringify({
+        clientIPaddress: clientIPaddress,
+        jobID: jobID
+    }));
 
     /*
     To remove from the crontab:
@@ -401,11 +480,15 @@ exports.removeScheduledJob = function(req, res) {
 
 
     // Callback function to be executed after Command Execution
-    var callback = function (error, stdout, stderr) {
-       if (error) {
-         detailLogger.error('JobID - %s  Removal of CRON Job failed: %s',jobID, JSON.stringify({ error: error}));
-         highLevelLogger.error('JobID - %s  Removal of CRON Job failed: %s',jobID, JSON.stringify({ error: error}));
-       }
+    var callback = function(error, stdout, stderr) {
+        if (error) {
+            detailLogger.error('JobID - %s  Removal of CRON Job failed: %s', jobID, JSON.stringify({
+                error: error
+            }));
+            highLevelLogger.error('JobID - %s  Removal of CRON Job failed: %s', jobID, JSON.stringify({
+                error: error
+            }));
+        }
     };
 
     var options = {
@@ -417,15 +500,22 @@ exports.removeScheduledJob = function(req, res) {
     var removeCronJobCmdExec = child_process.exec(crontabRemoveCmd, options, callback);
 
     // Check the exit code of the command 
-    removeCronJobCmdExec.on('exit', function (code) {
-        detailLogger.debug('removeCronJobCmdExec Child process exited with exit code '+code);   
+    removeCronJobCmdExec.on('exit', function(code) {
+        detailLogger.debug('removeCronJobCmdExec Child process exited with exit code ' + code);
         if (code == 0) {
-            detailLogger.info('JobID - %s  CRON Job Removed Successfully: %s',jobID, JSON.stringify({ crontabRemoveCmd: crontabRemoveCmd}));
-            highLevelLogger.info('JobID - %s  CRON Job Removed Successfully: %s',jobID, JSON.stringify({ crontabRemoveCmd: crontabRemoveCmd}));
-            updateStatusInDB();        
+            detailLogger.info('JobID - %s  CRON Job Removed Successfully: %s', jobID, JSON.stringify({
+                crontabRemoveCmd: crontabRemoveCmd
+            }));
+            highLevelLogger.info('JobID - %s  CRON Job Removed Successfully: %s', jobID, JSON.stringify({
+                crontabRemoveCmd: crontabRemoveCmd
+            }));
+            updateStatusInDB();
         } else {
             res.status(500);
-            res.send({status: "failed", err : err})
+            res.send({
+                status: "failed",
+                err: err
+            })
         }
 
     });
@@ -433,24 +523,35 @@ exports.removeScheduledJob = function(req, res) {
 
     // Update the Job in Database
     updateStatusInDB = function() {
-       var query = { _id: jobID };
-       var updateFields = { ScheduleStatus: 'DELETED', UpdatedTimeStamp : new Date() };
-   
-       function callback (err) {
-         if (err) {
-               detailLogger.error('JobID - %s Error updating the Job status to Deleted in Database: %s' ,jobID, JSON.stringify({ error: err}));
-               res.status(500);
-               return res.send({status: "failed", err : err})
-           }
-           else {
-              detailLogger.info('JobID - %s Updated the Scheduled Job status to Deleted in Database' ,jobID);
-              return res.send({status: "success"});
-           }
-       }
-       
-       ScheduledJob.update(query, updateFields , callback)
+        var query = {
+            _id: jobID
+        };
+        var updateFields = {
+            ScheduleStatus: 'DELETED',
+            UpdatedTimeStamp: new Date()
+        };
 
-   }
+        function callback(err) {
+            if (err) {
+                detailLogger.error('JobID - %s Error updating the Job status to Deleted in Database: %s', jobID, JSON.stringify({
+                    error: err
+                }));
+                res.status(500);
+                return res.send({
+                    status: "failed",
+                    err: err
+                })
+            } else {
+                detailLogger.info('JobID - %s Updated the Scheduled Job status to Deleted in Database', jobID);
+                return res.send({
+                    status: "success"
+                });
+            }
+        }
+
+        ScheduledJob.update(query, updateFields, callback)
+
+    }
 
 
 }
@@ -467,25 +568,38 @@ exports.removeScheduledJob = function(req, res) {
 
 // Disable Scheduled Job
 exports.disableScheduledJob = function(req, res) {
-    var clientIPaddress = req.ip || req.header('x-forwarded-for') || req.connection.remoteAddress;    
+    var clientIPaddress = req.ip || req.header('x-forwarded-for') || req.connection.remoteAddress;
     var jobID = req.params.JobID
-    
-    if (!jobID){
-        detailLogger.error('JobID - %s Error Disabling Scheduled Job %s' ,jobID, JSON.stringify({ clientIPaddress: clientIPaddress, error: 'JobID not specified'}));
+
+    if (!jobID) {
+        detailLogger.error('JobID - %s Error Disabling Scheduled Job %s', jobID, JSON.stringify({
+            clientIPaddress: clientIPaddress,
+            error: 'JobID not specified'
+        }));
         res.status(500);
-        return res.json(({status: '500 Server error', error: 'JobID not specified'}))
+        return res.json(({
+            status: '500 Server error',
+            error: 'JobID not specified'
+        }))
     }
 
-    detailLogger.debug('JobID - %s  Disabling Crontab Job : %s' ,jobID, JSON.stringify({ clientIPaddress: clientIPaddress, jobID: jobID }));       
+    detailLogger.debug('JobID - %s  Disabling Crontab Job : %s', jobID, JSON.stringify({
+        clientIPaddress: clientIPaddress,
+        jobID: jobID
+    }));
 
-    var crontabDisableCmd = "( crontab -l | sed '/" +jobID+ "/s!^!#!' ) | crontab -";
+    var crontabDisableCmd = "( crontab -l | sed '/" + jobID + "/s!^!#!' ) | crontab -";
 
     // Callback function to be executed after Command Execution
-    var callback = function (error, stdout, stderr) {
-       if (error) {
-         detailLogger.error('JobID - %s  Disabling of CRON Job failed: %s',jobID, JSON.stringify({ error: error}));
-         highLevelLogger.error('JobID - %s  Disabling of CRON Job failed: %s',jobID, JSON.stringify({ error: error}));
-       }
+    var callback = function(error, stdout, stderr) {
+        if (error) {
+            detailLogger.error('JobID - %s  Disabling of CRON Job failed: %s', jobID, JSON.stringify({
+                error: error
+            }));
+            highLevelLogger.error('JobID - %s  Disabling of CRON Job failed: %s', jobID, JSON.stringify({
+                error: error
+            }));
+        }
     };
 
     var options = {
@@ -497,15 +611,22 @@ exports.disableScheduledJob = function(req, res) {
     var disableCronJobCmdExec = child_process.exec(crontabDisableCmd, options, callback);
 
     // Check the exit code of the command 
-    disableCronJobCmdExec.on('exit', function (code) {
-        detailLogger.debug('disableCronJobCmdExec Child process exited with exit code '+code);   
+    disableCronJobCmdExec.on('exit', function(code) {
+        detailLogger.debug('disableCronJobCmdExec Child process exited with exit code ' + code);
         if (code == 0) {
-            detailLogger.info('JobID - %s  CRON Job Disabled Successfully: %s',jobID, JSON.stringify({ crontabDisableCmd: crontabDisableCmd}));
-            highLevelLogger.info('JobID - %s  CRON Job Disabled Successfully: %s',jobID, JSON.stringify({ crontabDisableCmd: crontabDisableCmd}));
-            updateStatusInDB();        
+            detailLogger.info('JobID - %s  CRON Job Disabled Successfully: %s', jobID, JSON.stringify({
+                crontabDisableCmd: crontabDisableCmd
+            }));
+            highLevelLogger.info('JobID - %s  CRON Job Disabled Successfully: %s', jobID, JSON.stringify({
+                crontabDisableCmd: crontabDisableCmd
+            }));
+            updateStatusInDB();
         } else {
             res.status(500);
-            res.send({status: "failed", err : err})
+            res.send({
+                status: "failed",
+                err: err
+            })
         }
 
     });
@@ -513,46 +634,70 @@ exports.disableScheduledJob = function(req, res) {
 
     // Update the Job in Database
     updateStatusInDB = function() {
-       var query = { _id: jobID };
-       var updateFields = { ScheduleStatus: 'DISABLED', UpdatedTimeStamp : new Date() };
-   
-       function callback (err) {
-         if (err) {
-               detailLogger.error('JobID - %s Error updating the Job status to Disabled in Database: %s' ,jobID, JSON.stringify({ error: err}));
-               res.status(500);
-               return res.send({status: "failed", err : err})
-           }
-           else {
-              detailLogger.info('JobID - %s Updated the Scheduled Job status to Disabled in Database' ,jobID);
-              return res.send({status: "success"});
-           }
-       }
-       
-       ScheduledJob.update(query, updateFields , callback)
-   }
+        var query = {
+            _id: jobID
+        };
+        var updateFields = {
+            ScheduleStatus: 'DISABLED',
+            UpdatedTimeStamp: new Date()
+        };
+
+        function callback(err) {
+            if (err) {
+                detailLogger.error('JobID - %s Error updating the Job status to Disabled in Database: %s', jobID, JSON.stringify({
+                    error: err
+                }));
+                res.status(500);
+                return res.send({
+                    status: "failed",
+                    err: err
+                })
+            } else {
+                detailLogger.info('JobID - %s Updated the Scheduled Job status to Disabled in Database', jobID);
+                return res.send({
+                    status: "success"
+                });
+            }
+        }
+
+        ScheduledJob.update(query, updateFields, callback)
+    }
 }
 
 // Enable Scheduled Job
 exports.enableScheduledJob = function(req, res) {
-    var clientIPaddress = req.ip || req.header('x-forwarded-for') || req.connection.remoteAddress;    
+    var clientIPaddress = req.ip || req.header('x-forwarded-for') || req.connection.remoteAddress;
     var jobID = req.params.JobID
-    
-    if (!jobID){
-        detailLogger.error('JobID - %s Error Enabling Scheduled Job %s' ,jobID, JSON.stringify({ clientIPaddress: clientIPaddress, error: 'JobID not specified'}));
+
+    if (!jobID) {
+        detailLogger.error('JobID - %s Error Enabling Scheduled Job %s', jobID, JSON.stringify({
+            clientIPaddress: clientIPaddress,
+            error: 'JobID not specified'
+        }));
         res.status(500);
-        return res.json(({status: '500 Server error', error: 'JobID not specified'}))
+        return res.json(({
+            status: '500 Server error',
+            error: 'JobID not specified'
+        }))
     }
 
-    detailLogger.debug('JobID - %s  Enabling Crontab Job : %s' ,jobID, JSON.stringify({ clientIPaddress: clientIPaddress, jobID: jobID }));       
+    detailLogger.debug('JobID - %s  Enabling Crontab Job : %s', jobID, JSON.stringify({
+        clientIPaddress: clientIPaddress,
+        jobID: jobID
+    }));
 
-    var crontabEnableCmd = "( crontab -l | sed '/" +jobID+ "/s!^.!!' ) | crontab -";
+    var crontabEnableCmd = "( crontab -l | sed '/" + jobID + "/s!^.!!' ) | crontab -";
 
     // Callback function to be executed after Command Execution
-    var callback = function (error, stdout, stderr) {
-       if (error) {
-         detailLogger.error('JobID - %s  Enabling of CRON Job failed: %s',jobID, JSON.stringify({ error: error}));
-         highLevelLogger.error('JobID - %s  Enabling of CRON Job failed: %s',jobID, JSON.stringify({ error: error}));
-       }
+    var callback = function(error, stdout, stderr) {
+        if (error) {
+            detailLogger.error('JobID - %s  Enabling of CRON Job failed: %s', jobID, JSON.stringify({
+                error: error
+            }));
+            highLevelLogger.error('JobID - %s  Enabling of CRON Job failed: %s', jobID, JSON.stringify({
+                error: error
+            }));
+        }
     };
 
     var options = {
@@ -564,15 +709,22 @@ exports.enableScheduledJob = function(req, res) {
     var enableCronJobCmdExec = child_process.exec(crontabEnableCmd, options, callback);
 
     // Check the exit code of the command 
-    enableCronJobCmdExec.on('exit', function (code) {
-        detailLogger.debug('enableCronJobCmdExec Child process exited with exit code '+code);   
+    enableCronJobCmdExec.on('exit', function(code) {
+        detailLogger.debug('enableCronJobCmdExec Child process exited with exit code ' + code);
         if (code == 0) {
-            detailLogger.info('JobID - %s  CRON Job Enabled Successfully: %s',jobID, JSON.stringify({ enableCronJobCmdExec: enableCronJobCmdExec}));
-            highLevelLogger.info('JobID - %s  CRON Job Enabled Successfully: %s',jobID, JSON.stringify({ enableCronJobCmdExec: enableCronJobCmdExec}));
-            updateStatusInDB();        
+            detailLogger.info('JobID - %s  CRON Job Enabled Successfully: %s', jobID, JSON.stringify({
+                enableCronJobCmdExec: enableCronJobCmdExec
+            }));
+            highLevelLogger.info('JobID - %s  CRON Job Enabled Successfully: %s', jobID, JSON.stringify({
+                enableCronJobCmdExec: enableCronJobCmdExec
+            }));
+            updateStatusInDB();
         } else {
             res.status(500);
-            res.send({status: "failed", err : err})
+            res.send({
+                status: "failed",
+                err: err
+            })
         }
 
     });
@@ -580,21 +732,32 @@ exports.enableScheduledJob = function(req, res) {
 
     // Update the Job in Database
     updateStatusInDB = function() {
-       var query = { _id: jobID };
-       var updateFields = { ScheduleStatus: 'ACTIVE', UpdatedTimeStamp : new Date() };
-   
-       function callback (err) {
-         if (err) {
-               detailLogger.error('JobID - %s Error updating the Job status to ACTIVE in Database: %s' ,jobID, JSON.stringify({ error: err}));
-               res.status(500);
-               return res.send({status: "failed", err : err})
-           }
-           else {
-              detailLogger.info('JobID - %s Updated the Scheduled Job status to ACTIVE in Database' ,jobID);
-              return res.send({status: "success"});
-           }
-       }
-       
-       ScheduledJob.update(query, updateFields , callback)
-   }
+        var query = {
+            _id: jobID
+        };
+        var updateFields = {
+            ScheduleStatus: 'ACTIVE',
+            UpdatedTimeStamp: new Date()
+        };
+
+        function callback(err) {
+            if (err) {
+                detailLogger.error('JobID - %s Error updating the Job status to ACTIVE in Database: %s', jobID, JSON.stringify({
+                    error: err
+                }));
+                res.status(500);
+                return res.send({
+                    status: "failed",
+                    err: err
+                })
+            } else {
+                detailLogger.info('JobID - %s Updated the Scheduled Job status to ACTIVE in Database', jobID);
+                return res.send({
+                    status: "success"
+                });
+            }
+        }
+
+        ScheduledJob.update(query, updateFields, callback)
+    }
 }

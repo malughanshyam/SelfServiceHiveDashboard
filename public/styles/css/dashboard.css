@@ -1,21 +1,9 @@
 body {
     padding-top: 5em;
 }
-
 #homeTabs {
     padding-top: 5em;
 }
-
-/**[id]:before { 
-  display: block; 
-  content: " "; 
-  margin-top: -75px; 
-  height: 75px; 
-  visibility: hidden; 
-}*/
-
-
-
 .smpl-step {
     margin-top: 40px;
 }
@@ -131,163 +119,156 @@ pre {
 .right-to-left li {
     float: right;
 }
-
 /* Styles go here */
 
 @media (max-width: 768px) {
-  .nav-justified > li {
-    display: table-cell;
-    width: 1%;
-  }
-  .nav-justified > li > a  {
-    border-bottom: 1px solid #ddd !important;
-    border-radius: 4px 4px 0 0 !important;
-    margin-bottom: 0 !important;
-  }
+    .nav-justified > li {
+        display: table-cell;
+        width: 1%;
+    }
+    .nav-justified > li > a {
+        border-bottom: 1px solid #ddd !important;
+        border-radius: 4px 4px 0 0 !important;
+        margin-bottom: 0 !important;
+    }
 }
-
 @media (min-width: 768px) {
-  .anchor {
-    padding-top: 60px;
-    margin-top: -60px;
-  }
+    .anchor {
+        padding-top: 60px;
+        margin-top: -60px;
+    }
 }
-
-.stepsFlow{
+.stepsFlow {
     padding-top: 2em;
 }
-
-
-
 /*style.css*/
+
 .gridStyle {
-    border: 1px solid rgb(212,212,212);
-    width: 400px; 
+    border: 1px solid rgb(212, 212, 212);
+    width: 400px;
     height: 300px
 }
-
-.st-sort-ascent:before{
+.st-sort-ascent:before {
     content: '\25B2';
 }
-
-.st-sort-descent:before{
+.st-sort-descent:before {
     content: '\25BC';
 }
-
 @-moz-document url-prefix() {
-  fieldset { display: table-cell; }
+    fieldset {
+        display: table-cell;
+    }
 }
-
-#adHocResultTypeTabs li, #schedResultTypeTabs li {
+#adHocResultTypeTabs li,
+#schedResultTypeTabs li {
     padding-left: 1em;
 }
-
-.tooltip-inner  {
-    white-space:pre; /* you can also try white-space: normal; */
-    max-width:none;
+.tooltip-inner {
+    white-space: pre;
+    /* you can also try white-space: normal; */
+    
+    max-width: none;
 }
-
-
 /* Width of modal */
-#modelDialogViewLog, #modelDialogViewResult {
-  width: 90%;
+
+#modelDialogViewLog,
+#modelDialogViewResult {
+    width: 90%;
 }
-
-#editSubmitBtnGrp, #viewRecentJobResultsBtn {
-    padding-bottom:  0.5em;
+#editSubmitBtnGrp,
+#viewRecentJobResultsBtn {
+    padding-bottom: 0.5em;
 }
-
-
 /* Change active color of Day Button clicked in New Scheule Job Tab*/
-#runDayChkBoxDiv .btn.active, #runDayChkBoxDiv .btn:active {
+
+#runDayChkBoxDiv .btn.active,
+#runDayChkBoxDiv .btn:active {
     background-color: #2aabd2;
     color: #fff;
     text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.2);
 }
-
 /* Change active color of Yes/No button for Notify By Email on Create Scheduled Job form */
-#notifyChkBox .btn.active, #notifyChkBox .btn:active {
+
+#notifyChkBox .btn.active,
+#notifyChkBox .btn:active {
     background-color: #2aabd2;
     color: #fff;
     outline: 0 none;
     text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.2);
 }
-
-
 /* Place the Create New Scheduled Task Status Div S*/
 
 #createSchedJobStatusPlaceholderDiv {
-    padding-top: 10%; 
+    padding-top: 10%;
     padding-bottom: 10%;
 }
-
-
 #createSchedJobStatusPlaceholderDiv #success {
-    color: #00CC33 ;
+    color: #00CC33;
 }
-
 #createSchedJobStatusPlaceholderDiv #failed {
-    color: #FF0000 ;
+    color: #FF0000;
 }
-
 #scheduledJobsTableId .fa-check-square {
-    color: #00CC33 ;
+    color: #00CC33;
 }
-
-
-
-#recentAdHocJobTable #statusSuccess, #scheduledJobsTableId #statusSuccess {
-    color: #00CC33 ;
+#recentAdHocJobTable #statusSuccess,
+#scheduledJobsTableId #statusSuccess {
+    color: #00CC33;
 }
-
-#recentAdHocJobTable #statusFail, #scheduledJobsTableId #statusFail {
-    color: #FF0000 ;
+#recentAdHocJobTable #statusFail,
+#scheduledJobsTableId #statusFail {
+    color: #FF0000;
 }
-
-#recentAdHocJobTable #statusRunning, #scheduledJobsTableId #statusRunning {
-    color:#5bc0de;
+#recentAdHocJobTable #statusRunning,
+#scheduledJobsTableId #statusRunning {
+    color: #5bc0de;
 }
-#recentAdHocJobTable #statusNotStarted, #scheduledJobsTableId #statusNotStarted {
-    color:#f0ad4e;
+#recentAdHocJobTable #statusNotStarted,
+#scheduledJobsTableId #statusNotStarted {
+    color: #f0ad4e;
 }
-
 /* Font color of Deleted Scheduled Jobs*/
-#scheduledJobsTableId  > tbody > .deletedJob , #scheduledJobsTableId  > tbody > .deletedJob  .fa {
-    color:#808080; 
+
+#scheduledJobsTableId > tbody > .deletedJob,
+#scheduledJobsTableId > tbody > .deletedJob .fa {
+    color: #808080;
     text-decoration: line-through;
-     
 }
-
 /* Font color of Disabled Scheduled Jobs*/
-#scheduledJobsTableId  > tbody > .disabledJob , #scheduledJobsTableId  > tbody > .disabledJob  .fa  {
-    color:#808080;      
-}
 
+#scheduledJobsTableId > tbody > .disabledJob,
+#scheduledJobsTableId > tbody > .disabledJob .fa {
+    color: #808080;
+}
 #scheduledJobsTableId .runDay {
-    color:#000000; 
+    color: #000000;
 }
-
 /* Font color of Disabled and Deleted Scheduled Jobs*/
-#scheduledJobsTableId  > tbody > .disabledJob #statusNotStarted , #scheduledJobsTableId  > tbody > .deletedJob #statusNotStarted  {
-    color:#808080;      
-}
-#scheduledJobsTableId  > tbody > .disabledJob #statusRunning, #scheduledJobsTableId  > tbody > .deletedJob #statusRunning  {
-    color:#808080;      
-}
-#scheduledJobsTableId  > tbody > .disabledJob #statusFail, #scheduledJobsTableId  > tbody > .deletedJob #statusFail {
-    color:#808080;      
-}
-#scheduledJobsTableId  > tbody > .disabledJob #statusSuccess, #scheduledJobsTableId  > tbody > .deletedJob #statusSuccess {
-    color:#808080;      
-}
 
-
+#scheduledJobsTableId > tbody > .disabledJob #statusNotStarted,
+#scheduledJobsTableId > tbody > .deletedJob #statusNotStarted {
+    color: #808080;
+}
+#scheduledJobsTableId > tbody > .disabledJob #statusRunning,
+#scheduledJobsTableId > tbody > .deletedJob #statusRunning {
+    color: #808080;
+}
+#scheduledJobsTableId > tbody > .disabledJob #statusFail,
+#scheduledJobsTableId > tbody > .deletedJob #statusFail {
+    color: #808080;
+}
+#scheduledJobsTableId > tbody > .disabledJob #statusSuccess,
+#scheduledJobsTableId > tbody > .deletedJob #statusSuccess {
+    color: #808080;
+}
 /* Change active color of Auto Refresh button */
-.btn-default.active#autoRefreshSchedJobTableBtn , .btn-default:active#autoRefreshSchedJobTableBtn, .btn-default.active#autoRefreshAdHocJobTableBtn , .btn-default:active#autoRefreshAdHocJobTableBtn {    
-    /*background-color: #2aabd2;*/
+
+.btn-default.active#autoRefreshSchedJobTableBtn,
+.btn-default:active#autoRefreshSchedJobTableBtn,
+.btn-default.active#autoRefreshAdHocJobTableBtn,
+.btn-default:active#autoRefreshAdHocJobTableBtn {
     background-color: #5cb85c;
     color: #fff;
     outline: 0 none;
     text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.2);
 }
-

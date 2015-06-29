@@ -1,6 +1,6 @@
 angular.module('dashboardApp')
 
-    .controller('adHocJobCtrl', function($scope, $compile, $http, dashboardAungularService, $rootScope) {
+.controller('adHocJobCtrl', function($scope, $compile, $http, dashboardAungularService, $rootScope) {
 
     // ---------------------------------
     // Controller For Scheduled Job
@@ -13,7 +13,7 @@ angular.module('dashboardApp')
     // Automatic Refresh of Recent AdHoc Job Table
     $scope.adHocJobTableAutoRefreshFlag = false
 
-    $scope.enableAdHocJobTableAutoRefresh = function(){
+    $scope.enableAdHocJobTableAutoRefresh = function() {
         // Create a Timer
         $scope.refreshAdHocJobTableInterval = setInterval(function() {
             $scope.populateRecentAdHocJobTable();
@@ -21,13 +21,13 @@ angular.module('dashboardApp')
 
     }
 
-    $scope.disableAdHocJobTableAutoRefresh = function(){
+    $scope.disableAdHocJobTableAutoRefresh = function() {
         // Clear Timer
         clearInterval($scope.refreshAdHocJobTableInterval);
     }
 
-    $scope.toggleAdHocJobTableAutoRefreshBtn = function(){
-        if ($scope.adHocJobTableAutoRefreshFlag == false){
+    $scope.toggleAdHocJobTableAutoRefreshBtn = function() {
+        if ($scope.adHocJobTableAutoRefreshFlag == false) {
             $scope.adHocJobTableAutoRefreshFlag = true
             $('#autoRefreshAdHocJobTableBtn').addClass('active');
             $('#autoRefreshAdHocJobTableBtn').prop('aria-pressed', true);
@@ -53,8 +53,8 @@ angular.module('dashboardApp')
     // Initialize New Job Tab
     $scope.initializeNewJobTab = function() {
         // Variables to store the data for Bar and Line charts to prevent recomputing the already populated charts
-        $scope.barChartComputedData ='';
-        $scope.lineChartComputedData= '';
+        $scope.barChartComputedData = '';
+        $scope.lineChartComputedData = '';
 
         // Cosmetic settings for the Steps - Flow
         $("#flowStepCreate").removeClass('complete');
@@ -63,13 +63,13 @@ angular.module('dashboardApp')
             "opacity": "1"
         });
 
-        $("#flowStepStatus").removeClass('complete');        
-        $("#flowStepStatus").addClass('disabled');        
+        $("#flowStepStatus").removeClass('complete');
+        $("#flowStepStatus").addClass('disabled');
         $("#flowStepStatus").find('i').css({
             "opacity": "0.3"
         });
 
-        $("#flowStepResult").removeClass('complete');        
+        $("#flowStepResult").removeClass('complete');
         $("#flowStepResult").addClass('disabled');
         $("#flowStepResult").find('i').css({
             "opacity": "0.3"
@@ -100,22 +100,22 @@ angular.module('dashboardApp')
 
     // Function to Reset New Job Tab
     $scope.resetNewJobTab = function() {
-                
+
         $scope.initializeNewJobTab();
-        
+
         // Replace the New AdHoc Tab with a clone of the backup created earlier
         $("#newAdHocTab").replaceWith(newAdHocTabClone.clone());
         $compile($('#newAdHocTab'))($scope);
         // $('#recentAdHocTab').removeClass('active');
         $('#newAdHocTab').addClass('active');
-        
+
     }
 
     // Submit New AdHoc Job to server
     $scope.submitJob = function() {
 
         // Replace Non Alpha Numeric Characters with underscore(_)
-        $scope.formData.jobName=dashboardAungularService.cleanUpStr($scope.formData.jobName);
+        $scope.formData.jobName = dashboardAungularService.cleanUpStr($scope.formData.jobName);
 
         $http.post('/submitNewAdHocJob', $scope.formData)
             .success(function(data) {
@@ -135,7 +135,7 @@ angular.module('dashboardApp')
     }
 
     // Flash an Alert Message and Reset New Job Tab
-    $scope.flashAlertAndResetNewJobTab = function(){
+    $scope.flashAlertAndResetNewJobTab = function() {
         $scope.resetNewJobTab();
         var type = 'info';
         var message = "You can check the status of the submitted job under Recent Jobs";
@@ -253,12 +253,12 @@ angular.module('dashboardApp')
 
         $scope.formData.jobID = adHocJob.JobID;
         $scope.computeJobResults(adHocJob.JobID);
-       
+
         // Trigger actions on the Modal Close/Hide Event
         $('#modalViewAdHocResults').on('hidden.bs.modal', function() {
             $scope.barChartComputedData = null;
             $scope.lineChartComputedData = null;
-            $("#modalViewAdHocResults").find('.modal-body').html(" "); 
+            $("#modalViewAdHocResults").find('.modal-body').html(" ");
         });
 
     }
@@ -332,7 +332,7 @@ angular.module('dashboardApp')
         // Check against the locally stored chart data to prevent duplicate computation/drawing of the charts
         if ($scope.barChartComputedData == $scope.jobResult) {
             return true;
-        } 
+        }
 
         $('#createBarChartBtn').button('loading');
 
@@ -340,7 +340,7 @@ angular.module('dashboardApp')
         var chartWidth = $("#jobResultPanelBodyContent").width();
         var chartDivID = '#chartBar';
 
-        dashboardAungularService.createBarChart($scope.jobResult, chartDivID, chartWidth); 
+        dashboardAungularService.createBarChart($scope.jobResult, chartDivID, chartWidth);
 
         $('#downloadBarChartBtnId').removeClass('disabled');
         $('#createBarChartBtn').button('reset');
@@ -356,7 +356,7 @@ angular.module('dashboardApp')
         // Check against the locally stored chart data to prevent duplicate computation/drawing of the charts
         if ($scope.lineChartComputedData == $scope.jobResult) {
             return true;
-        } 
+        }
 
         $('#createLineChartBtn').button('loading');
 
@@ -364,7 +364,7 @@ angular.module('dashboardApp')
         var chartWidth = $("#jobResultPanelBodyContent").width()
         var chartDivID = '#chartLine';
 
-        dashboardAungularService.createLineChart($scope.jobResult, chartDivID, chartWidth); 
+        dashboardAungularService.createLineChart($scope.jobResult, chartDivID, chartWidth);
 
         $('#downloadLineChartBtnId').removeClass('disabled');
         $('#createLineChartBtn').button('reset');
@@ -418,15 +418,15 @@ angular.module('dashboardApp')
     }
 
     // Flag for Show Popup while displaying substring of the Query in the Recent Jobs Table 
-    $scope.showPopupFlag = function(text, limit){
+    $scope.showPopupFlag = function(text, limit) {
         if (text.length > limit)
             return true;
         return false;
     }
 
     // Function to convert the ISO Datestring to Readable Format for displaying in the Recent Jobs Table
-    $scope.parseIsoDatetime = function(dateStr){
-        return dashboardAungularService.parseIsoDatetime(dateStr); 
+    $scope.parseIsoDatetime = function(dateStr) {
+        return dashboardAungularService.parseIsoDatetime(dateStr);
     }
 
     // Reset the Form/Job Details
@@ -436,30 +436,15 @@ angular.module('dashboardApp')
     };
 
     // Initiate Scheduling an AdHoc Job
-    $scope.initiateScheduling = function(adHocJob){
+    $scope.initiateScheduling = function(adHocJob) {
         dashboardAungularService.initiateScheduling(adHocJob);
-      
-      /*  $('#navRecentAdHoc').removeClass('active');
-        $('#recentAdHocTab').removeClass('active');
-        $('#navAdHoc').removeClass('active'); 
-        $('#adHocTab').removeClass('active');      
-        $('#adHocTab').removeClass('in');
-        
-        $('#navScheduled').addClass('active');
-        $('#scheduledTab').addClass('active');
-        $('#scheduledTab').addClass('in');
-        $('#navSchedJobList').removeClass('active');
-        $('#navSchedJobNew').addClass('active');
-        $('#newSchedJobTab').addClass('active'); 
-        $('#createSchedJobStatusTab').removeClass('active');
-        $('#createSchedJobTab').addClass('active'); 
-    */    
-        $( "#scheduledTabNavLink" ).click();
-        $( "#navSchedJobNew" ).click();
+
+        $("#scheduledTabNavLink").click();
+        $("#navSchedJobNew").click();
 
         // Broadcast an event with the adHocJob details
         $rootScope.$broadcast('copyDetailsFromAdHocJob', adHocJob);
-        
+
     }
 
     $scope.reset();

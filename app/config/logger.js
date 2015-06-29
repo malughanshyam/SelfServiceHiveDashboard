@@ -4,9 +4,9 @@ var winston = require('winston');
 // Specify Colors
 winston.addColors({
     debug: 'green',
-    info:  'cyan',
+    info: 'cyan',
     silly: 'magenta',
-    warn:  'yellow',
+    warn: 'yellow',
     error: 'red'
 });
 
@@ -15,24 +15,24 @@ winston.addColors({
 // Configure the logger for 'High Level Logs'
 //
 winston.loggers.add('HighLevelLog', {
-  console: {
-    level: 'debug',
-    colorize: true,
-    label: 'High Level Log',
-    exitOnError: false  ,
-    //prettyPrint:true
-    json:false
-  },
-  file: {
-    level: 'debug',
-    // colorize: true,
-    filename: './logs/HighLevelLog.log',
-    exitOnError: false ,
-    // prettyPrint:true,
-    // logstash: false,
-    json: false,
-    handleExceptions: true
-  }
+    console: {
+        level: 'debug',
+        colorize: true,
+        label: 'High Level Log',
+        exitOnError: false,
+        //prettyPrint:true
+        json: false
+    },
+    file: {
+        level: 'debug',
+        // colorize: true,
+        filename: './logs/HighLevelLog.log',
+        exitOnError: false,
+        // prettyPrint:true,
+        // logstash: false,
+        json: false,
+        handleExceptions: true
+    }
 });
 
 
@@ -40,7 +40,7 @@ winston.loggers.add('HighLevelLog', {
 // Configure the logger for 'Detailed Logs'
 //
 winston.loggers.add('DetailedLog', {
-  /*console: {
+    /*console: {
     level: 'debug',
     colorize: true,
     label: 'Detailed Log',
@@ -49,14 +49,14 @@ winston.loggers.add('DetailedLog', {
     json: false
 //    prettyPrint:true
   },*/
-  file: {
-    level: 'debug',
-    // colorize: true,
-    filename: './logs/DetailedLog.log',
-    exitOnError: false,
-    handleExceptions: true,
-    // prettyPrint:true,
-    // logstash: true,
-    json: false
-  }
+    file: {
+        level: 'debug',
+        // colorize: true,
+        filename: './logs/DetailedLog.log',
+        exitOnError: false,
+        handleExceptions: true,
+        // prettyPrint:true,
+        // logstash: true,
+        json: false
+    }
 });

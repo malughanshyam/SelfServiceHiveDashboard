@@ -41,7 +41,7 @@ updateStatusFile () {
     jobStatus=$1
     outputDataDir=$2
     statusFile=$3
-    echo "$jobStatus" > $outputDataDir/$statusFile
+    echo "$jobStatus" > "$outputDataDir/$statusFile"
 }
 
 # Update Status and Log Files in case failure
@@ -51,7 +51,7 @@ updateLogFile () {
     logFileName=$3
     logMsgType=$4
     logMsg=$5
-    echo "`date +"%F %T"` $logMsgType HiveLauncherScript - $logMsg" >> $outputDataDir/$logFileName
+    echo "$(date +"%F %T") $logMsgType HiveLauncherScript - $logMsg" >> "$outputDataDir/$logFileName"
 }
 
 # Update Job Status in MongoDB
@@ -59,10 +59,11 @@ updateStatusInMongoDB () {
     MONGO_PATH=$1
     mongoDBhost=$2
     mongoDBport=$3
-    mongoDashboardDBColl=$4
-    jobID=$5
-    jobStatus=$6
-    $MONGO_PATH/mongo --host $mongoDBhost --port $mongoDBport SelfServiceHiveDashboard --eval 'db.'$mongoDashboardDBColl'.update({JobID: "'$jobID'"},{$set: {JobRunStatus : "'$jobStatus'" } })'   
+    mongoDashboardDB=$4
+    mongoDashboardDBColl=$5
+    jobID=$6
+    jobStatus=$7
+    $MONGO_PATH/mongo --host $mongoDBhost --port $mongoDBport $mongoDashboardDB --eval 'db.'$mongoDashboardDBColl'.update({JobID: "'$jobID'"},{$set: {JobRunStatus : "'$jobStatus'" } })'   
 }
 
 
@@ -133,41 +134,41 @@ mongoDashboardDB="SelfServiceHiveDashboard"
 
 # Log into Debug Log File
 logMsg="******** Beginning Execution of Hive Launcher Script ********"
-updateLogFile $jobID $outputDataDir $logFile "INFO " "$logMsg" 
-updateLogFile $jobID $outputDataDir $debugLogFile "INFO " "$logMsg" 
+updateLogFile "$jobID" "$outputDataDir" "$logFile" "INFO " "$logMsg" 
+updateLogFile "$jobID" "$outputDataDir" "$debugLogFile" "INFO " "$logMsg" 
 
 # Validate if Query file exists
-if [ ! -f $sqlQueryFile ]; then
+if [ ! -f "$sqlQueryFile" ]; then
       
    logMsg="File $sqlQueryFile doesn't exist! \nHive Executor Script Failed! "
-   updateLogFile $jobID $outputDataDir $logFile "ERROR" "$logMsg" 
-   updateLogFile $jobID $outputDataDir $debugLogFile "ERROR" "$logMsg"
+   updateLogFile "$jobID" "$outputDataDir" "$logFile" "ERROR" "$logMsg" 
+   updateLogFile "$jobID" "$outputDataDir" "$debugLogFile" "ERROR" "$logMsg"
    
    jobStatus="JOB_FAILED"
-   updateStatusFile $jobStatus $outputDataDir $statusFile
+   updateStatusFile "$jobStatus" "$outputDataDir" "$statusFile"
 
-   updateStatusInMongoDB $MONGO_PATH $mongoDBhost $mongoDBport $mongoDashboardDBColl $jobID $jobStatus
+   updateStatusInMongoDB "$MONGO_PATH" "$mongoDBhost" "$mongoDBport" "$mongoDashboardDB" "$mongoDashboardDBColl" "$jobID" "$jobStatus"
    exit 1
 fi
 
 # Validate if Query file is readable
-if [ ! -r $sqlQueryFile ]; then
+if [ ! -r "$sqlQueryFile" ]; then
    
    logMsg="$sqlQueryFile is not readable \nHive Executor Script Failed! "
-   updateLogFile $jobID $outputDataDir $logFile "ERROR" "$logMsg" 
-   updateLogFile $jobID $outputDataDir $debugLogFile "ERROR" "$logMsg" 
+   updateLogFile "$jobID" "$outputDataDir" "$logFile" "ERROR" "$logMsg" 
+   updateLogFile "$jobID" "$outputDataDir" "$debugLogFile" "ERROR" "$logMsg" 
 
    jobStatus="JOB_FAILED"
-   updateStatusFile $jobStatus $outputDataDir $statusFile
+   updateStatusFile "$jobStatus" "$outputDataDir" "$statusFile"
 
-   updateStatusInMongoDB $MONGO_PATH $mongoDBhost $mongoDBport $mongoDashboardDBColl $jobID $jobStatus
+   updateStatusInMongoDB "$MONGO_PATH" "$mongoDBhost" "$mongoDBport" "$mongoDashboardDB" "$mongoDashboardDBColl" "$jobID" "$jobStatus"
    exit 1
 fi 
 
 ###### Clean Up ######
 # Initialize Status file
 jobStatus="JOB_NOT_STARTED"
-updateStatusFile $jobStatus $outputDataDir $statusFile
+updateStatusFile "$jobStatus" "$outputDataDir" "$statusFile"
 
 
 # Remove Log file if exists
@@ -176,11 +177,11 @@ if [ -f $outputDataDir/$logFile ]; then
 
   # Log into High Level Log File
   logMsg="******** Beginning Execution of Hive Launcher Script ********"
-  updateLogFile $jobID $outputDataDir $logFile "INFO " "$logMsg" 
+  updateLogFile "$jobID" "$outputDataDir" "$logFile" "INFO " "$logMsg" 
 
   logMsg="Cleaned up old Log file: $outputDataDir/$logFile"
-  updateLogFile $jobID $outputDataDir $logFile "INFO " "$logMsg" 
-  updateLogFile $jobID $outputDataDir $debugLogFile "INFO " "$logMsg" 
+  updateLogFile "$jobID" "$outputDataDir" "$logFile" "INFO " "$logMsg" 
+  updateLogFile "$jobID" "$outputDataDir" "$debugLogFile" "INFO " "$logMsg" 
 fi
 
 
@@ -188,8 +189,8 @@ fi
 if [ -f $outputDataDir/$resultFile ]; then
   rm $outputDataDir/$resultFile
   logMsg="Cleaned up old Result file: $outputDataDir/$resultFile"
-  updateLogFile $jobID $outputDataDir $logFile "INFO " "$logMsg" 
-  updateLogFile $jobID $outputDataDir $debugLogFile "INFO " "$logMsg" 
+  updateLogFile "$jobID" "$outputDataDir" "$logFile" "INFO " "$logMsg" 
+  updateLogFile "$jobID" "$outputDataDir" "$debugLogFile" "INFO " "$logMsg" 
 fi
 
 
@@ -205,7 +206,7 @@ done
 
 
 # MongoDB Collection
-if [ $jobType == "ADHOC" ]; then
+if [ "$jobType" == "ADHOC" ]; then
   mongoDashboardDBColl="AdHocJob"
 else
   mongoDashboardDBColl="ScheduledJob"
@@ -220,88 +221,87 @@ sed -e "s|\${reportLogFile}|$logFilePath|g" -e "s|\${debugLogFile}|$debugLogFile
 
 # Updating Status to JOB_IN_PROGRESS
 logMsg="Initiating execution of Hive Executor Script"
-updateLogFile $jobID $outputDataDir $logFile "DEBUG" "$logMsg" 
-updateLogFile $jobID $outputDataDir $debugLogFile "DEBUG" "$logMsg" 
+updateLogFile "$jobID" "$outputDataDir" "$logFile" "DEBUG" "$logMsg" 
+updateLogFile "$jobID" "$outputDataDir" "$debugLogFile" "DEBUG" "$logMsg" 
 jobStatus="JOB_IN_PROGRESS"
-updateStatusFile $jobStatus $outputDataDir $statusFile
-updateStatusInMongoDB $MONGO_PATH $mongoDBhost $mongoDBport $mongoDashboardDBColl $jobID $jobStatus
-
+updateStatusFile "$jobStatus" "$outputDataDir" "$statusFile"
+updateStatusInMongoDB "$MONGO_PATH" "$mongoDBhost" "$mongoDBport" "$mongoDashboardDB" "$mongoDashboardDBColl" "$jobID" "$jobStatus"
 
 # Launch the HiveExecutor Java program with the appropriate parameters
-java -cp $CLASSPATH HiveExecutor $jobID $jobName $outputDataDir $hiveUser $hiveHost $hiveDBName $sqlQueryFile
+java -cp "$CLASSPATH" HiveExecutor "$jobID" "$jobName" "$outputDataDir" "$hiveUser" "$hiveHost" "$hiveDBName" "$sqlQueryFile"
 
 # Check the exitStatus
 exitStatus=$?
 logMsg="Exiting HiveExecutor with status code:"$exitStatus
-updateLogFile $jobID $outputDataDir $logFile "DEBUG" "$logMsg" 
-updateLogFile $jobID $outputDataDir $debugLogFile "DEBUG" "$logMsg" 
+updateLogFile "$jobID" "$outputDataDir" "$logFile" "DEBUG" "$logMsg" 
+updateLogFile "$jobID" "$outputDataDir" "$debugLogFile" "DEBUG" "$logMsg" 
 
 if [ $exitStatus -ne 0 ]; then
 
   jobStatus="JOB_FAILED"
-  updateStatusFile $jobStatus $outputDataDir $statusFile
+  updateStatusFile "$jobStatus" "$outputDataDir" "$statusFile"
 
-  updateStatusInMongoDB $MONGO_PATH $mongoDBhost $mongoDBport $mongoDashboardDBColl $jobID $jobStatus
+  updateStatusInMongoDB "$MONGO_PATH" "$mongoDBhost" "$mongoDBport" "$mongoDashboardDB" "$mongoDashboardDBColl" "$jobID" "$jobStatus"
 
   logMsg="JOB_FAILED! Updated Status in MongoDB"
-  updateLogFile $jobID $outputDataDir $logFile "ERROR" "$logMsg" 
-  updateLogFile $jobID $outputDataDir $debugLogFile "ERROR" "$logMsg" 
+  updateLogFile "$jobID" "$outputDataDir" "$logFile" "ERROR" "$logMsg" 
+  updateLogFile "$jobID" "$outputDataDir" "$debugLogFile" "ERROR" "$logMsg" 
 
   logMsg="Hive Executor Script Failed! "
-  updateLogFile $jobID $outputDataDir $logFile "ERROR" "$logMsg" 
-  updateLogFile $jobID $outputDataDir $debugLogFile "ERROR" "$logMsg" 
+  updateLogFile "$jobID" "$outputDataDir" "$logFile" "ERROR" "$logMsg" 
+  updateLogFile "$jobID" "$outputDataDir" "$debugLogFile" "ERROR" "$logMsg" 
 
 
 else
 
   jobStatus="JOB_SUCCESSFUL"
-  updateStatusFile $jobStatus $outputDataDir $statusFile
+  updateStatusFile "$jobStatus" "$outputDataDir" "$statusFile"
 
-  updateStatusInMongoDB $MONGO_PATH $mongoDBhost $mongoDBport $mongoDashboardDBColl $jobID $jobStatus
+  updateStatusInMongoDB "$MONGO_PATH" "$mongoDBhost" "$mongoDBport" "$mongoDashboardDB" "$mongoDashboardDBColl" "$jobID" "$jobStatus"  
 
   logMsg="JOB_SUCCESSFUL! Updated Status in MongoDB"
-  updateLogFile $jobID $outputDataDir $logFile "INFO " "$logMsg" 
-  updateLogFile $jobID $outputDataDir $debugLogFile "INFO " "$logMsg" 
+  updateLogFile "$jobID" "$outputDataDir" "$logFile" "INFO " "$logMsg" 
+  updateLogFile "$jobID" "$outputDataDir" "$debugLogFile" "INFO " "$logMsg" 
 
   logMsg="Hive Executor Script Completed Successfully! "
-  updateLogFile $jobID $outputDataDir $logFile "INFO " "$logMsg" 
-  updateLogFile $jobID $outputDataDir $debugLogFile "INFO " "$logMsg" 
+  updateLogFile "$jobID" "$outputDataDir" "$logFile" "INFO " "$logMsg" 
+  updateLogFile "$jobID" "$outputDataDir" "$debugLogFile" "INFO " "$logMsg" 
 
 fi
 
 
 # Send Email
-if [ $notifyFlag == 'Y' ]; then
+if [ "$notifyFlag" == 'Y' ]; then
 
   #jobStatus=`cat $outputDataDir/$statusFile`
   #jobResultURL="http://localhost:8096/views/jobresults.html?jobType="
   jobResultURL="http://vqctd-hadoopas1.phx01.ebayadvertising.com:8096/views/jobresults.html?jobType="
-  jobResultURL=$jobResultURL$jobType
-  jobResultURL=$jobResultURL"&jobID="$jobID
+  jobResultURL="$jobResultURL""$jobType"
+  jobResultURL="$jobResultURL""&jobID=""$jobID"
   #jobResultURL=`echo "http://localhost:8080/views/jobresults.html?jobType=SCHED&jobID=55826c6395c8393709756ff6"`
 
-  mailSubject="Subject: Job - "$jobName" ["$jobStatus"] "$'\n'
+  mailSubject="Subject: Job - $jobName [$jobStatus] "$'\n'
 
-  mailBody=`echo -e "\nThe Job - $jobName has completed with the status\t:  "`
-  mailBody=$mailBody$jobStatus$'\n'
-  mailBody=$mailBody`echo -e "\nCheck out more details at : "`
-  mailBody=$mailBody$jobResultURL$'\n'
+  mailBody=$(echo -e "\nThe Job - $jobName has completed with the status\t:  ")
+  mailBody="$mailBody$jobStatus"$'\n'
+  mailBody="$mailBody"$(echo -e "\nCheck out more details at : ")
+  mailBody="$mailBody$jobResultURL"$'\n'
 
   mailSignature=$'\n'$'\n'"--"$'\n'
-  mailSignature=$mailSignature"Self Service Hive Dashboard"$'\n'
+  mailSignature="$mailSignature"Self Service Hive Dashboard$'\n'
 
-  mailComplete=$mailSubject$mailBody$mailSignature
+  mailComplete="$mailSubject""$mailBody""$mailSignature"
 
-  echo "$mailComplete" | /usr/sbin/sendmail $notifyEmail
+  echo "$mailComplete" | /usr/sbin/sendmail "$notifyEmail"
 
   logMsg="Alert mail sent to $notifyEmail with Results URL: $jobResultURL"
-  updateLogFile $jobID $outputDataDir $logFile "INFO " "$logMsg" 
-  updateLogFile $jobID $outputDataDir $debugLogFile "INFO " "$logMsg" 
+  updateLogFile "$jobID" "$outputDataDir" "$logFile" "INFO " "$logMsg" 
+  updateLogFile "$jobID" "$outputDataDir" "$debugLogFile" "INFO " "$logMsg" 
 
   #echo "$mailComplete" > "mail_$notifyEmail.txt"
 fi
 
 # Log into Debug Log File
 logMsg="******** Ending Execution of Hive Launcher Script ********"
-updateLogFile $jobID $outputDataDir $logFile "INFO " "$logMsg" 
-updateLogFile $jobID $outputDataDir $debugLogFile "INFO " "$logMsg" 
+updateLogFile "$jobID" "$outputDataDir" "$logFile" "INFO " "$logMsg" 
+updateLogFile "$jobID" "$outputDataDir" "$debugLogFile" "INFO " "$logMsg" 

@@ -26,7 +26,7 @@
     <script src="/scripts/vendor/angular-animate.min.js"></script>
 
     <!-- Load c3.css -->
-    <link href="/styles/css/c3.min.css" rel="stylesheet" >
+    <link href="/styles/css/c3.min.css" rel="stylesheet">
     <!-- Load d3.js and c3.js -->
     <script src="/scripts/vendor/d3.min.js"></script>
     <script src="/scripts/vendor/c3.min.js"></script>
@@ -45,40 +45,42 @@
 
 <body ng-app="dashboardApp" ng-controller="jobResultsCtrl">
     <nav id="mainNavbar" class="navbar navbar-inverse navbar-fixed-top">
-      <div class="container-fluid">
-        <!-- Brand and toggle get grouped for better mobile display -->
-        <div class="navbar-header">
-          
-          <button type="button" class="navbar-toggle collapsed pull-left" data-toggle="collapse" data-target="#navBarDropdown" aria-expanded="false" aria-controls="navbar">
-                <span class="sr-only">Toggle navigation</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-          </button>
-          <a class="navbar-brand" href="/">Self Service Hive Dashboard</a>
-        </div>
+        <div class="container-fluid">
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="navbar-header">
 
-        <!-- Collect the nav links, forms, and other content for toggling -->
-        <div class="collapse navbar-collapse" id="navBarDropdown">
-          <ul class="nav navbar-nav">  
-            <li>
-                <a href="/"><i class="fa fa-home fa-fw"></i>&nbsp; Home</a>
-            </li>
+                <button type="button" class="navbar-toggle collapsed pull-left" data-toggle="collapse" data-target="#navBarDropdown" aria-expanded="false" aria-controls="navbar">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="/">Self Service Hive Dashboard</a>
+            </div>
 
-          </ul>
+            <!-- Collect the nav links, forms, and other content for toggling -->
+            <div class="collapse navbar-collapse" id="navBarDropdown">
+                <ul class="nav navbar-nav">
+                    <li>
+                        <a href="/"><i class="fa fa-home fa-fw"></i>&nbsp; Home</a>
+                    </li>
 
-          <ul class="nav navbar-nav navbar-right">
-            <li>
-                <a data-toggle="tooltip" data-placement="bottom" title="Server Time"><i class="fa fa-clock-o"></i> <small id="serverClock"></small> </a>
-            </li>
-            <li>
-                <a href="mailto:gmalu@ebay.com?Subject=SSHD%20Support" target="_top"><i class="fa fa-envelope-o"></i> <small>Contact Support</small>
+                </ul>
+
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a data-toggle="tooltip" data-placement="bottom" title="Server Time"><i class="fa fa-clock-o"></i> <small id="serverClock"></small> </a>
+                    </li>
+                    <li>
+                        <a href="mailto:gmalu@ebay.com?Subject=SSHD%20Support" target="_top"><i class="fa fa-envelope-o"></i> <small>Contact Support</small>
                 </a>
-            </li>
+                    </li>
 
-          </ul>
-        </div><!-- /.navbar-collapse -->
-      </div><!-- /.container-fluid -->
+                </ul>
+            </div>
+            <!-- /.navbar-collapse -->
+        </div>
+        <!-- /.container-fluid -->
     </nav>
 
     <div class="page-header text-center">
@@ -137,14 +139,14 @@
             </li>
 
             <!-- Display on Job == Successful -->
-            <li id="navJobResults" ng-show="jobObj.jobRunStatus=='JOB_SUCCESSFUL'" >
+            <li id="navJobResults" ng-show="jobObj.jobRunStatus=='JOB_SUCCESSFUL'">
                 <a data-toggle="tab" href="#jobResultsTab" ng-click="populateResults()" ng-show="jobObj.jobRunStatus=='JOB_SUCCESSFUL'"><h4><i class="fa fa-1x fa-gavel"></i> Results</h4></a>
             </li>
 
 
             <!-- Display on Job != Successful -->
             <li id="navJobResults" class="disabled" ng-show="jobObj.jobRunStatus!='JOB_SUCCESSFUL'" tooltip="No Results to Display">
-                <a >
+                <a>
                     <h4><i class="fa fa-1x fa-clock-o"></i> Results
                     </h4>
                 </a>
@@ -255,7 +257,7 @@
 
     <!--<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.10.3/moment.min.js"></script> -->
     <script src="/scripts/vendor/moment.min.js"></script>
-    <script src="/scripts/vendor/moment-timezone-with-data-2010-2020.min.js"></script> 
+    <script src="/scripts/vendor/moment-timezone-with-data-2010-2020.min.js"></script>
 
     <script src="/scripts/app.js"></script>
     <script src="/scripts/services/dashboardAungularService.js"></script>

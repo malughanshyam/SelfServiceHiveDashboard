@@ -1,19 +1,15 @@
 #statusSuccess {
-    color: #00CC33 ;
+    color: #00CC33;
 }
-
 #statusFail {
-    color: #FF0000 ;
+    color: #FF0000;
 }
-
 #statusRunning {
-    color:#5bc0de;
+    color: #5bc0de;
 }
-
 #statusNotStarted {
-    color:#f0ad4e;
+    color: #f0ad4e;
 }
-
 #resultTypeTabs li {
     padding-right: 1em;
 }
