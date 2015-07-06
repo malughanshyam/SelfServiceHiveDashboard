@@ -63,7 +63,8 @@ updateStatusInMongoDB () {
     mongoDashboardDBColl=$5
     jobID=$6
     jobStatus=$7
-    $MONGO_PATH/mongo --host $mongoDBhost --port $mongoDBport $mongoDashboardDB --eval 'db.'$mongoDashboardDBColl'.update({JobID: "'$jobID'"},{$set: {JobRunStatus : "'$jobStatus'" } })'   
+    currentISOTimestamp='ISODate("'`date --utc +%FT%T.%3NZ`'")'
+    $MONGO_PATH/mongo --host $mongoDBhost --port $mongoDBport $mongoDashboardDB --eval 'db.'$mongoDashboardDBColl'.update({JobID: "'$jobID'"},{$set: {JobRunStatus : "'$jobStatus'", UpdatedTimeStamp: '$currentISOTimestamp' } })'   
 }
 
 
