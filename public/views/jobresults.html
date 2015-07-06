@@ -173,17 +173,25 @@
                 <!-- Results Display Type Tab Begins -->
                 <ul class="nav nav-pills right-to-left" id="resultTypeTabs">
 
-                    <li id="navChart1">
+                    <li id="navChartPie">
                         <div class="btn-group" role="group" aria-label="...">
-                            <button type="button" id="createLineChartBtn" class="btn btn-default btn-xs" data-toggle="tab" href="#chart1" ng-click="createLineChart()" data-tooltip="Plot Line Chart" data-loading-text="Loading..." autocomplete="off"> Line Chart</button>
+                            <button type="button" id="createPieChartBtn" class="btn btn-default btn-xs" data-toggle="tab" href="#chartPieTab" ng-click="createPieChart()" data-tooltip="Plot Pie Chart" data-loading-text="Loading..." autocomplete="off"> <i class="fa fa-pie-chart fa-2x"> </i></button>
+
+                            <button type="button" class="btn btn-success btn-xs disabled" ng-click="saveDivAsPicture()" id="downloadPieChartBtnId" data-tooltip="Save As Image"><span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span></button>
+                        </div>
+                    </li>
+
+                    <li id="navChartLine">
+                        <div class="btn-group" role="group" aria-label="...">
+                            <button type="button" id="createLineChartBtn" class="btn btn-default btn-xs" data-toggle="tab" href="#chartLineTab" ng-click="createLineChart()" data-tooltip="Plot Line Chart" data-loading-text="Loading..." autocomplete="off"> <i class="fa fa-line-chart fa-2x"> </i></button>
 
                             <button type="button" class="btn btn-success btn-xs disabled" ng-click="saveDivAsPicture()" id="downloadLineChartBtnId" data-tooltip="Save As Image"><span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span></button>
                         </div>
                     </li>
 
-                    <li id="navChart2">
+                    <li id="navChartBar">
                         <div class="btn-group" role="group" aria-label="...">
-                            <button type="button" id="createBarChartBtn" class="btn btn-default btn-xs" data-toggle="tab" href="#chart2" ng-click="createBarChart()" data-tooltip="Plot Bar Chart" data-loading-text="Loading..." autocomplete="off"> Bar Chart</button>
+                            <button type="button" id="createBarChartBtn" class="btn btn-default btn-xs" data-toggle="tab" href="#chartBarTab" ng-click="createBarChart()" data-tooltip="Plot Bar Chart" data-loading-text="Loading..." autocomplete="off"><i class="fa fa-bar-chart-o fa-2x"> </i> </button>
 
                             <button type="button" class="btn btn-success btn-xs disabled" ng-click="saveDivAsPicture()" id="downloadBarChartBtnId" data-tooltip="Save As Image"><span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span></button>
                         </div>
@@ -193,9 +201,9 @@
                     <li class="active" id="navTabular">
 
                         <div class="btn-group" role="group" aria-label="...">
-                            <button type="button" class="btn btn-default btn-xs" data-toggle="tab" href="#tabular" data-tooltip="Show Raw Data"> Tabular</button>
+                            <button type="button" class="btn btn-default btn-xs" data-toggle="tab" href="#tabular" data-tooltip="Show Raw Data"> <i class="fa  fa-table fa-2x"> </i> </button>
 
-                            <button type="button" class="btn btn-success btn-xs" ng-click="downloadJobResultFile(formData.jobID)" id="downloadTSVBtnId" data-tooltip="Save As TSV"><span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span></button>
+                            <button type="button" class="btn btn-success btn-xs" ng-click="downloadAdHocJobResultFile(formData.jobID)" id="downloadTSVBtnId" data-tooltip="Save As TSV"><span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span></button>
                         </div>
                     </li>
                 </ul>
@@ -213,11 +221,14 @@
                             <div id="tabular" class="tab-pane fade in active">
                                 <div id="jobResultTable"> </div>
                             </div>
-                            <div id="chart1" class="tab-pane fade in ">
+                            <div id="chartLineTab" class="tab-pane fade in ">
                                 <div id="chartLine" class="chartResult"> </div>
                             </div>
-                            <div id="chart2" class="tab-pane fade in ">
+                            <div id="chartBarTab" class="tab-pane fade in ">
                                 <div id="chartBar" class="chartResult"> </div>
+                            </div>
+                            <div id="chartPieTab" class="tab-pane fade in ">
+                                <div id="chartPie" class="chartResult"> </div>
                             </div>
                         </div>
                     </div>

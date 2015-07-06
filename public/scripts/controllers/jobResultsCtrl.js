@@ -29,6 +29,10 @@ angular.module('dashboardApp')
     // Initialize variables
     $scope.jobObj = {};
 
+    $scope.barChartComputedData;
+    $scope.lineChartComputedData;
+    $scope.pieChartComputedData;
+
     // Retrieve the given JobType and JobID
     $scope.jobObj.jobType = allURLParams['jobType'];
     $scope.jobObj.jobID = allURLParams['jobID'];
@@ -144,9 +148,6 @@ angular.module('dashboardApp')
 
         var chartDivID = '#chartBar'
 
-        console.log("calling dashboard service")
-        console.log(chartWidth)
-        console.log(chartDivID)
         dashboardAungularService.createBarChart($scope.jobResult, chartDivID, chartWidth);
 
         $('#downloadBarChartBtnId').removeClass('disabled');
@@ -179,6 +180,31 @@ angular.module('dashboardApp')
 
         // Store Locally to avoid Recomputing the same chart
         $scope.lineChartComputedData = $scope.jobResult
+
+    }
+
+    // Create Line Chart
+    $scope.createPieChart = function() {
+
+        // Check against the locally stored chart data to prevent duplicate computation/drawing of the charts
+        if ($scope.pieChartComputedData == $scope.jobResult) {
+            return true;
+        }
+
+        $('#createPieChartBtn').button('loading');
+
+        // Compute the Width for the Charts
+        var chartWidth = $("#jobResultPanelBodyContent").width();
+
+        var chartDivID = '#chartPie'
+
+        dashboardAungularService.createPieChart($scope.jobResult, chartDivID, chartWidth);
+
+        $('#downloadLineChartBtnId').removeClass('disabled');
+        $('#createPieChartBtn').button('reset');
+
+        // Store Locally to avoid Recomputing the same chart
+        $scope.pieChartComputedData = $scope.jobResult
 
     }
 
