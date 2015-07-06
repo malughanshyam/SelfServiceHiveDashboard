@@ -508,9 +508,9 @@
                                     <!-- Results Display Type Tab Begins -->
                                     <ul class="nav nav-pills right-to-left" id="adHocResultTypeTabs">
 
-                                        <li id="navChart1">
+                                        <li id="navChartLine">
                                             <div class="btn-group" role="group" aria-label="...">
-                                                <button type="button" id="createLineChartBtn" class="btn btn-default btn-xs" data-toggle="tab" href="#chart1" ng-click="createLineChart()" data-tooltip="Plot Line Chart" data-loading-text="Loading..." autocomplete="off"> Line Chart</button>
+                                                <button type="button" id="createLineChartBtn" class="btn btn-default btn-xs" data-toggle="tab" href="#chartLine" ng-click="createLineChart()" data-tooltip="Plot Line Chart" data-loading-text="Loading..." autocomplete="off"> Line Chart</button>
 
                                                 <button type="button" class="btn btn-success btn-xs disabled" ng-click="saveDivAsPicture()" id="downloadLineChartBtnId" data-tooltip="Save As Image"><span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span></button>
                                             </div>
@@ -548,10 +548,10 @@
                                                 <div id="tabular" class="tab-pane fade in active">
                                                     <div id="jobResultTable"> </div>
                                                 </div>
-                                                <div id="chart1" class="tab-pane fade in ">
+                                                <div id="chartLine" class="tab-pane fade in ">
                                                     <div id="chartLine" class="chartResult"> </div>
                                                 </div>
-                                                <div id="chart2" class="tab-pane fade in ">
+                                                <div id="chartBar" class="tab-pane fade in ">
                                                     <div id="chartBar" class="chartResult"> </div>
                                                 </div>
                                             </div>
@@ -801,9 +801,9 @@
                                         <!-- Results Display Type Tab Begins -->
                                         <ul class="nav nav-pills right-to-left" id="schedResultTypeTabs">
 
-                                            <li id="navChart1">
+                                            <li id="navChartLine">
                                                 <div class="btn-group" role="group" aria-label="...">
-                                                    <button type="button" id="createLineChartBtn" class="btn btn-default btn-xs" data-toggle="tab" href="#sJobchart2Tab" ng-click="createLineChart()" data-tooltip="Plot Line Chart" data-loading-text="Loading..." autocomplete="off"> Line Chart</button>
+                                                    <button type="button" id="createLineChartBtn" class="btn btn-default btn-xs" data-toggle="tab" href="#sJobchartLineTab" ng-click="createLineChart()" data-tooltip="Plot Line Chart" data-loading-text="Loading..." autocomplete="off"> Line Chart</button>
 
                                                     <button type="button" class="btn btn-success btn-xs disabled" ng-click="saveDivAsPicture()" id="downloadLineChartBtnId" data-tooltip="Save As Image"><span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span></button>
                                                 </div>
@@ -811,7 +811,7 @@
 
                                             <li id="navChart2">
                                                 <div class="btn-group" role="group" aria-label="...">
-                                                    <button type="button" id="createBarChartBtn" class="btn btn-default btn-xs" data-toggle="tab" href="#sJobchart1Tab" ng-click="createBarChart()" data-tooltip="Plot Bar Chart" data-loading-text="Loading..." autocomplete="off"> Bar Chart</button>
+                                                    <button type="button" id="createBarChartBtn" class="btn btn-default btn-xs" data-toggle="tab" href="#sJobchartBarTab" ng-click="createBarChart()" data-tooltip="Plot Bar Chart" data-loading-text="Loading..." autocomplete="off"> Bar Chart</button>
 
                                                     <button type="button" class="btn btn-success btn-xs disabled" ng-click="saveDivAsPicture()" id="downloadBarChartBtnId" data-tooltip="Save As Image"><span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span></button>
                                                 </div>
@@ -820,7 +820,7 @@
                                             <li class="active" id="navTabular">
 
                                                 <div class="btn-group" role="group" aria-label="...">
-                                                    <button type="button" class="btn btn-default btn-xs" data-toggle="tab" href="#sJobTabularTab" data-tooltip="Show Raw Data"> Tabular</button>
+                                                    <button type="button" id="createTabularResultBtn" class="btn btn-default btn-xs" data-toggle="tab" href="#sJobTabularTab" data-tooltip="Show Raw Data"> Tabular</button>
 
                                                     <button type="button" class="btn btn-success btn-xs" ng-click="downloadSchedJobResultFile()" id="downloadTSVBtnId" data-tooltip="Save As TSV"><span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span>
                                                     </button>
@@ -843,11 +843,11 @@
                                                     <div id="sJobTabularTab" class="tab-pane fade in active">
                                                         <div id="sJobTabular"> </div>
                                                     </div>
-                                                    <div id="sJobchart1Tab" class="tab-pane fade in ">
-                                                        <div id="sJobchart1" class="chartResult"> </div>
+                                                    <div id="sJobchartBarTab" class="tab-pane fade in ">
+                                                        <div id="sJobchartBar" class="chartResult"> </div>
                                                     </div>
-                                                    <div id="sJobchart2Tab" class="tab-pane fade in ">
-                                                        <div id="sJobchart2" class="chartResult"> </div>
+                                                    <div id="sJobchartLineTab" class="tab-pane fade in ">
+                                                        <div id="sJobchartLine" class="chartResult"> </div>
                                                     </div>
                                                 </div>
                                             </div>

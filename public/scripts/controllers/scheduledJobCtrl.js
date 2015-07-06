@@ -192,14 +192,16 @@ angular.module('dashboardApp')
         $("#modalViewSchedResults").find('#submittedHiveQuery').text(schedJob.SQLQuery);
         $("#modalViewSchedResults").find('#resultPanelTitle').text(schedJob.JobName);
 
+        $('#createTabularResultBtn').click();
+
         $scope.schedJob.jobID = schedJob.JobID
         $scope.computeJobResults(schedJob.JobID);
 
         $('#modalViewSchedResults').on('hidden.bs.modal', function() {
             $scope.barChartComputedData = null;
             $scope.lineChartComputedData = null;
-            //$(this).data('bs.modal', null);
             $('#modalViewSchedResults').unbind();
+            
         })
 
     }
@@ -237,7 +239,7 @@ angular.module('dashboardApp')
 
         // Compute the Width for the Charts
         var chartWidth = $("#jobResultPanelBodyContent").width();
-        var chartDivID = '#sJobchart1'
+        var chartDivID = '#sJobchartBar'
 
         dashboardAungularService.createBarChart($scope.jobResult, chartDivID, chartWidth);
 
@@ -261,7 +263,7 @@ angular.module('dashboardApp')
 
         // Compute the Width for the Charts
         var chartWidth = $("#jobResultPanelBodyContent").width();
-        var chartDivID = '#sJobchart2'
+        var chartDivID = '#sJobchartLine'
 
         dashboardAungularService.createLineChart($scope.jobResult, chartDivID, chartWidth);
 
