@@ -2,5 +2,4 @@ data/
 mongodb/data/
 logs/
 backup/
-
 hive_launcher_scripts/log4j.properties
