@@ -508,17 +508,25 @@
                                     <!-- Results Display Type Tab Begins -->
                                     <ul class="nav nav-pills right-to-left" id="adHocResultTypeTabs">
 
+                                        <li id="navChartPie">
+                                            <div class="btn-group" role="group" aria-label="...">
+                                                <button type="button" id="createPieChartBtn" class="btn btn-default btn-xs" data-toggle="tab" href="#chartPie" ng-click="createPieChart()" data-tooltip="Plot Pie Chart" data-loading-text="Loading..." autocomplete="off"> <i class="fa fa-pie-chart fa-2x"> </i></button>
+
+                                                <button type="button" class="btn btn-success btn-xs disabled" ng-click="saveDivAsPicture()" id="downloadPieChartBtnId" data-tooltip="Save As Image"><span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span></button>
+                                            </div>
+                                        </li>
+
                                         <li id="navChartLine">
                                             <div class="btn-group" role="group" aria-label="...">
-                                                <button type="button" id="createLineChartBtn" class="btn btn-default btn-xs" data-toggle="tab" href="#chartLine" ng-click="createLineChart()" data-tooltip="Plot Line Chart" data-loading-text="Loading..." autocomplete="off"> Line Chart</button>
+                                                <button type="button" id="createLineChartBtn" class="btn btn-default btn-xs" data-toggle="tab" href="#chartLine" ng-click="createLineChart()" data-tooltip="Plot Line Chart" data-loading-text="Loading..." autocomplete="off"> <i class="fa fa-line-chart fa-2x"> </i></button>
 
                                                 <button type="button" class="btn btn-success btn-xs disabled" ng-click="saveDivAsPicture()" id="downloadLineChartBtnId" data-tooltip="Save As Image"><span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span></button>
                                             </div>
                                         </li>
 
-                                        <li id="navChart2">
+                                        <li id="navChartBar">
                                             <div class="btn-group" role="group" aria-label="...">
-                                                <button type="button" id="createBarChartBtn" class="btn btn-default btn-xs" data-toggle="tab" href="#chart2" ng-click="createBarChart()" data-tooltip="Plot Bar Chart" data-loading-text="Loading..." autocomplete="off"> Bar Chart</button>
+                                                <button type="button" id="createBarChartBtn" class="btn btn-default btn-xs" data-toggle="tab" href="#chartBar" ng-click="createBarChart()" data-tooltip="Plot Bar Chart" data-loading-text="Loading..." autocomplete="off"><i class="fa fa-bar-chart-o fa-2x"> </i> </button>
 
                                                 <button type="button" class="btn btn-success btn-xs disabled" ng-click="saveDivAsPicture()" id="downloadBarChartBtnId" data-tooltip="Save As Image"><span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span></button>
                                             </div>
@@ -528,7 +536,7 @@
                                         <li class="active" id="navTabular">
 
                                             <div class="btn-group" role="group" aria-label="...">
-                                                <button type="button" class="btn btn-default btn-xs" data-toggle="tab" href="#tabular" data-tooltip="Show Raw Data"> Tabular</button>
+                                                <button type="button" class="btn btn-default btn-xs" data-toggle="tab" href="#tabular" data-tooltip="Show Raw Data"> <i class="fa  fa-table fa-2x"> </i> </button>
 
                                                 <button type="button" class="btn btn-success btn-xs" ng-click="downloadAdHocJobResultFile(formData.jobID)" id="downloadTSVBtnId" data-tooltip="Save As TSV"><span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span></button>
                                             </div>
@@ -548,11 +556,14 @@
                                                 <div id="tabular" class="tab-pane fade in active">
                                                     <div id="jobResultTable"> </div>
                                                 </div>
+                                                <div id="chartBar" class="tab-pane fade in ">
+                                                    <div id="chartBar" class="chartResult"> </div>
+                                                </div>
                                                 <div id="chartLine" class="tab-pane fade in ">
                                                     <div id="chartLine" class="chartResult"> </div>
                                                 </div>
-                                                <div id="chartBar" class="tab-pane fade in ">
-                                                    <div id="chartBar" class="chartResult"> </div>
+                                                <div id="chartPie" class="tab-pane fade in ">
+                                                    <div id="chartPie" class="chartResult"> </div>
                                                 </div>
                                             </div>
                                         </div>
@@ -672,8 +683,8 @@
                                 <tr ng-repeat="row in displayedSchedJobsCollection" ng-class="{'deletedJob': row.ScheduleStatus=='DELETED' , 'disabledJob': row.ScheduleStatus=='DISABLED'}">
                                     <!-- <td>{{row.JobID}}</td> -->
                                     <td>{{row.JobName}}
-                                        <i ng-show={{row.ScheduleStatus=="DISABLED" }} tooltip="Job has been Disabled"><strong>(Disabled)</strong></i>
-                                        <i ng-show={{row.ScheduleStatus=="DELETED" }} tooltip="Job has been Deleted"><strong>(Deleted)</strong></i>
+                                        <i ng-show="{{row.ScheduleStatus=='DISABLED' }}" tooltip="Job has been Disabled"><strong>(Disabled)</strong></i>
+                                        <i ng-show="{{row.ScheduleStatus=='DELETED' }}" tooltip="Job has been Deleted"><strong>(Deleted)</strong></i>
                                     </td>
 
                                     <td><small>{{row.SQLQuery.substring(0, 30)}}</small><a><small ng-show="showPopupFlag(row.SQLQuery,30)" popover="{{row.SQLQuery}}" popover-trigger="click"> ...<i class="fa fa-1x fa-eye"></i></small></a></td>
@@ -801,17 +812,25 @@
                                         <!-- Results Display Type Tab Begins -->
                                         <ul class="nav nav-pills right-to-left" id="schedResultTypeTabs">
 
+                                            <li id="navChartPie">
+                                                <div class="btn-group" role="group" aria-label="...">
+                                                    <button type="button" id="createLineChartBtn" class="btn btn-default btn-xs" data-toggle="tab" href="#sJobchartPieTab" ng-click="createPieChart()" data-tooltip="Plot Line Chart" data-loading-text="Loading..." autocomplete="off"> <i class="fa fa-pie-chart fa-2x"> </i> </button>
+
+                                                    <button type="button" class="btn btn-success btn-xs disabled" ng-click="saveDivAsPicture()" id="downloadPieChartBtnId" data-tooltip="Save As Image"><span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span></button>
+                                                </div>
+                                            </li>
+
                                             <li id="navChartLine">
                                                 <div class="btn-group" role="group" aria-label="...">
-                                                    <button type="button" id="createLineChartBtn" class="btn btn-default btn-xs" data-toggle="tab" href="#sJobchartLineTab" ng-click="createLineChart()" data-tooltip="Plot Line Chart" data-loading-text="Loading..." autocomplete="off"> Line Chart</button>
+                                                    <button type="button" id="createLineChartBtn" class="btn btn-default btn-xs" data-toggle="tab" href="#sJobchartLineTab" ng-click="createLineChart()" data-tooltip="Plot Line Chart" data-loading-text="Loading..." autocomplete="off"> <i class="fa fa-line-chart fa-2x"> </i></button>
 
                                                     <button type="button" class="btn btn-success btn-xs disabled" ng-click="saveDivAsPicture()" id="downloadLineChartBtnId" data-tooltip="Save As Image"><span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span></button>
                                                 </div>
                                             </li>
 
-                                            <li id="navChart2">
+                                            <li id="navChartBar">
                                                 <div class="btn-group" role="group" aria-label="...">
-                                                    <button type="button" id="createBarChartBtn" class="btn btn-default btn-xs" data-toggle="tab" href="#sJobchartBarTab" ng-click="createBarChart()" data-tooltip="Plot Bar Chart" data-loading-text="Loading..." autocomplete="off"> Bar Chart</button>
+                                                    <button type="button" id="createBarChartBtn" class="btn btn-default btn-xs" data-toggle="tab" href="#sJobchartBarTab" ng-click="createBarChart()" data-tooltip="Plot Bar Chart" data-loading-text="Loading..." autocomplete="off"> <i class="fa fa-bar-chart-o fa-2x"> </i> </button>
 
                                                     <button type="button" class="btn btn-success btn-xs disabled" ng-click="saveDivAsPicture()" id="downloadBarChartBtnId" data-tooltip="Save As Image"><span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span></button>
                                                 </div>
@@ -820,7 +839,7 @@
                                             <li class="active" id="navTabular">
 
                                                 <div class="btn-group" role="group" aria-label="...">
-                                                    <button type="button" id="createTabularResultBtn" class="btn btn-default btn-xs" data-toggle="tab" href="#sJobTabularTab" data-tooltip="Show Raw Data"> Tabular</button>
+                                                    <button type="button" id="createTabularResultBtn" class="btn btn-default btn-xs" data-toggle="tab" href="#sJobTabularTab" data-tooltip="Show Raw Data"> <i class="fa  fa-table fa-2x"> </i></button>
 
                                                     <button type="button" class="btn btn-success btn-xs" ng-click="downloadSchedJobResultFile()" id="downloadTSVBtnId" data-tooltip="Save As TSV"><span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span>
                                                     </button>
@@ -848,6 +867,9 @@
                                                     </div>
                                                     <div id="sJobchartLineTab" class="tab-pane fade in ">
                                                         <div id="sJobchartLine" class="chartResult"> </div>
+                                                    </div>
+                                                    <div id="sJobchartPieTab" class="tab-pane fade in ">
+                                                        <div id="sJobchartPie" class="chartResult"> </div>
                                                     </div>
                                                 </div>
                                             </div>

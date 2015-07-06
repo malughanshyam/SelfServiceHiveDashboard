@@ -227,7 +227,7 @@ public class HiveExecutor {
 					debugLogger.debug("Printing Column Headers to Result File");
 					for (int i = 1; i <= numOfCols; i++) {
 						writerResult.print(rsmd.getColumnName(i).toUpperCase());
-						if (i != numOfCols) {
+						if (i != numOfCols || numOfCols == 1) {
 							writerResult.print("\t");
 						}
 					}
@@ -238,7 +238,7 @@ public class HiveExecutor {
 
 				for (int i = 1; i <= numOfCols; i++) {
 					writerResult.print(this.res.getString(i));
-					if (i != numOfCols) {
+					if (i != numOfCols || numOfCols == 1) {
 						writerResult.print("\t");
 					}
 				}

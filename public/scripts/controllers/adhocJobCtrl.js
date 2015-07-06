@@ -55,6 +55,8 @@ angular.module('dashboardApp')
         // Variables to store the data for Bar and Line charts to prevent recomputing the already populated charts
         $scope.barChartComputedData = '';
         $scope.lineChartComputedData = '';
+        $scope.pieChartComputedData = '';
+
 
         // Cosmetic settings for the Steps - Flow
         $("#flowStepCreate").removeClass('complete');
@@ -371,6 +373,30 @@ angular.module('dashboardApp')
 
         // Store Locally to avoid Recomputing the same chart
         $scope.lineChartComputedData = $scope.jobResult;
+
+    }
+
+    // Create Bar Chart
+    $scope.createPieChart = function() {
+
+        // Check against the locally stored chart data to prevent duplicate computation/drawing of the charts
+        if ($scope.pieChartComputedData == $scope.jobResult) {
+            return true;
+        }
+
+        $('#createPieChartBtn').button('loading');
+
+        // Compute the Width for the Charts
+        var chartWidth = $("#jobResultPanelBodyContent").width();
+        var chartDivID = '#chartPie';
+
+        dashboardAungularService.createPieChart($scope.jobResult, chartDivID, chartWidth);
+
+        $('#downloadPieChartBtnId').removeClass('disabled');
+        $('#createPieChartBtn').button('reset');
+
+        // Store Locally to avoid Recomputing the same chart
+        $scope.pieChartComputedData = $scope.jobResult;
 
     }
 

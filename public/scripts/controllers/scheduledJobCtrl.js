@@ -50,6 +50,7 @@ angular.module('dashboardApp')
 
         $scope.barChartComputedData;
         $scope.lineChartComputedData;
+        $scope.pieChartComputedData;
 
         $scope.schedJob.schedJobName = "";
         $scope.schedJob.schedQuery = "";
@@ -235,7 +236,7 @@ angular.module('dashboardApp')
             return true;
         }
 
-        $('#createBarChartBtn').button('loading');
+        $('#schedResultTypeTabs').find('#createBarChartBtn').button('loading');
 
         // Compute the Width for the Charts
         var chartWidth = $("#jobResultPanelBodyContent").width();
@@ -243,8 +244,8 @@ angular.module('dashboardApp')
 
         dashboardAungularService.createBarChart($scope.jobResult, chartDivID, chartWidth);
 
-        $('#downloadBarChartBtnId').removeClass('disabled');
-        $('#createBarChartBtn').button('reset');
+        $('#schedResultTypeTabs').find('#downloadBarChartBtnId').removeClass('disabled');
+        $('#schedResultTypeTabs').find('#createBarChartBtn').button('reset');
 
         // Store Locally to avoid Recomputing the same chart
         $scope.barChartComputedData = $scope.jobResult
@@ -259,7 +260,7 @@ angular.module('dashboardApp')
             return true;
         }
 
-        $('#createLineChartBtn').button('loading');
+        $('#schedResultTypeTabs').find('#createLineChartBtn').button('loading');
 
         // Compute the Width for the Charts
         var chartWidth = $("#jobResultPanelBodyContent").width();
@@ -267,11 +268,34 @@ angular.module('dashboardApp')
 
         dashboardAungularService.createLineChart($scope.jobResult, chartDivID, chartWidth);
 
-        $('#downloadLineChartBtnId').removeClass('disabled');
-        $('#createLineChartBtn').button('reset');
+        $('#schedResultTypeTabs').find('#downloadLineChartBtnId').removeClass('disabled');
+        $('#schedResultTypeTabs').find('#createLineChartBtn').button('reset');
 
         // Store Locally to avoid Recomputing the same chart
         $scope.lineChartComputedData = $scope.jobResult
+
+    }
+
+    $scope.createPieChart = function() {
+
+        // Check against the locally stored chart data to prevent duplicate computation/drawing of the charts
+        if ($scope.pieChartComputedData == $scope.jobResult) {
+            return true;
+        }
+
+        $('#schedResultTypeTabs').find('#createPieChartBtn').button('loading');
+
+        // Compute the Width for the Charts
+        var chartWidth = $("#jobResultPanelBodyContent").width();
+        var chartDivID = '#sJobchartPie'
+
+        dashboardAungularService.createPieChart($scope.jobResult, chartDivID, chartWidth);
+
+        $('#schedResultTypeTabs').find('#downloadPieChartBtnId').removeClass('disabled');
+        $('#schedResultTypeTabs').find('#createPieChartBtn').button('reset');
+
+        // Store Locally to avoid Recomputing the same chart
+        $scope.pieChartComputedData = $scope.jobResult
 
     }
 
@@ -364,7 +388,7 @@ angular.module('dashboardApp')
 
 
     $scope.saveDivAsPicture = function() {
-        dashboardAungularService.saveAsPicture($("#resultPanel"))
+        dashboardAungularService.saveAsPicture($('#modalViewSchedResults').find('#resultPanel'))
     }
 
     $scope.showPopupFlag = function(text, limit) {

@@ -193,6 +193,41 @@ angular.module('dashboardApp')
 
         }
 
+        var createPieChart = function(chartData, chartDivID, chartWidth) {
+
+
+            // Parse the TSV Result file into Array of Data 
+            var x = chartData.split('\n');
+            for (var i = 0; i < x.length; i++) {
+                y = x[i].split('\t');
+                x[i] = y;
+            }
+
+            var chartSplitData = x
+
+            // $scope.chartDataHeader = x[0]
+            // $scope.chartDataSplit = x.slice(1);
+
+            // console.log("Header: ")
+            // console.log($scope.chartDataHeader)
+
+            // console.log("Data: ")
+            // console.log($scope.chartDataSplit)
+
+            // Generate Line Chart
+            var chartPie = c3.generate({
+                bindto: chartDivID,
+                data: {
+                    rows: chartSplitData,
+                    type: 'pie'
+                },
+                
+                size: {
+                    width: chartWidth
+                }
+            });
+
+        }
 
         var saveAsPicture = function(element) {
 
@@ -315,6 +350,7 @@ angular.module('dashboardApp')
             createResultTable: createResultTable,
             createBarChart: createBarChart,
             createLineChart: createLineChart,
+            createPieChart : createPieChart,
             saveAsPicture: saveAsPicture,
             parseIsoDatetime: parseIsoDatetime,
             initiateScheduling: initiateScheduling,
