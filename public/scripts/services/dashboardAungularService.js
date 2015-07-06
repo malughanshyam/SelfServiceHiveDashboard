@@ -5,6 +5,7 @@ angular.module('dashboardApp')
 
         // Set up Server Clock on Navigation Bar
         var serverTime;
+        var serverTimeTickInterval = 0;
 
         // Get Server Time
         var getServerTimeAndStartClock = function() {
@@ -23,16 +24,40 @@ angular.module('dashboardApp')
 
         }
 
-        // Tick clock every second
+        // Tick the clock
         var tickClock = function(duration) {
-            serverTime.add(duration); // February 1
-            $('#serverClock').text(serverTime.tz('America/New_York').format("ddd, MMMM D YYYY, hh:mm:ss A z"));
-            setTimeout(function() {
-                tickClock(duration)
-            }, 1000);
+
+            serverTimeTickInterval = setInterval(function() {
+                serverTime.add(duration); // February 1
+                $('#serverClock').text(serverTime.tz('America/New_York').format("ddd, MMMM D YYYY, hh:mm:ss A z"));
+            }, 1000); // 1 second = 1000 milliseconds
         }
 
-        // Start Server Clock
+
+        // Refresh or Pause the Clock based on Focus / Blur of the Current Tab / Window respectively
+        $(window).on("blur focus", function(e) {
+            var prevType = $(this).data("prevType");
+
+            if (prevType != e.type) {   //  reduce double fire issues
+                switch (e.type) {
+                    case "blur":
+                        if(serverTimeTickInterval){
+                            clearInterval(serverTimeTickInterval);
+                        }
+                        break;
+                    case "focus":
+                        if(serverTimeTickInterval){
+                            clearInterval(serverTimeTickInterval);
+                        }
+                        getServerTimeAndStartClock();
+                        break;
+                }
+            }
+
+            $(this).data("prevType", e.type);
+        })
+        
+        // Start the Server Clock Display
         getServerTimeAndStartClock();
 
         var createResultTable = function(resultTableDivID, data) {
