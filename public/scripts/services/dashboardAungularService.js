@@ -202,12 +202,12 @@ angular.module('dashboardApp')
             var chartSplitData = x
 
             console.log(chartSplitData);
-            
+
             // Generate Line Chart
             var chartPie = c3.generate({
                 bindto: chartDivID,
                 data: {
-                    rows: chartSplitData,
+                    columns: chartSplitData,
                     type: 'pie'
                 },
                 
@@ -215,6 +215,10 @@ angular.module('dashboardApp')
                     width: chartWidth
                 }
             });
+
+
+
+
 
         }
 
