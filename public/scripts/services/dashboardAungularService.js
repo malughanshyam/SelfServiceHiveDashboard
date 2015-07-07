@@ -101,8 +101,6 @@ angular.module('dashboardApp')
 
         var createBarChart = function(chartData, chartDivID, chartWidth) {
 
-
-
             // Parse the TSV Result file into Array of Data 
             var x = chartData.split('\n');
             for (var i = 0; i < x.length; i++) {
@@ -149,7 +147,6 @@ angular.module('dashboardApp')
 
         var createLineChart = function(chartData, chartDivID, chartWidth) {
 
-
             // Parse the TSV Result file into Array of Data 
             var x = chartData.split('\n');
             for (var i = 0; i < x.length; i++) {
@@ -195,6 +192,34 @@ angular.module('dashboardApp')
 
         var createPieChart = function(chartData, chartDivID, chartWidth) {
 
+            // Parse the TSV Result file into Array of Data 
+            var x = chartData.split('\n');
+            for (var i = 0; i < x.length; i++) {
+                y = x[i].split('\t');
+                x[i] = y;
+            }
+
+            var chartSplitData = x
+
+            console.log(chartSplitData);
+            
+            // Generate Line Chart
+            var chartPie = c3.generate({
+                bindto: chartDivID,
+                data: {
+                    rows: chartSplitData,
+                    type: 'pie'
+                },
+                
+                size: {
+                    width: chartWidth
+                }
+            });
+
+        }
+
+
+        var createTimeSeriesChart = function(chartData, chartDivID, chartWidth) {
 
             // Parse the TSV Result file into Array of Data 
             var x = chartData.split('\n');
@@ -215,13 +240,21 @@ angular.module('dashboardApp')
             // console.log($scope.chartDataSplit)
 
             // Generate Line Chart
-            var chartPie = c3.generate({
+            var chartTimeSeries = c3.generate({
                 bindto: chartDivID,
                 data: {
-                    rows: chartSplitData,
-                    type: 'pie'
+                    x: chartSplitData[0][0],
+                    rows: chartSplitData
                 },
-                
+                axis: {
+                    x: {
+                        type: 'timeseries',
+                        tick: {
+                            format: '%Y-%m-%d'
+                        },
+                        height: 130
+                    }
+                },
                 size: {
                     width: chartWidth
                 }
@@ -351,6 +384,7 @@ angular.module('dashboardApp')
             createBarChart: createBarChart,
             createLineChart: createLineChart,
             createPieChart : createPieChart,
+            createTimeSeriesChart: createTimeSeriesChart,
             saveAsPicture: saveAsPicture,
             parseIsoDatetime: parseIsoDatetime,
             initiateScheduling: initiateScheduling,

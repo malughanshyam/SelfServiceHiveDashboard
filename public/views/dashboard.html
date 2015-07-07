@@ -508,6 +508,14 @@
                                     <!-- Results Display Type Tab Begins -->
                                     <ul class="nav nav-pills right-to-left" id="adHocResultTypeTabs">
 
+                                        <li id="navChartTimeSeries">
+                                            <div class="btn-group" role="group" aria-label="...">
+                                                <button type="button" id="chartTimeSeriesBtn" class="btn btn-default btn-xs" data-toggle="tab" href="#chartTimeSeries" ng-click="createTimeSeriesChart()" data-tooltip="Plot Time Series Chart" data-loading-text="Loading..." autocomplete="off"> <i class="fa fa-sort-amount-asc fa-2x"> </i></button>
+
+                                                <button type="button" class="btn btn-success btn-xs disabled" ng-click="saveDivAsPicture()" id="downloadTimeSeriesChartBtnId" data-tooltip="Save As Image"><span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span></button>
+                                            </div>
+                                        </li>
+
                                         <li id="navChartPie">
                                             <div class="btn-group" role="group" aria-label="...">
                                                 <button type="button" id="createPieChartBtn" class="btn btn-default btn-xs" data-toggle="tab" href="#chartPie" ng-click="createPieChart()" data-tooltip="Plot Pie Chart" data-loading-text="Loading..." autocomplete="off"> <i class="fa fa-pie-chart fa-2x"> </i></button>
@@ -564,6 +572,9 @@
                                                 </div>
                                                 <div id="chartPie" class="tab-pane fade in ">
                                                     <div id="chartPie" class="chartResult"> </div>
+                                                </div>
+                                                <div id="chartTimeSeries" class="tab-pane fade in ">
+                                                    <div id="chartTimeSeries" class="chartResult"> </div>
                                                 </div>
                                             </div>
                                         </div>
@@ -721,14 +732,17 @@
                                     </td>
 
                                     <td>
-                                        <button type="button" ng-click="viewSchedJobResultsModal(row)" class="btn btn-success btn-xs" ng-show="row.JobRunStatus == 'JOB_SUCCESSFUL'">
-                                            <span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span> Results
-                                        </button>
+                                        <div id="addBottomPadding">
+                                            <button type="button" ng-click="viewSchedJobResultsModal(row)" class="btn btn-success btn-xs" ng-show="row.JobRunStatus == 'JOB_SUCCESSFUL'">
+                                                <span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span> Results
+                                            </button>
+                                        </div>
 
-
-                                        <button type="button" ng-click="viewSchedJobLogModal(row)" ng-class="{'btn-danger': row.JobRunStatus == 'JOB_FAILED' , 'btn-warning': row.JobRunStatus == 'JOB_IN_PROGRESS'}" class="btn  btn-xs" ng-show="row.JobRunStatus == 'JOB_FAILED'">
-                                            <span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span> View Log
-                                        </button>
+                                        <div >
+                                            <button type="button" ng-click="viewSchedJobLogModal(row)" ng-class="{'btn-danger': row.JobRunStatus == 'JOB_FAILED' , 'btn-info': row.JobRunStatus == 'JOB_IN_PROGRESS' , 'btn-success': row.JobRunStatus == 'JOB_SUCCESSFUL'}" class="btn  btn-xs" ng-hide="row.JobRunStatus == 'JOB_NOT_STARTED'">
+                                                <span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span> View Log
+                                            </button>
+                                        </div>
 
                                     </td>
 

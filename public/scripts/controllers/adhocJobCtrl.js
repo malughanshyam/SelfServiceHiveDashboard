@@ -56,6 +56,7 @@ angular.module('dashboardApp')
         $scope.barChartComputedData = '';
         $scope.lineChartComputedData = '';
         $scope.pieChartComputedData = '';
+        $scope.timeSeriesChartComputedData = '';
 
 
         // Cosmetic settings for the Steps - Flow
@@ -376,7 +377,7 @@ angular.module('dashboardApp')
 
     }
 
-    // Create Bar Chart
+    // Create Pie Chart
     $scope.createPieChart = function() {
 
         // Check against the locally stored chart data to prevent duplicate computation/drawing of the charts
@@ -397,6 +398,30 @@ angular.module('dashboardApp')
 
         // Store Locally to avoid Recomputing the same chart
         $scope.pieChartComputedData = $scope.jobResult;
+
+    }
+
+    // Create Time Series Chart
+    $scope.createTimeSeriesChart = function() {
+
+        // Check against the locally stored chart data to prevent duplicate computation/drawing of the charts
+        if ($scope.timeSeriesChartComputedData == $scope.jobResult) {
+            return true;
+        }
+
+        $('#createTimeSeriesChartBtn').button('loading');
+
+        // Compute the Width for the Charts
+        var chartWidth = $("#jobResultPanelBodyContent").width()
+        var chartDivID = '#chartTimeSeries';
+
+        dashboardAungularService.createLineChart($scope.jobResult, chartDivID, chartWidth);
+
+        $('#downloadTimeSeriesChartBtnId').removeClass('disabled');
+        $('#createTimeSeriesChartBtn').button('reset');
+
+        // Store Locally to avoid Recomputing the same chart
+        $scope.timeSeriesChartComputedData = $scope.jobResult;
 
     }
 

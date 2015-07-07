@@ -109,6 +109,7 @@ pre {
 #jobLogDiv {
     padding: 0.5em;
 }
+
 #imgLoading {
     width: 5px;
     height: auto;
@@ -176,7 +177,8 @@ pre {
     width: 90%;
 }
 #editSubmitBtnGrp,
-#viewRecentJobResultsBtn {
+#viewRecentJobResultsBtn,
+#addBottomPadding {
     padding-bottom: 0.5em;
 }
 /* Change active color of Day Button clicked in New Scheule Job Tab*/
@@ -271,4 +273,7 @@ pre {
     color: #fff;
     outline: 0 none;
     text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.2);
+}
+#addTopPadding {
+    padding-top:1em: 
 }

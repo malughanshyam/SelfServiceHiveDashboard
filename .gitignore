@@ -2,4 +2,5 @@ data/
 mongodb/data/
 logs/
 backup/
-hive_launcher_scripts/log4j.properties
+hive_launcher_scripts/hs_err*
+hive_launcher_scripts/log4j.properties*
