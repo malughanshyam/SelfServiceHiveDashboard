@@ -44,6 +44,7 @@ angular.module('dashboardApp')
                         if(serverTimeTickInterval){
                             clearInterval(serverTimeTickInterval);
                         }
+                        $('#serverClock').text("Server Time")
                         break;
                     case "focus":
                         if(serverTimeTickInterval){
@@ -200,8 +201,6 @@ angular.module('dashboardApp')
             }
 
             var chartSplitData = x
-
-            console.log(chartSplitData);
 
             // Generate Line Chart
             var chartPie = c3.generate({

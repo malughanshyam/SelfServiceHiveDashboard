@@ -277,3 +277,7 @@ pre {
 #addTopPadding {
     padding-top:1em: 
 }
+
+.report-modal-body {
+    overflow-x:auto;
+}
